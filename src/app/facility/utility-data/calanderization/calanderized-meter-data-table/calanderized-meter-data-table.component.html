@@ -1,0 +1,69 @@
+<table class="table table-sm" #meterDataTable [ngClass]="{'copying-table': copyingTable}">
+    <thead>
+        <tr class="table-mh">
+            <th colspan=9>{{calanderizedMeter.meter.name}}
+                <span class="item-right small source-label">{{calanderizedMeter.meter.source}}</span>
+            </th>
+        </tr>
+        <tr>
+            <th (click)="setOrderDataField('date')" [ngClass]="{'active': orderDataField == 'date'}" class="row-year">
+                Month</th>
+            <th (click)="setOrderDataField('energyConsumption')"
+                [ngClass]="{'active': orderDataField == 'energyConsumption'}" *ngIf="calanderizedMeter.showConsumption">
+                Total Consumption<br> (<span [innerHTML]="calanderizedMeter.consumptionUnit | settingsLabel"></span>)
+            </th>
+            <th (click)="setOrderDataField('energyUse')" [ngClass]="{'active': orderDataField == 'energyUse'}"
+                *ngIf="calanderizedMeter.showEnergyUse">
+                Total Energy<br> (<span [innerHTML]="calanderizedMeter.energyUnit | settingsLabel"></span>)
+            </th>
+            <th (click)="setOrderDataField('marketEmissions')"
+                [ngClass]="{'active': orderDataField == 'marketEmissions'}">Total Market <br>Emissions (kg
+                CO<sub>2</sub>)</th>
+            <th (click)="setOrderDataField('locationEmissions')"
+                [ngClass]="{'active': orderDataField == 'locationEmissions'}">Total Location <br>Emissions (kg
+                CO<sub>2</sub>)</th>
+            <th (click)="setOrderDataField('RECs')" [ngClass]="{'active': orderDataField == 'RECs'}">RECs<br> (<span
+                    [innerHTML]="calanderizedMeter.energyUnit | settingsLabel"></span>)</th>
+            <th (click)="setOrderDataField('excessRECs')" [ngClass]="{'active': orderDataField == 'excessRECs'}">Excess
+                RECs<br> (<span [innerHTML]="calanderizedMeter.energyUnit | settingsLabel"></span>)</th>
+            <th (click)="setOrderDataField('excessRECsEmissions')"
+                [ngClass]="{'active': orderDataField == 'excessRECsEmissions'}">Excess
+                RECs Emissions<br> (kg CO<sub>2</sub>)</th>
+            <th (click)="setOrderDataField('energyCost')" [ngClass]="{'active': orderDataField == 'energyCost'}">Total
+                Cost</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let data of calanderizedMeter.monthlyData| orderBy: orderDataField: orderByDirection | slice: ((currentPageNumber-1) * itemsPerPage): currentPageNumber * itemsPerPage"
+            [ngClass]="{'use-and-consumption': data.energyConsumption && data.energyUse}">
+            <td>{{data.date | date: 'MMMM, y'}}</td>
+            <td *ngIf="calanderizedMeter.showConsumption">{{data.energyConsumption |customNumber}}
+            </td>
+            <td *ngIf="calanderizedMeter.showEnergyUse">{{data.energyUse | customNumber}}
+            </td>
+            <td *ngIf="calanderizedMeter.showEmissions">{{data.marketEmissions | number:'1.0-0'}}
+            </td>
+            <td *ngIf="calanderizedMeter.showEmissions">{{data.locationEmissions | number:'1.0-0'}}
+            </td>
+            <td *ngIf="calanderizedMeter.showEmissions">{{data.RECs | number:'1.0-0'}}
+            </td>
+            <td *ngIf="calanderizedMeter.showEmissions">{{data.excessRECs | number:'1.0-0'}}
+            </td>
+            <td *ngIf="calanderizedMeter.showEmissions">
+                {{data.excessRECsEmissions | number:'1.0-0'}}
+            </td>
+            <td>{{data.energyCost | customNumber:true}}
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="tableControls overflow-hidden">
+    <a class="click-link" (click)="copyTable()"><span class="fa fa-copy"></span> Copy Table</a>
+    <div class="item-right">
+        <ngb-pagination [collectionSize]="calanderizedMeter.monthlyData.length" [(page)]="currentPageNumber"
+            [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" aria-label="Default pagination">
+        </ngb-pagination>
+    </div>
+    <p class="item-right">{{calanderizedMeter.monthlyData.length}} entries</p>
+</div>

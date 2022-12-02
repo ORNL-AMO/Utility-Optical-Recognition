@@ -1,0 +1,31 @@
+<div class="wrapper">
+    <div class="d-flex w-100">
+        <div class="d-flex flex-column p-2 nav">
+            <div class="nav-item">
+                <a class="nav-link" routerLink="/setup-wizard/account-setup/information-setup"
+                    [routerLinkActive]="['active']">
+                    <span class="badge"
+                        [ngClass]="{'badge-danger':generalInformationInvalid, 'badge-success': !generalInformationInvalid}">1</span>
+                    General Information
+                </a>
+            </div>
+            <div class="nav-item">
+                <a class="nav-link" routerLink="/setup-wizard/account-setup/units-setup" [routerLinkActive]="['active']"
+                    [ngClass]="{'disabled': generalInformationInvalid}">
+                    <span class="badge" [ngClass]="unitsClass">2</span>
+                    Units
+                </a>
+            </div>
+            <div class="nav-item">
+                <a class="nav-link" routerLink="/setup-wizard/account-setup/reporting-setup"
+                    [routerLinkActive]="['active']" [ngClass]="{'disabled': generalInformationInvalid || unitsInvalid}">
+                    <span class="badge" [ngClass]="reportingClass">3</span>
+                    Reporting
+                </a>
+            </div>
+        </div>
+        <div class="flex-fill pt-2 pl-4 pr-4 pb-4">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>

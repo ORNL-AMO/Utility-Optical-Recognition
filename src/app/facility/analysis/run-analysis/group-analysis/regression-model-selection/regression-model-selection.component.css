@@ -1,0 +1,30 @@
+thead th.active {
+    text-decoration: underline;
+}
+
+thead tr:not(.table-mh) th.can-click:hover{
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+
+.show-models-label{
+    width: auto;
+}
+
+button span{
+    color: white;
+}
+
+
+td{
+    vertical-align: middle;
+}
+
+button span.fa-microscope{
+    color: black;
+}
+
+tr.selected-model{
+    border: solid !important;
+}

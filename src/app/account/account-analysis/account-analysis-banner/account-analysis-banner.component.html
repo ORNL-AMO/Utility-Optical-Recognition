@@ -1,0 +1,34 @@
+<div class="analysis banner sticky-top d-flex justify-content-between" *ngIf="!inDashboard"
+    [ngClass]="{'modal-open': modalOpen}">
+    <div>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" routerLink="/account/analysis/setup" [routerLinkActive]="['active']">
+                    <span class="fa fa-exclamation-circle" *ngIf="!setupValid"></span>
+                    <i class="fa fa-gears"></i>
+                    Analysis Setup</a>
+            </li>
+            <li class="nav-item" [ngClass]="{'disabled': !setupValid}">
+                <a class="nav-link" routerLink="/account/analysis/select-items" [routerLinkActive]="['active']">
+                    <span class="fa fa-exclamation-circle" *ngIf="!facilitySelectionValid"></span>
+                    <i class="fa fa-list-check"></i>
+                    Select Facility Items</a>
+            </li>
+            <li class="nav-item" [ngClass]="{'disabled': !facilitySelectionValid || !setupValid}">
+                <a class="nav-link" routerLink="/account/analysis/results" [routerLinkActive]="['active']">
+                    <i class="fa fa-magnifying-glass-chart"></i>
+                    Analysis Results</a>
+            </li>
+        </ul>
+    </div>
+    <div>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" routerLink="dashboard" [routerLinkActive]="['active']">
+                    <i class="fa fa-list"></i>
+                    All Account Analysis
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,17 @@
+.click-link{
+    color: #007bff;
+    font-size: small;
+}
+
+.click-link:hover{
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.table thead tr{
+    background-color: white;
+}
+
+.emission-rates label{
+    font-size: 22px;
+}

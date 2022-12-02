@@ -1,0 +1,18 @@
+/*
+Content Container
+=============================================== */
+  .wrapper {
+    background-color: white;
+    margin: 30px;
+    padding: 20px 30px 30px;
+  }
+  .wrapper.help-panel {
+    margin-left: 0px;
+  }
+  .wrapper.main-content {
+    height: calc(100vh - 250px);
+    overflow-y: auto;
+  }
+  .help-panel.tab-margin {
+    margin-top: 65px;
+  }

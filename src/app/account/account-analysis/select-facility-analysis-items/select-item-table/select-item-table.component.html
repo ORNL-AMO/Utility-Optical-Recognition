@@ -1,0 +1,127 @@
+<h4>
+    <div class="d-flex justify-content-between">
+        <div class="mt-auto">
+            <i class="fa fa-industry pr-2" [ngStyle]="{color: facility.color}"></i>{{facility.name}}
+            Analysis Items
+        </div>
+
+        <div>
+            <button class="btn btn-outline m-0" (click)="createNewItem()">+Add Facility Analysis</button>
+        </div>
+    </div>
+</h4>
+
+<ng-container
+    *ngIf="selectedFacilityItem && (selectedFacilityItem.setupErrors.hasError || selectedFacilityItem.setupErrors.groupsHaveErrors)">
+    <div class="alert alert-danger w-100 text-center">
+        The selected facility analysis contains errors. Click "View Analysis" to view and fix the errors.
+    </div>
+    <hr>
+</ng-container>
+
+
+<ng-container *ngIf="selectedFacilityItemId == undefined">
+    <div class="alert alert-danger w-100 text-center">
+        Analysis item selection required.
+    </div>
+    <hr>
+</ng-container>
+
+
+<div class="table-responsive">
+    <table class="table table-sm table-hover">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Analysis Item</th>
+                <th>
+                    Group Analysis
+                </th>
+                <th>Last Modified</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let analysisItem of facilityAnalysisItems | orderBy: 'date'">
+                <td class="radio-td">
+                    <input type="radio" class="rowToggle" [(ngModel)]="selectedFacilityItemId"
+                        [value]="analysisItem.guid" name="{{analysisItem.id+'_selectedFacilityItemId'}}"
+                        id="{{analysisItem.id+'_selectedFacilityItemId'}}" (change)="save()">
+                </td>
+                <td>
+                    <span class="fa fa-exclamation-circle"
+                        *ngIf="analysisItem.setupErrors.hasError || analysisItem.setupErrors.groupsHaveErrors"></span>
+                    {{analysisItem.name}}
+                </td>
+                <td>
+                    <span *ngFor="let group of analysisItem.groups">
+                        {{group.idbGroupId | groupName}}:
+                        <span *ngIf="group.analysisType == 'absoluteEnergyConsumption'">Absolute Energy
+                            Consumption</span>
+                        <span *ngIf="group.analysisType == 'energyIntensity'">Energy Intensity</span>
+                        <span *ngIf="group.analysisType == 'modifiedEnergyIntensity'">Modified Energy Intensity</span>
+                        <span *ngIf="group.analysisType == 'regression'">Regression</span>
+                        <br>
+                    </span>
+                </td>
+                <td>{{analysisItem.date | date:'short'}}</td>
+                <td class="actions">
+                    <!-- <div class="d-flex">
+                        <i class="fa fa-pencil" title="Edit" (click)="editItem(analysisItem)"></i>
+                    </div> -->
+                    <a class="click-link" (click)="editItem(analysisItem)">View Analysis</a>
+                </td>
+            </tr>
+            <tr *ngIf="facilityAnalysisItems.length == 0">
+                <td colspan="7" class="text-center">
+                    No <span *ngIf="selectedAnalysisItem.energyIsSource">source energy</span>
+                    <span *ngIf="!selectedAnalysisItem.energyIsSource">site energy</span> analysis items found for this
+                    facility that match
+                    the selected report year.<br>
+                    Click the "+Add Facility Analysis" button to conduct a facility level analysis that will be added to
+                    the account analysis in progress.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="radio" class="rowToggle" [(ngModel)]="selectedFacilityItemId" [value]="'skip'"
+                        name="{{facility.name+'undefined'}}" id="{{facility.name+'undefined'}}" (change)="save()">
+                </td>
+                <td colspan="6">
+                    Skip Facility
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="popup" [class.open]="itemToEdit">
+    <div class="popup-header" *ngIf="itemToEdit">Go To: {{itemToEdit.name}}
+        <button class="item-right" (click)="cancelEditItem()">x</button>
+    </div>
+    <div class="popup-body">
+        <p>WARNING: Are you sure you want to go to this analysis item? Your progress will be saved and you will leave
+            this screen.</p>
+    </div>
+    <div class="saveCancel popup-footer text-right">
+        <button class="btn btn-secondary" (click)="cancelEditItem()">Cancel</button>
+        <button class="btn btn-outline" (click)="confirmEditItem()">Go To Facility Analysis</button>
+    </div>
+</div>
+
+
+
+<div class="popup" [class.open]="showCreateItem">
+    <div class="popup-header">Create New Facility Analysis
+        <button class="item-right" (click)="cancelCreateNew()">x</button>
+    </div>
+    <div class="popup-body">
+        <p>WARNING: Are you sure you want to create a new analysis item for this facility? Your progress will be saved
+            and you will leave
+            this screen.</p>
+    </div>
+    <div class="saveCancel popup-footer text-right">
+        <button class="btn btn-secondary" (click)="cancelCreateNew()">Cancel</button>
+        <button class="btn btn-outline" (click)="confirmCreateNew()">Create Facility Analysis</button>
+    </div>
+</div>

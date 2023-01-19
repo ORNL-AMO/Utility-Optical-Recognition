@@ -27,6 +27,7 @@ export class EditBillComponent implements OnInit {
   displayEnergyUse: boolean;
   invalidDate: boolean;
   showConfirmCancel: boolean = false;
+  showFilterDropdown: boolean = false;
   constructor(private activatedRoute: ActivatedRoute, private utilityMeterDataDbService: UtilityMeterDatadbService,
     private utilityMeterDbService: UtilityMeterdbService, private loadingService: LoadingService,
     private dbChangesService: DbChangesService, private facilityDbService: FacilitydbService, private accountDbService: AccountdbService,
@@ -89,7 +90,7 @@ export class EditBillComponent implements OnInit {
     await this.dbChangesService.setMeterData(selectedAccount, selectedFacility);
     this.cancel(true);
     this.loadingService.setLoadingStatus(false);
-    this.toastNotificationService.showToast('Reading Saved!', undefined, undefined, false, "success");
+    this.toastNotificationService.showToast('Reading Saved!', undefined, undefined, false, "bg-success");
   }
 
   async saveAndAddAnother() {
@@ -112,7 +113,7 @@ export class EditBillComponent implements OnInit {
     this.editMeterData.readDate.setMonth(this.editMeterData.readDate.getUTCMonth() + 1);
     this.setMeterDataForm();
     this.loadingService.setLoadingStatus(false);
-    this.toastNotificationService.showToast('Reading Saved!', undefined, undefined, false, "success");
+    this.toastNotificationService.showToast('Reading Saved!', undefined, undefined, false, "bg-success");
   }
 
 
@@ -131,5 +132,9 @@ export class EditBillComponent implements OnInit {
     this.meterDataForm.valueChanges.subscribe(() => {
       this.showConfirmCancel = false;
     })
+  }
+
+  toggleFilterMenu(){
+    this.showFilterDropdown = !this.showFilterDropdown;
   }
 }

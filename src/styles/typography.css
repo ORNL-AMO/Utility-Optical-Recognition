@@ -8,6 +8,7 @@ Typography
     height: 100%;
     background: #ececec;
   }*/
+
   * {
     /*font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";*/
     font-size: 14px;
@@ -16,6 +17,17 @@ Typography
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+@media (max-width: 1500px) {
+    * {
+      font-size: 12px;
+    }
+    h4 {
+      font-size: 14px;
+    }
+}
+
+
   h1,
   h2,
   h3,
@@ -25,8 +37,8 @@ Typography
     margin: 8px 0;
   }
   h4 {
-    text-transform: uppercase;
-    font-size: 16px !important;
+    /* text-transform: uppercase; */
+    font-size: 16px;
     padding: 10px 0;
     border-bottom: 2px solid orange;
     font-weight: normal;
@@ -37,7 +49,7 @@ Typography
     text-transform: uppercase;
     letter-spacing: 1px;
   }
-  a:not([href]), a:not([href]) .fa.fa-copy {
+  a:not([href]) {
     color: #007bff !important;
   }
   a:not([href]):hover {

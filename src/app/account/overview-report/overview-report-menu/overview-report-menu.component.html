@@ -113,7 +113,7 @@
                 </div>
             </div>
             <div class="col-6">
-                <div class="text-right">
+                <div class="text-end">
                     <div class="form-group">
                         <label class="text-left" for="selectTemplate">
                             Report Template
@@ -206,12 +206,12 @@
             <div class="col">
                 <button class="btn btn-danger" (click)="goToDashboard()">Return to Dashboard</button>
             </div>
-            <div class="col text-right">
+            <div class="col text-end">
                 <button *ngIf="!selectedReportOptions" class="btn btn-primary" (click)="createReport()"
                     [disabled]="!reportOptions.targetYear || !reportOptions.baselineYear"><span
                         class="fa fa-save"></span> Create
                     Report</button>
-                <button *ngIf="selectedReportOptions" class="btn btn-secondary mr-2" (click)="cancelChanges()">Discard
+                <button *ngIf="selectedReportOptions" class="btn btn-secondary me-2" (click)="cancelChanges()">Discard
                     Changes</button>
                 <button *ngIf="selectedReportOptions" class="btn btn-primary" (click)="updateReport()"
                     [disabled]="!reportOptions.targetYear || !reportOptions.baselineYear"><span
@@ -223,15 +223,16 @@
 </div>
 
 <!--save template modal-->
+<div [ngClass]="{'windowOverlay': displayCreateTemplate}"></div>
 <div class="popup" [class.open]="displayCreateTemplate">
     <div class="popup-header" *ngIf="displayCreateTemplate">Create New Report Template
         <button class="item-right" (click)="cancelNewTemplate()">x</button>
     </div>
     <div class="popup-body">
-        <label class="pl-0" for="templateName">Template Name</label>
+        <label class="ps-0" for="templateName">Template Name</label>
         <input type="text" id="templateName" name="templateName" [(ngModel)]="templateName" class="form-control">
     </div>
-    <div class="saveCancel popup-footer text-right">
+    <div class="saveCancel popup-footer text-end">
         <button class="btn btn-secondary" (click)="cancelNewTemplate()">Cancel</button>
         <button class="btn btn-success" (click)="saveTemplate()">Save</button>
     </div>
@@ -239,8 +240,8 @@
 
 
 
+<div class="windowOverlay" *ngIf="displayEditTemplates"></div>
 <div class="window" [class.open]="displayEditTemplates">
-    <div class="windowOverlay"></div>
     <div class="windowContent windowContentMed">
         <app-manage-report-templates (emitClose)="closeEditTemplates()"></app-manage-report-templates>
     </div>

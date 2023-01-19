@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { LoadingService } from 'src/app/core-components/loading/loading.service';
 import { ToastNotificationsService } from 'src/app/core-components/toast-notifications/toast-notifications.service';
+import { UtilityMeterDataService } from 'src/app/facility/utility-data/energy-consumption/utility-meter-data/utility-meter-data.service';
 import { AccountdbService } from 'src/app/indexedDB/account-db.service';
 import { DbChangesService } from 'src/app/indexedDB/db-changes.service';
 import { FacilitydbService } from 'src/app/indexedDB/facility-db.service';
@@ -11,6 +13,8 @@ import { UtilityMeterdbService } from 'src/app/indexedDB/utilityMeter-db.service
 import { UtilityMeterDatadbService } from 'src/app/indexedDB/utilityMeterData-db.service';
 import { UtilityMeterGroupdbService } from 'src/app/indexedDB/utilityMeterGroup-db.service';
 import { IdbAccount, IdbFacility, IdbPredictorEntry, IdbUtilityMeter, IdbUtilityMeterData, IdbUtilityMeterGroup } from 'src/app/models/idb';
+import { EnergyUnitsHelperService } from 'src/app/shared/helper-services/energy-units-helper.service';
+import { SharedDataService } from 'src/app/shared/helper-services/shared-data.service';
 import { FileReference, UploadDataService } from 'src/app/upload-data/upload-data.service';
 
 @Component({
@@ -32,7 +36,10 @@ export class ConfirmAndSubmitComponent implements OnInit {
     private toastNotificationService: ToastNotificationsService,
     private dbChangesService: DbChangesService,
     private accountDbService: AccountdbService,
-    private utilityMeterGroupDbService: UtilityMeterGroupdbService) { }
+    private utilityMeterGroupDbService: UtilityMeterGroupdbService,
+    private sharedDataService: SharedDataService,
+    private utilityMeterDataService: UtilityMeterDataService,
+    private energyUnitsHelperService: EnergyUnitsHelperService) { }
 
   ngOnInit(): void {
     this.paramsSub = this.activatedRoute.parent.params.subscribe(param => {
@@ -50,6 +57,7 @@ export class ConfirmAndSubmitComponent implements OnInit {
   }
 
   async submit() {
+    this.sharedDataService.modalOpen.next(true);
     this.loadingService.setLoadingMessage('Submitting File Data..');
     this.loadingService.setLoadingStatus(true);
 
@@ -84,18 +92,31 @@ export class ConfirmAndSubmitComponent implements OnInit {
     this.loadingService.setLoadingMessage('Uploading Meter Data...');
     for (let i = 0; i < this.fileReference.meterData.length; i++) {
       let meterData: IdbUtilityMeterData = this.fileReference.meterData[i];
-      if (meterData.id) {
-        let skipMeterData: boolean = false;
-        for (let x = 0; x < this.fileReference.skipExistingReadingsMeterIds.length; x++) {
-          if (this.fileReference.skipExistingReadingsMeterIds[x] == meterData.meterId) {
-            skipMeterData = true;
-          }
-        }
-        if (!skipMeterData) {
-          await this.utilityMeterDataDbService.updateWithObservable(meterData).toPromise();
-        }
+      let meter: IdbUtilityMeter = this.fileReference.meters.find(meter => { return meter.guid == meterData.meterId })
+
+      let form: FormGroup;
+      if (meter.source == 'Electricity') {
+        form = this.utilityMeterDataService.getElectricityMeterDataForm(meterData);
       } else {
-        await this.utilityMeterDataDbService.addWithObservable(meterData).toPromise();
+        let displayVolumeInput: boolean = (this.energyUnitsHelperService.isEnergyUnit(meter.startingUnit) == false);
+        let displayEnergyUse: boolean = this.energyUnitsHelperService.isEnergyMeter(meter.source);
+        form = this.utilityMeterDataService.getGeneralMeterDataForm(meterData, displayVolumeInput, displayEnergyUse);
+      }
+
+      if (form.valid) {
+        if (meterData.id) {
+          let skipMeterData: boolean = false;
+          for (let x = 0; x < this.fileReference.skipExistingReadingsMeterIds.length; x++) {
+            if (this.fileReference.skipExistingReadingsMeterIds[x] == meterData.meterId) {
+              skipMeterData = true;
+            }
+          }
+          if (!skipMeterData) {
+            await this.utilityMeterDataDbService.updateWithObservable(meterData).toPromise();
+          }
+        } else {
+          await this.utilityMeterDataDbService.addWithObservable(meterData).toPromise();
+        }
       }
     }
 
@@ -125,7 +146,8 @@ export class ConfirmAndSubmitComponent implements OnInit {
     this.uploadDataService.fileReferences[fileReferenceIndex] = this.fileReference;
     this.hasNextFile = fileReferenceIndex < (this.uploadDataService.fileReferences.length - 1);
     this.loadingService.setLoadingStatus(false);
-    this.toastNotificationService.showToast(this.fileReference.name + ' Data Submitted', undefined, undefined, false, "success");
+    this.toastNotificationService.showToast(this.fileReference.name + ' Data Submitted', undefined, undefined, false, "bg-success");
+    this.sharedDataService.modalOpen.next(false);
   }
 
   goToNext() {

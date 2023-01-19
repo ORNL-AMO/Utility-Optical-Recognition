@@ -1,5 +1,5 @@
-<table class="table table-sm table-hover" #dataTable [ngClass]="{'copying-table': copyingTable}">
-    <thead>
+<table class="table utility-data table-sm table-bordered table-hover" #dataTable [ngClass]="{'copying-table': copyingTable}">
+    <thead class="sortable">
         <tr class="table-mh">
             <th class="first-column"></th>
             <th *ngIf="analysisTableColumns.energy" class="text-center th-3" [attr.colspan]="numEnergyColumns">
@@ -48,7 +48,7 @@
 
             <th *ngIf="analysisTableColumns.baselineAdjustment" (click)="setOrderDataField('baselineAdjustment')"
                 [ngClass]="{'active': orderDataField == 'baselineAdjustment'}">
-                Baseline<br> Adjustment
+                Total<br>Baseline<br> Adjustment
             </th>
             <th *ngFor="let predictorVariable of predictorColumns" (click)="setOrderDataField(predictorVariable.name)"
                 [ngClass]="{'active': orderDataField == predictorVariable.name}">
@@ -69,6 +69,10 @@
                 [ngClass]="{'active': orderDataField == 'totalSavingsPercentImprovement'}">
                 Total Savings <br> % Improvement
             </th>
+            <th *ngIf="analysisTableColumns.newSavings" (click)="setOrderDataField('newSavings')"
+                [ngClass]="{'active': orderDataField == 'newSavings'}">
+                New <br> Savings
+            </th>
             <th *ngIf="analysisTableColumns.annualSavingsPercentImprovement"
                 (click)="setOrderDataField('annualSavingsPercentImprovement')"
                 [ngClass]="{'active': orderDataField == 'annualSavingsPercentImprovement'}">
@@ -76,15 +80,11 @@
             </th>
             <th *ngIf="analysisTableColumns.cummulativeSavings" (click)="setOrderDataField('cummulativeSavings')"
                 [ngClass]="{'active': orderDataField == 'cummulativeSavings'}">
-                Cummulative <br> Savings
-            </th>
-            <th *ngIf="analysisTableColumns.newSavings" (click)="setOrderDataField('newSavings')"
-                [ngClass]="{'active': orderDataField == 'newSavings'}">
-                New <br> Savings
+                Cumulative <br> Savings
             </th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class="table-group-divider">
         <tr *ngFor="let summary of annualAnalysisSummary | orderBy: orderDataField: orderByDirection">
             <td>
                 {{summary.year | yearDisplay: accountOrFacility.fiscalYear}}
@@ -185,6 +185,14 @@
                     &mdash;
                 </span>
             </td>
+            <td *ngIf="analysisTableColumns.newSavings">
+                <span *ngIf="summary.newSavings" [ngClass]="{'red': summary.newSavings < 0}">
+                    {{summary.newSavings | customNumber}}
+                </span>
+                <span *ngIf="!summary.newSavings">
+                    &mdash;
+                </span>
+            </td>
             <td *ngIf="analysisTableColumns.annualSavingsPercentImprovement">
                 <span *ngIf="summary.annualSavingsPercentImprovement"
                     [ngClass]="{'red': summary.annualSavingsPercentImprovement < 0}">
@@ -202,15 +210,7 @@
                     &mdash;
                 </span>
             </td>
-            <td *ngIf="analysisTableColumns.newSavings">
-                <span *ngIf="summary.newSavings" [ngClass]="{'red': summary.newSavings < 0}">
-                    {{summary.newSavings | customNumber}}
-                </span>
-                <span *ngIf="!summary.newSavings">
-                    &mdash;
-                </span>
-            </td>
         </tr>
     </tbody>
 </table>
-<a class="click-link" (click)="copyTable()"><span class="fa fa-copy"></span> Copy Table</a>
+<button class="btn action-btn btn-sm" (click)="copyTable()"><span class="fa fa-copy"></span> Copy Table</button>

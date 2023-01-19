@@ -24,7 +24,6 @@ export class CalanderizationComponent implements OnInit {
   itemsPerPageSub: Subscription;
   calanderizedMeter: CalanderizedMeter;
   facilityMetersSub: Subscription;
-  facilityMeterDataSub: Subscription;
   facilityMeters: Array<IdbUtilityMeter>;
   orderDataField: string = 'date';
   orderByDirection: string = 'desc';
@@ -41,7 +40,7 @@ export class CalanderizationComponent implements OnInit {
   selectedFacility: IdbFacility;
   displayDataApplicationModal: boolean = false;
   constructor(private calanderizationService: CalanderizationService, private utilityMeterDbService: UtilityMeterdbService,
-    private utilityMeterDataDbService: UtilityMeterDatadbService, private facilityDbService: FacilitydbService,
+    private facilityDbService: FacilitydbService,
     private dbChangesService: DbChangesService, private accountDbService: AccountdbService,
     private sharedDataService: SharedDataService) { }
 
@@ -61,11 +60,6 @@ export class CalanderizationComponent implements OnInit {
       this.setCalanderizedMeterData();
     });
 
-
-    this.facilityMeterDataSub = this.utilityMeterDataDbService.accountMeterData.subscribe(() => {
-      this.setCalanderizedMeterData();
-    });
-
     this.itemsPerPageSub = this.sharedDataService.itemsPerPage.subscribe(val => {
       this.itemsPerPage = val;
     });
@@ -73,7 +67,7 @@ export class CalanderizationComponent implements OnInit {
 
   ngOnDestroy() {
     this.facilityMetersSub.unsubscribe();
-    this.facilityMeterDataSub.unsubscribe();
+    // this.facilityMeterDataSub.unsubscribe();
     this.calanderizedDataFiltersSub.unsubscribe();
     this.itemsPerPageSub.unsubscribe();
     this.calanderizationService.calanderizedDataFilters.next({
@@ -205,11 +199,13 @@ export class CalanderizationComponent implements OnInit {
   }
 
   showDataApplicationModal() {
+    this.sharedDataService.modalOpen.next(true);
     this.dataApplicationMeter = JSON.parse(JSON.stringify(this.selectedMeter));
     this.displayDataApplicationModal = true;
   }
 
   cancelSetDataApplication() {
+    this.sharedDataService.modalOpen.next(false);
     this.displayDataApplicationModal = false;
     this.dataApplicationMeter = undefined;
   }
@@ -241,7 +237,7 @@ export class CalanderizationComponent implements OnInit {
     this.setCalanderizedMeterData();
   }
 
-  
+
   getColor(): string {
     return UtilityColors[this.selectedMeter.source].color
   }

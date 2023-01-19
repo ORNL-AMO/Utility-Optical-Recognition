@@ -65,6 +65,11 @@ export const VolumeLiquidOptions: Array<UnitOption> = [
         unitsOfMeasure: 'Imperial'
     },
     {
+        display: 'Thousand Gallons (kGal)',
+        value: 'kgal',
+        unitsOfMeasure: 'Imperial'
+    },
+    {
         display: 'Cubic Meters (m&#x00B3;)',
         value: 'm3',
         unitsOfMeasure: 'Metric'
@@ -96,6 +101,11 @@ export const VolumeGasOptions: Array<UnitOption> = [
         display: 'Million Cubic Feet (MCF)',
         value: 'MCF',
         unitsOfMeasure: 'Imperial'
+    },
+    {
+        display: 'Million Cubic Meters (MCM)',
+        value: 'MCM',
+        unitsOfMeasure: 'Metric'
     },
 ]
 

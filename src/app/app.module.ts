@@ -24,6 +24,7 @@ import { SearchBarComponent } from './core-components/header/search-bar/search-b
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { FacilityListPipe } from './core-components/sidebar/facility-list.pipe';
 import { UploadDataModule } from './upload-data/upload-data.module';
+import { UtilityOpticalRecognitionComponent } from './utility-optical-recognition/utility-optical-recognition.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { UploadDataModule } from './upload-data/upload-data.module';
     ElectronUpdateComponent,
     ImportBackupModalComponent,
     SearchBarComponent,
-    FacilityListPipe
+    FacilityListPipe,
+    UtilityOpticalRecognitionComponent
   ],
   imports: [
     BrowserModule,

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-utility-optical-recognition',
@@ -7,4 +8,12 @@ import { Component } from '@angular/core';
 })
 export class UtilityOpticalRecognitionComponent {
 
+
+
+  constructor(public activeModal: NgbActiveModal) {}
+
+  closeModal() {            
+    document.getElementById("modalUploadPDF").style.display = "none";
+ }
+  
 }

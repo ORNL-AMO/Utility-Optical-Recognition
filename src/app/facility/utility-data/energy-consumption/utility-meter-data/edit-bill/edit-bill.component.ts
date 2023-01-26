@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LoadingService } from 'src/app/core-components/loading/loading.service';
 import { ToastNotificationsService } from 'src/app/core-components/toast-notifications/toast-notifications.service';
 import { AccountdbService } from 'src/app/indexedDB/account-db.service';
@@ -10,6 +11,7 @@ import { UtilityMeterdbService } from 'src/app/indexedDB/utilityMeter-db.service
 import { UtilityMeterDatadbService } from 'src/app/indexedDB/utilityMeterData-db.service';
 import { IdbAccount, IdbFacility, IdbUtilityMeter, IdbUtilityMeterData } from 'src/app/models/idb';
 import { EnergyUnitsHelperService } from 'src/app/shared/helper-services/energy-units-helper.service';
+import { UtilityOpticalRecognitionComponent } from 'src/app/utility-optical-recognition/utility-optical-recognition.component';
 import { UtilityMeterDataService } from '../utility-meter-data.service';
 
 @Component({
@@ -32,7 +34,8 @@ export class EditBillComponent implements OnInit {
     private utilityMeterDbService: UtilityMeterdbService, private loadingService: LoadingService,
     private dbChangesService: DbChangesService, private facilityDbService: FacilitydbService, private accountDbService: AccountdbService,
     private utilityMeterDataService: UtilityMeterDataService, private toastNotificationService: ToastNotificationsService,
-    private energyUnitsHelperService: EnergyUnitsHelperService, private router: Router) { }
+    private energyUnitsHelperService: EnergyUnitsHelperService, private router: Router,
+    private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.activatedRoute.parent.params.subscribe(parentParams => {
@@ -137,4 +140,11 @@ export class EditBillComponent implements OnInit {
   toggleFilterMenu(){
     this.showFilterDropdown = !this.showFilterDropdown;
   }
+
+  callModal() {
+    const modalRef = this.modalService.open(UtilityOpticalRecognitionComponent, 
+      { size: 'lg', backdrop: 'static', centered: true, keyboard: false }
+    );
+  }
+
 }

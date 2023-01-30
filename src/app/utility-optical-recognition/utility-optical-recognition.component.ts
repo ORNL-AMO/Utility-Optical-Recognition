@@ -8,7 +8,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class UtilityOpticalRecognitionComponent {
 
-
+  public showUtilitySelector: boolean = true;
 
   constructor(public activeModal: NgbActiveModal) {}
 

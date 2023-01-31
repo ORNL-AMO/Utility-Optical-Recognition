@@ -3,7 +3,46 @@
     <button id="modalUploadPDF" type="button" class="btn-close me-2" (click)="activeModal.dismiss('Cross click')" aria-label="Close"></button>
   </div>
 
-
+  <!-- utility selector -->
+  <div class="utility-selector container p-3" *ngIf="showUtilitySelector">
+    <div class="row justify-content-center mb-5">
+      <h4>Please select a utility bill or meter option</h4>
+    </div>
+    <div class="row mb-5">
+      <div class="col">
+          <div class="card">
+            <button class="btn btn-primary">Electricity</button>
+          </div>
+      </div>
+      <div class="col">
+          <div class="card">
+            <button class="btn btn-primary">Water</button>
+          </div>
+      </div>
+      <div class="col">
+          <div class="card">
+            <button class="btn btn-primary">Natural Gas</button>
+          </div>
+      </div>
+    </div>
+    <div class="row mb-5">
+        <div class="col">
+          <div class="card">
+              <button class="btn btn-primary">Waste Water</button>
+          </div>
+        </div>
+        <div class="col">
+            <div class="card">
+              <button class="btn btn-primary">Other Energy</button>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+              <button class="btn btn-primary">Other Fuels</button>
+            </div>
+        </div>
+    </div>
+  </div>
 
 
   <!-- <div class="row justify-content-end">

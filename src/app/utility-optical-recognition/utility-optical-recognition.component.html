@@ -3,8 +3,61 @@
     <button id="modalUploadPDF" type="button" class="btn-close me-2" (click)="activeModal.dismiss('Cross click')" aria-label="Close"></button>
   </div>
 
+  <!-- preset selector/scan profile -->
+  <div class="preset-selector container p-4" *ngIf="showScanProfileSelector">
+    <div class="row justify-content-center mb-5">
+      <h4>Please select a scan profile</h4>
+    </div>
+    <div class="row mb-5">
+      <div class="col">
+        <div class="card">
+          <button class="btn btn-primary">Company 1 - Electricity</button>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <button class="btn btn-primary">Company 2 - Electricity</button>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <button class="btn btn-primary">Company 3 - Electricity</button>
+        </div>
+      </div>
+    </div>
+    <div class="row mb-5">
+        <div class="col">
+          <div class="card">
+            <button class="btn btn-primary">Company 1 - Gas</button>
+          </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <button class="btn btn-primary">Company 1 - Solar</button>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <button class="btn btn-primary">Company 1 - Something</button>
+            </div>
+          </div>
+    </div>
+    <div class="row justify-content-center p-1">
+      <div class="col text-center">
+        <p>Add a new scan profile?</p>
+      </div>
+    </div>
+    <div class="row justify-content-center mb-5">
+      <div class="col-4">
+        <div class="card">
+          <button class="btn btn-primary" (click)="newScanProfile()">New Scan Profile</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- utility selector -->
-  <div class="utility-selector container p-3" *ngIf="showUtilitySelector">
+  <div class="utility-selector container p-4" *ngIf="showUtilitySelector">
     <div class="row justify-content-center mb-5">
       <h4>Please select a utility bill or meter option</h4>
     </div>
@@ -43,7 +96,6 @@
         </div>
     </div>
   </div>
-
 
   <!-- <div class="row justify-content-end">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

@@ -50,7 +50,7 @@
     <div class="row justify-content-center mb-5">
       <div class="col-4">
         <div class="card">
-          <button class="btn btn-primary" (click)="newScanProfile()">New Scan Profile</button>
+          <button class="btn btn-primary" (click)="this.showScanProfileSelector = false; this.showUtilitySelector = true">New Scan Profile</button>
         </div>
       </div>
     </div>
@@ -64,38 +64,41 @@
     <div class="row mb-5">
       <div class="col">
           <div class="card">
-            <button class="btn btn-primary">Electricity</button>
+            <button class="btn btn-primary" (click)="this.showUtilitySelector = false">Electricity</button>
           </div>
       </div>
       <div class="col">
           <div class="card">
-            <button class="btn btn-primary">Water</button>
+            <button class="btn btn-primary" (click)="this.showUtilitySelector = false">Water</button>
           </div>
       </div>
       <div class="col">
           <div class="card">
-            <button class="btn btn-primary">Natural Gas</button>
+            <button class="btn btn-primary" (click)="this.showUtilitySelector = false">Natural Gas</button>
           </div>
       </div>
     </div>
     <div class="row mb-5">
         <div class="col">
           <div class="card">
-              <button class="btn btn-primary">Waste Water</button>
+              <button class="btn btn-primary" (click)="this.showUtilitySelector = false">Waste Water</button>
           </div>
         </div>
         <div class="col">
             <div class="card">
-              <button class="btn btn-primary">Other Energy</button>
+              <button class="btn btn-primary" (click)="this.showUtilitySelector = false">Other Energy</button>
             </div>
         </div>
         <div class="col">
             <div class="card">
-              <button class="btn btn-primary">Other Fuels</button>
+              <button class="btn btn-primary" (click)="this.showUtilitySelector = false">Other Fuels</button>
             </div>
         </div>
     </div>
   </div>
+
+  <!-- upload pdf -->
+  <!-- backend people put your HTML here -->
 
   <!-- <div class="row justify-content-end">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

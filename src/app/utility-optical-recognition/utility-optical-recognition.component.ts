@@ -8,18 +8,15 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class UtilityOpticalRecognitionComponent {
 
-  public showScanProfileSelector: boolean = true;        //aka scan profiles
+  public showScanProfileSelector: boolean = true;        //aka preset profiles
   public showUtilitySelector: boolean = false;
 
   constructor(public activeModal: NgbActiveModal) {}
 
-  closeModal() {            
-    document.getElementById("modalUploadPDF").style.display = "none";
-  }
+  // closeModal() {            
+  //   document.getElementById("modalUploadPDF").style.display = "none";
+  // }
 
-  newScanProfile(){
-    this.showScanProfileSelector = false;
-    this.showUtilitySelector = true;
-  }
+
   
 }

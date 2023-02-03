@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { PDFDocumentProxy } from 'ng2-pdf-viewer';
+import html2canvas from 'html2canvas';
+import { ImageCroppedEvent } from 'ngx-image-cropper';
 
 @Component({
   selector: 'app-utility-optical-recognition',

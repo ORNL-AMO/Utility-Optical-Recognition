@@ -25,6 +25,8 @@ import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { FacilityListPipe } from './core-components/sidebar/facility-list.pipe';
 import { UploadDataModule } from './upload-data/upload-data.module';
 import { UtilityOpticalRecognitionComponent } from './utility-optical-recognition/utility-optical-recognition.component';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { ImageCropperModule } from 'ngx-image-cropper';
 
 @NgModule({
   declarations: [
@@ -55,7 +57,9 @@ import { UtilityOpticalRecognitionComponent } from './utility-optical-recognitio
     SetupWizardModule,
     HelperPipesModule,
     NgbTypeaheadModule,
-    UploadDataModule
+    UploadDataModule,
+    PdfViewerModule,
+    ImageCropperModule
   ],
   providers: [],
   bootstrap: [AppComponent]

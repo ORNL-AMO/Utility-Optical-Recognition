@@ -113,7 +113,7 @@
       </div>
       <div *ngIf="showCropButtons">
         <button (click)="pdfToCanvas()" class="btn btn-primary button-margin">Start Cropping</button>
-        <button *ngIf="isPdf2Image" (click)="rtrvCrppdImgFrmStrg()" class="btn btn-primary button-margin">Crop Image</button>
+        <button *ngIf="isPdf2Image" (click)="doOCR()" class="btn btn-primary button-margin">Crop Image</button>
       </div>
     </div>
     <div class="pdf-container top-margin" *ngIf="isPdfUploaded">
@@ -135,9 +135,9 @@
       [aspectRatio]="2 / 2">
       </image-cropper>
     </div>
-    <div class="container" *ngIf="isImageCropped">
-      <h6>Cropped Image Preview</h6>
-      <img [src]="strdCrppdImg" />
+    <div class="container" *ngIf="isOcrResult">
+      <h1>OCR Result</h1>
+      <h3>{{ ocrResult }}</h3>
     </div>
 </div>
   <!-- <div class="row justify-content-end">

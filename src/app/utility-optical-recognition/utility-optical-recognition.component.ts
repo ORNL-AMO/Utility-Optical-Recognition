@@ -19,7 +19,7 @@ export class UtilityOpticalRecognitionComponent {
   public showPdfDiv: boolean = false;
   public isPdfUploaded :boolean = false;
   public isPdf2Image :boolean = false;
-  public isImageCropped :boolean = false;
+  public isOcrResult :boolean = false;
   public is :boolean = false;
   public pdfSrc: any = '';
   public totalPages: number = 0;
@@ -114,15 +114,15 @@ export class UtilityOpticalRecognitionComponent {
     return window.sessionStorage.getItem("pdf2Img");
   }
 
-  public rtrvCrppdImgFrmStrg(){
-    this.isImageCropped = true;
-    this.isPdf2Image = false;
+  private rtrvCrppdImgFrmStrg(){
     return window.sessionStorage.getItem("CrppdImg");
   }
   //#endregion
 
 //#region Tesseract
     async doOCR(){
+      this.isPdf2Image = false;
+      this.isOcrResult = true;
     const worker = createWorker({
       logger: m => console.log(m),
     });

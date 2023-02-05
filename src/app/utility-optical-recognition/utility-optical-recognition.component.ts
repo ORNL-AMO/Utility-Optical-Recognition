@@ -3,6 +3,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 import html2canvas from 'html2canvas';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
+import { createWorker } from 'tesseract.js'
 
 @Component({
   selector: 'app-utility-optical-recognition',
@@ -24,6 +25,8 @@ export class UtilityOpticalRecognitionComponent {
   public totalPages: number = 0;
   public currentpage: number = 0;
   public cropingImage: any = '';
+  public ocrResult: any = '';
+
     //"Getter method", Angular will call the getter method whenever it needs to update the value of the `src` attribute.
     get strdPdf2Img(): string {
       return this.rtrvPdf2ImgFrmStrg() || '';
@@ -117,5 +120,21 @@ export class UtilityOpticalRecognitionComponent {
     return window.sessionStorage.getItem("CrppdImg");
   }
   //#endregion
+
+//#region Tesseract
+    async doOCR(){
+    const worker = createWorker({
+      logger: m => console.log(m),
+    });
+    await (await worker).load();
+    await (await worker).loadLanguage('eng');
+    await (await worker).initialize('eng');
+    const {data: { text } } = await (await worker).recognize(this.cropingImage);
+    sessionStorage.setItem("CrppdImg", this.cropingImage);
+    this.ocrResult = text;
+    console.log(text);
+    await (await worker).terminate();
+  }
+//#endregion
 
 }

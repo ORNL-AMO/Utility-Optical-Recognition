@@ -64,34 +64,34 @@
     <div class="row mb-5">
       <div class="col">
           <div class="card">
-            <button class="btn btn-primary" (click)="this.showUtilitySelector = false">Electricity</button>
+            <button class="btn btn-primary" (click)="this.showUtilitySelector = false; this.showPdfModalDiv = true">Electricity</button>
           </div>
       </div>
       <div class="col">
           <div class="card">
-            <button class="btn btn-primary" (click)="this.showUtilitySelector = false">Water</button>
+            <button class="btn btn-primary" (click)="this.showUtilitySelector = false; this.showPdfModalDiv = true">Water</button>
           </div>
       </div>
       <div class="col">
           <div class="card">
-            <button class="btn btn-primary" (click)="this.showUtilitySelector = false">Natural Gas</button>
+            <button class="btn btn-primary" (click)="this.showUtilitySelector = false; this.showPdfModalDiv = true">Natural Gas</button>
           </div>
       </div>
     </div>
     <div class="row mb-5">
         <div class="col">
           <div class="card">
-              <button class="btn btn-primary" (click)="this.showUtilitySelector = false">Waste Water</button>
+              <button class="btn btn-primary" (click)="this.showUtilitySelector = false; this.showPdfModalDiv = true">Waste Water</button>
           </div>
         </div>
         <div class="col">
             <div class="card">
-              <button class="btn btn-primary" (click)="this.showUtilitySelector = false">Other Energy</button>
+              <button class="btn btn-primary" (click)="this.showUtilitySelector = false; this.showPdfModalDiv = true">Other Energy</button>
             </div>
         </div>
         <div class="col">
             <div class="card">
-              <button class="btn btn-primary" (click)="this.showUtilitySelector = false">Other Fuels</button>
+              <button class="btn btn-primary" (click)="this.showUtilitySelector = false; this.showPdfModalDiv = true">Other Fuels</button>
             </div>
         </div>
     </div>
@@ -99,7 +99,47 @@
 
   <!-- upload pdf -->
   <!-- backend people put your HTML here -->
-
+  <div *ngIf="showPdfModalDiv">
+    <div class="fileUploadDiv">
+      <label for="formFile" class="form-label"> Please Select File:</label>
+      <input class="form-control" type="file" id="upload-doc" accept=".pdf" (change)="uploadPdf($event)">
+    
+      <div *ngIf="isPdfUploaded" class="button-div">
+        <div class="page-div">
+          <button (click)="previous()" class="btn btn-success">Previous</button>
+          <p class="pagescount">Pages - {{currentpage}} of {{totalPages}}</p>
+          <button (click)="next()" class="btn btn-success">Next</button>
+        </div>
+      </div>
+      <div *ngIf="showCropButtons">
+        <button (click)="pdfToCanvas()" class="btn btn-primary button-margin">Start Cropping</button>
+        <button *ngIf="isPdf2Image" (click)="doOCR()" class="btn btn-primary button-margin">Crop Image</button>
+      </div>
+    </div>
+    <div class="pdf-container top-margin" *ngIf="isPdfUploaded">
+      <pdf-viewer 
+      [src]="pdfSrc" 
+      [render-text]="true" 
+      [page]="currentpage" 
+      [show-all]="false" 
+      [original-size]="false"
+      [zoom-scale]="'page-fit'"
+      (after-load-complete)="afterLoadComplete($event)">
+      </pdf-viewer>
+    </div>
+    <div class="container" *ngIf="isPdf2Image">
+      <image-cropper 
+      [imageBase64]="strdPdf2Img"
+      (imageCropped)="cropImage($event)"
+      [maintainAspectRatio]="false"
+      [aspectRatio]="2 / 2">
+      </image-cropper>
+    </div>
+    <div class="container" *ngIf="isOcrResult">
+      <h1>OCR Result</h1>
+      <h3>{{ ocrResult }}</h3>
+    </div>
+</div>
   <!-- <div class="row justify-content-end">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
     <button type="button" class="btn btn-primary">Save changes</button>

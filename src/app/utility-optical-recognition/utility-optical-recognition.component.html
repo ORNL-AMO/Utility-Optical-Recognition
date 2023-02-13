@@ -2,6 +2,7 @@
   <div class="row justify-content-end mb-2">
     <button id="modalUploadPDF" type="button" class="btn-close me-2" (click)="activeModal.dismiss('Cross click')" aria-label="Close"></button>
   </div>
+  <p>{{ selectedMeter.source }}</p>
 
   <!-- preset selector/scan profile -->
   <div class="preset-selector container p-4" *ngIf="showScanProfileSelector">
@@ -98,8 +99,7 @@
   </div>
 
   <!-- upload pdf -->
-  <!-- backend people put your HTML here -->
-  <div *ngIf="showPdfModalDiv">
+  <div class="" *ngIf="showPdfModalDiv">
     <div class="fileUploadDiv">
       <label for="formFile" class="form-label"> Please Select File:</label>
       <input class="form-control" type="file" id="upload-doc" accept=".pdf" (change)="uploadPdf($event)">

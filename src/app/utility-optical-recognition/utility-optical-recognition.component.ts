@@ -1,15 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { UtilityMeterdbService } from 'src/app/indexedDB/utilityMeter-db.service';
+import { Subscription } from 'rxjs';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { PDFDocumentProxy } from 'ng2-pdf-viewer';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import html2canvas from 'html2canvas';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { createWorker } from 'tesseract.js'
+import { IdbUtilityMeter } from '../models/idb';
+import { UtilityColors } from 'src/app/shared/utilityColors';
 
 @Component({
   selector: 'app-utility-optical-recognition',
   templateUrl: './utility-optical-recognition.component.html',
   styleUrls: ['./utility-optical-recognition.component.css']
 })
+
 export class UtilityOpticalRecognitionComponent {
   //#region Variables
   public showScanProfileSelector: boolean = true;        //aka preset profiles
@@ -26,6 +32,9 @@ export class UtilityOpticalRecognitionComponent {
   public currentpage: number = 0;
   public cropingImage: any = '';
   public ocrResult: any = '';
+  public selectedMeter: IdbUtilityMeter;
+  public label: string;
+  public routerSub: Subscription;
 
     //"Getter method", Angular will call the getter method whenever it needs to update the value of the `src` attribute.
     get strdPdf2Img(): string {
@@ -37,7 +46,44 @@ export class UtilityOpticalRecognitionComponent {
     }  
 //#endregion
 
-  constructor(public activeModal: NgbActiveModal) {}
+  constructor(
+    public activeModal: NgbActiveModal,
+    private utilityMeterDbService: UtilityMeterdbService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router
+  ) { }
+
+  ngOnInit() {
+    this.activatedRoute.params.subscribe(params => {
+      let meterId: number = parseInt(params['id']);
+      let facilityMeters: Array<IdbUtilityMeter> = this.utilityMeterDbService.facilityMeters.getValue();
+      this.selectedMeter = facilityMeters.find(meter => { return meter.id == meterId });
+    });
+    this.routerSub = this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.setLabel(this.router.url);
+      }
+    });
+    this.setLabel(this.router.url);
+  }
+
+  ngOnDestroy(){
+    this.routerSub.unsubscribe();
+  }
+
+  setLabel(url: string) {
+    if (this.router.url.includes('new-bill')) {
+      this.label = 'New Bill'
+    } else if (this.router.url.includes('edit-bill')) {
+      this.label = 'Edit Bill';
+    } else {
+      this.label = 'Bills';
+    }
+  }
+
+  getColor(): string {
+    return UtilityColors[this.selectedMeter.source].color
+  }
 
   // closeModal() {            
   //   document.getElementById("modalUploadPDF").style.display = "none";
@@ -120,7 +166,7 @@ export class UtilityOpticalRecognitionComponent {
   //#endregion
 
 //#region Tesseract
-    async doOCR(){
+  async doOCR(){
       this.isPdf2Image = false;
       this.isOcrResult = true;
     const worker = createWorker({

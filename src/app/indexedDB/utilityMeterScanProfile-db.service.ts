@@ -15,6 +15,6 @@ export class UtilityMeterScanProfileService {
     }
 
     getAll(): Observable<Array<utilityMeterScanProfile>> {
-        return this.dbService.getAll('');
+        return this.dbService.getAll('utilityMeterScanProfile');
     }
 }

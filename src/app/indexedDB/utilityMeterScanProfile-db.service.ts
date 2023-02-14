@@ -14,7 +14,9 @@ export class UtilityMeterScanProfileService {
         this.utilityMeterScanProfileItems = new BehaviorSubject<Array<utilityMeterScanProfile>>([]);
     }
 
-    getAll(): Observable<Array<utilityMeterScanProfile>> {
+    getAll(): Observable<Array<utilityMeterScanProfile>> { //CRUD > Read
         return this.dbService.getAll('utilityMeterScanProfile');
     }
+
+    
 }

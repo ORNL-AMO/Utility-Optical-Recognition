@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { IdbAccount,  utilityMeterScanProfile} from '../models/idb';
+import { IdbAccount,  utilityMeterScanProfile, MeterSource, AttributeTypes} from '../models/idb';
 import { AccountdbService } from './account-db.service';
 
 @Injectable({
@@ -21,16 +21,17 @@ export class UtilityMeterScanProfileService {
     addWithObservable(utilityMeterScanProfileItem: utilityMeterScanProfile): utilityMeterScanProfile { //CRUD > Create
         // return this.dbService.add('utilityMeterScanProfile', utilityMeterScanProfileItem);
         //Add more here.
+        let source: MeterSource;
+        let attribute: AttributeTypes;
         return {
-            id?: selectAccount.guid,
             guid: Math.random().toString(36).substr(2, 9),
-            accountId: "",
-            source: new MeterSource,
-            attribute: AttributeTypes,
-            x1: number,
-            y1: number,
-            x2: number,
-            y2: number,
+            accountId: utilityMeterScanProfileItem.guid,
+            source: source,
+            attribute: attribute,
+            x1: 0,
+            y1: 0,
+            x2: 0,
+            y2: 0,
         }
     }
     

@@ -16,10 +16,11 @@ import { UtilityColors } from 'src/app/shared/utilityColors';
   styleUrls: ['./utility-optical-recognition.component.css']
 })
 
-export class UtilityOpticalRecognitionComponent {
+export class UtilityOpticalRecognitionComponent implements OnInit {
   //#region Variables
-  public showScanProfileSelector: boolean = true;        //aka preset profiles
-  public showUtilitySelector: boolean = false;
+  public showScanProfileSelectorDiv: boolean = true;        //aka preset profiles
+  public showUtilitySelectorDiv: boolean = false;
+  public showFileUploadDiv: boolean = false;
   public showPdfModalDiv: boolean = false;
   public showCropButtons: boolean = false;
   public showPdfDiv: boolean = false;

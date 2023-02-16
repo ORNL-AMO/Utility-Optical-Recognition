@@ -2,10 +2,10 @@
   <div class="row justify-content-end mb-2">
     <button id="modalUploadPDF" type="button" class="btn-close me-2" (click)="activeModal.dismiss('Cross click')" aria-label="Close"></button>
   </div>
-  <p>{{ selectedMeter.source }}</p>
+  <!-- <p>{{ selectedMeter.source }}</p> -->
 
   <!-- preset selector/scan profile -->
-  <div class="preset-selector container p-4" *ngIf="showScanProfileSelector">
+  <div class="preset-selector container p-4" *ngIf="showScanProfileSelectorDiv">
     <div class="row justify-content-center mb-5">
       <h4>Please select a scan profile</h4>
     </div>
@@ -51,71 +51,89 @@
     <div class="row justify-content-center mb-5">
       <div class="col-4">
         <div class="card">
-          <button class="btn btn-primary" (click)="this.showScanProfileSelector = false; this.showUtilitySelector = true">New Scan Profile</button>
+          <button class="btn btn-primary" (click)="this.showScanProfileSelectorDiv = false; this.showUtilitySelectorDiv = true">New Scan Profile</button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- utility selector -->
-  <div class="utility-selector container p-4" *ngIf="showUtilitySelector">
+  <div class="utility-selector container p-4" *ngIf="showUtilitySelectorDiv">
     <div class="row justify-content-center mb-5">
       <h4>Please select a utility bill or meter option</h4>
     </div>
     <div class="row mb-5">
       <div class="col">
           <div class="card">
-            <button class="btn btn-primary" (click)="this.showUtilitySelector = false; this.showPdfModalDiv = true">Electricity</button>
+            <button class="btn btn-primary" (click)="this.showUtilitySelectorDiv = false; this.showFileUploadDiv = true">Electricity</button>
           </div>
       </div>
       <div class="col">
           <div class="card">
-            <button class="btn btn-primary" (click)="this.showUtilitySelector = false; this.showPdfModalDiv = true">Water</button>
+            <button class="btn btn-primary" (click)="this.showUtilitySelectorDiv = false; this.showFileUploadDiv = true">Water</button>
           </div>
       </div>
       <div class="col">
           <div class="card">
-            <button class="btn btn-primary" (click)="this.showUtilitySelector = false; this.showPdfModalDiv = true">Natural Gas</button>
+            <button class="btn btn-primary" (click)="this.showUtilitySelectorDiv = false; this.showFileUploadDiv = true">Natural Gas</button>
           </div>
       </div>
     </div>
     <div class="row mb-5">
         <div class="col">
           <div class="card">
-              <button class="btn btn-primary" (click)="this.showUtilitySelector = false; this.showPdfModalDiv = true">Waste Water</button>
+              <button class="btn btn-primary" (click)="this.showUtilitySelectorDiv = false; this.showFileUploadDiv = true">Waste Water</button>
           </div>
         </div>
         <div class="col">
             <div class="card">
-              <button class="btn btn-primary" (click)="this.showUtilitySelector = false; this.showPdfModalDiv = true">Other Energy</button>
+              <button class="btn btn-primary" (click)="this.showUtilitySelectorDiv = false; this.showFileUploadDiv = true">Other Energy</button>
             </div>
         </div>
         <div class="col">
             <div class="card">
-              <button class="btn btn-primary" (click)="this.showUtilitySelector = false; this.showPdfModalDiv = true">Other Fuels</button>
+              <button class="btn btn-primary" (click)="this.showUtilitySelectorDiv = false; this.showFileUploadDiv = true">Other Fuels</button>
             </div>
         </div>
     </div>
   </div>
 
   <!-- upload pdf -->
-  <div class="" *ngIf="showPdfModalDiv">
-    <div class="fileUploadDiv">
-      <label for="formFile" class="form-label"> Please Select File:</label>
-      <input class="form-control" type="file" id="upload-doc" accept=".pdf" (change)="uploadPdf($event)">
-    
-      <div *ngIf="isPdfUploaded" class="button-div">
-        <div class="page-div">
-          <button (click)="previous()" class="btn btn-success">Previous</button>
-          <p class="pagescount">Pages - {{currentpage}} of {{totalPages}}</p>
-          <button (click)="next()" class="btn btn-success">Next</button>
-        </div>
-      </div>
-      <div *ngIf="showCropButtons">
-        <button (click)="pdfToCanvas()" class="btn btn-primary button-margin">Start Cropping</button>
-        <button *ngIf="isPdf2Image" (click)="doOCR()" class="btn btn-primary button-margin">Crop Image</button>
+  <div class="file-upload container p-4" *ngIf="showFileUploadDiv">
+    <div class="row">
+      <h4>Import Data from .PDF Files</h4>
+    </div>
+    <div class="alert alert-info mb-0">
+      <ul>
+        <li>Select the file you wish to upload.</li>
+        <li>Data must be a .PDF file type.</li>
+        <li>Once the files have been selected, we will work through selecting the relevant data on the bill.</li>
+        <li>Click the "Choose Files" button or drag and drop files into the grey box.</li>
+        <li>One file can be uploaded at a time.</li>
+      </ul>
+    </div>
+    <hr>
+    <input class="form-control" type="file" id="upload-doc" accept=".pdf" (change)="uploadPdf($event); this.showFileUploadDiv = false; this.showPdfModalDiv = true" />
+    <hr>
+  </div>
+
+  <!-- show pdf -->
+  <div class="show-pdf container p-4" *ngIf="showPdfModalDiv">
+    <div class="row justify-content-center mb-5">
+      <h4>Set up scan profile</h4>
+    </div>
+    <div *ngIf="isPdfUploaded" class="button-div">
+      <div class="page-div">
+        <button (click)="previous()" class="btn btn-success">Previous</button>
+        <p class="pagescount">Page {{currentpage}} of {{totalPages}}</p>
+        <button (click)="next()" class="btn btn-success">Next</button>
       </div>
     </div>
+    <div *ngIf="showCropButtons">
+      <button (click)="pdfToCanvas()" class="btn btn-primary button-margin">Start Cropping</button>
+      <button *ngIf="isPdf2Image" (click)="doOCR()" class="btn btn-primary button-margin">Crop Image</button>
+    </div>
+
     <div class="pdf-container top-margin" *ngIf="isPdfUploaded">
       <pdf-viewer 
       [src]="pdfSrc" 
@@ -127,6 +145,7 @@
       (after-load-complete)="afterLoadComplete($event)">
       </pdf-viewer>
     </div>
+
     <div class="container" *ngIf="isPdf2Image">
       <image-cropper 
       [imageBase64]="strdPdf2Img"
@@ -135,11 +154,13 @@
       [aspectRatio]="2 / 2">
       </image-cropper>
     </div>
+    
     <div class="container" *ngIf="isOcrResult">
       <h1>OCR Result</h1>
       <h3>{{ ocrResult }}</h3>
     </div>
-</div>
+  </div>
+
   <!-- <div class="row justify-content-end">
     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
     <button type="button" class="btn btn-primary">Save changes</button>

@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { UtilityMeterdbService } from 'src/app/indexedDB/utilityMeter-db.service';
 import { Subscription } from 'rxjs';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import html2canvas from 'html2canvas';
@@ -15,6 +14,9 @@ import { UtilityColors } from 'src/app/shared/utilityColors';
   templateUrl: './utility-optical-recognition.component.html',
   styleUrls: ['./utility-optical-recognition.component.css']
 })
+
+  //selectedMeter.source - selected meter type
+  //sourceOptions - types of utilities
 
 export class UtilityOpticalRecognitionComponent implements OnInit {
   //#region Variables
@@ -48,7 +50,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 //#endregion
 
   constructor(
-    public activeModal: NgbActiveModal,
     private utilityMeterDbService: UtilityMeterdbService,
     private activatedRoute: ActivatedRoute,
     private router: Router
@@ -59,6 +60,8 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
       let meterId: number = parseInt(params['id']);
       let facilityMeters: Array<IdbUtilityMeter> = this.utilityMeterDbService.facilityMeters.getValue();
       this.selectedMeter = facilityMeters.find(meter => { return meter.id == meterId });
+      console.log(this.selectedMeter.source);
+      // console.log(this.sourceOptions)
     });
     this.routerSub = this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -85,10 +88,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   getColor(): string {
     return UtilityColors[this.selectedMeter.source].color
   }
-
-  // closeModal() {            
-  //   document.getElementById("modalUploadPDF").style.display = "none";
-  // }
 
 //#region PDF Viewer
   public uploadPdf(event:any){

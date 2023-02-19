@@ -11,7 +11,7 @@
         <button *ngIf="showConfirmCancel" class="btn btn-secondary" (click)="confirmCancel()">Are you sure?
             Changes
             will be lost.</button>
-        <button class="btn btn-primary me-2" (click)="callModal()">Upload PDF</button>
+        <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#uploadPdfModal">Upload PDF</button>
         <button *ngIf="addOrEdit == 'edit'" class="btn btn-primary" (click)="saveAndQuit()"
             [disabled]="meterDataForm.invalid || invalidDate">Save</button>
         <button *ngIf="addOrEdit == 'add'" class="btn btn-primary me-2" (click)="saveAndQuit()"
@@ -28,6 +28,18 @@
 </div>
 <hr>
 
+
+
+<div class="modal fade" tabindex="-1" id="uploadPdfModal">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="btn-close item-right" data-bs-dismiss="modal" aria-label="Close"></button>
+                <app-utility-optical-recognition></app-utility-optical-recognition>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 

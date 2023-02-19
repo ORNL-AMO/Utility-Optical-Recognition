@@ -11,7 +11,6 @@ import { UtilityMeterdbService } from 'src/app/indexedDB/utilityMeter-db.service
 import { UtilityMeterDatadbService } from 'src/app/indexedDB/utilityMeterData-db.service';
 import { IdbAccount, IdbFacility, IdbUtilityMeter, IdbUtilityMeterData } from 'src/app/models/idb';
 import { EnergyUnitsHelperService } from 'src/app/shared/helper-services/energy-units-helper.service';
-import { UtilityOpticalRecognitionComponent } from 'src/app/utility-optical-recognition/utility-optical-recognition.component';
 import { UtilityMeterDataService } from '../utility-meter-data.service';
 
 @Component({
@@ -139,12 +138,6 @@ export class EditBillComponent implements OnInit {
 
   toggleFilterMenu(){
     this.showFilterDropdown = !this.showFilterDropdown;
-  }
-
-  callModal() {
-    const modalRef = this.modalService.open(UtilityOpticalRecognitionComponent, 
-      { size: 'lg', backdrop: 'static', centered: true, keyboard: false }
-    );
   }
 
 }

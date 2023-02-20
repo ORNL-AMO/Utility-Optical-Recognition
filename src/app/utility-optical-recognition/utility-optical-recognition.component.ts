@@ -1,13 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { UtilityMeterdbService } from 'src/app/indexedDB/utilityMeter-db.service';
-import { Subscription } from 'rxjs';
 import { PDFDocumentProxy } from 'ng2-pdf-viewer';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import html2canvas from 'html2canvas';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { createWorker } from 'tesseract.js'
 import { IdbUtilityMeter } from '../models/idb';
 import { UtilityColors } from 'src/app/shared/utilityColors';
+import { SourceOptions } from 'src/app/facility/utility-data/energy-consumption/energy-source/edit-meter-form/editMeterOptions';
 
 @Component({
   selector: 'app-utility-optical-recognition',
@@ -15,29 +13,29 @@ import { UtilityColors } from 'src/app/shared/utilityColors';
   styleUrls: ['./utility-optical-recognition.component.css']
 })
 
-  //selectedMeter.source - selected meter type
   //sourceOptions - types of utilities
 
 export class UtilityOpticalRecognitionComponent implements OnInit {
   //#region Variables
+  @Input() selectedMeter: IdbUtilityMeter;
+
   public showScanProfileSelectorDiv: boolean = true;        //aka preset profiles
   public showUtilitySelectorDiv: boolean = false;
   public showFileUploadDiv: boolean = false;
   public showPdfModalDiv: boolean = false;
   public showCropButtons: boolean = false;
   public showPdfDiv: boolean = false;
-  public isPdfUploaded :boolean = false;
-  public isPdf2Image :boolean = false;
-  public isOcrResult :boolean = false;
-  public is :boolean = false;
+
+  public isPdfUploaded: boolean = false;
+  public isPdf2Image: boolean = false;
+  public isOcrResult: boolean = false;
   public pdfSrc: any = '';
   public totalPages: number = 0;
   public currentpage: number = 0;
   public cropingImage: any = '';
   public ocrResult: any = '';
-  public selectedMeter: IdbUtilityMeter;
-  public label: string;
-  public routerSub: Subscription;
+  public sourceOptions: Array<string> = SourceOptions;      // provides the types of utilities
+  public utilityOptionsHTML: string;
 
     //"Getter method", Angular will call the getter method whenever it needs to update the value of the `src` attribute.
     get strdPdf2Img(): string {
@@ -49,47 +47,27 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     }  
 //#endregion
 
-  constructor(
-    private utilityMeterDbService: UtilityMeterdbService,
-    private activatedRoute: ActivatedRoute,
-    private router: Router
-  ) { }
+  constructor() {}
 
-  ngOnInit() {
-    this.activatedRoute.params.subscribe(params => {
-      let meterId: number = parseInt(params['id']);
-      let facilityMeters: Array<IdbUtilityMeter> = this.utilityMeterDbService.facilityMeters.getValue();
-      this.selectedMeter = facilityMeters.find(meter => { return meter.id == meterId });
-      console.log(this.selectedMeter.source);
-      // console.log(this.sourceOptions)
-    });
-    this.routerSub = this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        this.setLabel(this.router.url);
-      }
-    });
-    this.setLabel(this.router.url);
-  }
-
-  ngOnDestroy(){
-    this.routerSub.unsubscribe();
-  }
-
-  setLabel(url: string) {
-    if (this.router.url.includes('new-bill')) {
-      this.label = 'New Bill'
-    } else if (this.router.url.includes('edit-bill')) {
-      this.label = 'Edit Bill';
-    } else {
-      this.label = 'Bills';
-    }
-  }
+  ngOnInit() {}
 
   getColor(): string {
     return UtilityColors[this.selectedMeter.source].color
   }
 
-//#region PDF Viewer
+  skipToUploadPdf() {
+    if(this.selectedMeter.source){
+      this.showScanProfileSelectorDiv = false; 
+      this.showFileUploadDiv = true
+    } else {
+      this.showScanProfileSelectorDiv = false;
+      this.showUtilitySelectorDiv = true;
+    }
+  }
+
+
+
+  //#region PDF Viewer
   public uploadPdf(event:any){
     let $img: any = document.querySelector('#upload-doc');
     if(event.target.files[0].type == 'application/pdf'){
@@ -165,7 +143,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
   //#endregion
 
-//#region Tesseract
+  //#region Tesseract
   async doOCR(){
       this.isPdf2Image = false;
       this.isOcrResult = true;

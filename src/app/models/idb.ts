@@ -352,7 +352,7 @@ export interface utilityMeterScanProfile {
     accountId: string,
     //data
     source: MeterSource,
-    attribute: AttributeTypes,
+    attribute: AttributeTypes, //IdbUtilityMeterData This has all of those attributes except the blocks
     x1: number,
     y1: number,
     x2: number,

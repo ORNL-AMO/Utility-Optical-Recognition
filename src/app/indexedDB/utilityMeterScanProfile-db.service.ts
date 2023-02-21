@@ -96,10 +96,59 @@ export class UtilityMeterScanProfileService {
       }
 
     updateElectricityMeterProfileForm(meterData: utilityMeterScanProfile, form: FormGroup): utilityMeterScanProfile {
-        meterData.id = null,
-        meterData.guid = Math.random().toString(36).substr(2, 9),
-        meterData.accountId = utilityMeterScanProfileItem.guid,
+        meterData.id = null;
+        meterData.guid = Math.random().toString(36).substr(2, 9);
+        meterData.accountId = meterData.guid;
         
         return meterData;
-      }
+    }
+
+    getGeneralMeterDataForm(meterData: utilityMeterScanProfile, displayVolumeInput: boolean, displayEnergyInput: boolean): FormGroup {
+        //need to use date string for calander to work in form
+        
+        let dateString: string;
+        if (meterData.readDate && isNaN(new Date(meterData.readDate).getTime()) == false) {
+          let datePipe: DatePipe = new DatePipe(navigator.language);
+          let stringFormat: string = 'y-MM-dd'; // YYYY-MM-DD  
+          dateString = datePipe.transform(meterData.readDate, stringFormat);
+        }
+        let totalVolumeValidators: Array<ValidatorFn> = [];
+        if (displayVolumeInput) {
+          totalVolumeValidators = [Validators.required, Validators.min(0)]
+        }
+        let totalEnergyUseValidators: Array<ValidatorFn> = [];
+        if (displayEnergyInput) {
+          totalEnergyUseValidators = [Validators.required, Validators.min(0)];
+        }
+        return this.formBuilder.group({
+          readDate: [dateString, Validators.required],
+          totalVolume: [meterData.totalVolume, totalVolumeValidators],
+          totalEnergyUse: [meterData.totalEnergyUse, totalEnergyUseValidators],
+          totalCost: [meterData.totalCost],
+          commodityCharge: [meterData.commodityCharge],
+          deliveryCharge: [meterData.deliveryCharge],
+          otherCharge: [meterData.otherCharge],
+        });
+        
+    }
+
+    updateGeneralMeterDataFromForm(meterData: utilityMeterScanProfile, form: FormGroup): utilityMeterScanProfile {
+        //UTC date is one day behind from form
+        meterData.id = null;
+        meterData.guid = Math.random().toString(36).substr(2, 9);
+        meterData.accountId = meterData.guid;
+        
+        return meterData;
+        /*
+        let formDate: Date = new Date(form.controls.readDate.value)
+        meterData.readDate = new Date(formDate.getUTCFullYear(), formDate.getUTCMonth(), formDate.getUTCDate());
+        meterData.totalVolume = form.controls.totalVolume.value;
+        meterData.totalEnergyUse = form.controls.totalEnergyUse.value;
+        meterData.totalCost = form.controls.totalCost.value;
+        meterData.commodityCharge = form.controls.commodityCharge.value;
+        meterData.deliveryCharge = form.controls.deliveryCharge.value;
+        meterData.otherCharge = form.controls.otherCharge.value;
+        return meterData;
+        */
+    }
 }

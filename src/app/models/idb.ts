@@ -352,7 +352,7 @@ export interface utilityMeterScanProfile {
     accountId: string,
     //data
     source: MeterSource,
-    attribute: AttributeTypes, //IdbUtilityMeterData This has all of those attributes except the blocks
+    attribute: Type, //IdbUtilityMeterData This has all of those attributes except the blocks
     x1: number,
     y1: number,
     x2: number,
@@ -363,4 +363,6 @@ export interface utilityMeterScanProfile {
 export type AnalysisType = 'absoluteEnergyConsumption' | 'energyIntensity' | 'modifiedEnergyIntensity' | 'regression';
 export type MeterSource = "Electricity" | "Natural Gas" | "Other Fuels" | "Other Energy" | "Water" | "Waste Water" | "Other Utility";
 export type MeterPhase = "Solid" | "Liquid" | "Gas";
-export type AttributeTypes = "readDate" | "totalEnergyUse" | "totalCost" | "commodityCharge" | "deliveryCharge" | "otherCharge" | "checked" | "totalDemand" | "basicCharge" | "supplyBlockAmount" | "supplyBlockCharge" | "flatRateAmount" | "flatRateCharge" | "peakAmount" | "peakCharge" | "offPeakAmount" | "offPeakCharge" |  "demandBlockAmount" | "demandBlockCharge" | "generalTransCharge" | "transCharge" | "powerFactor" | "powerFactorCharge" | "businessCharge" | "utilityTax" | "latePayment" | "otherCharge";
+export type ElectricityAttributeTypes = "readDate" | "totalEnergyUse" | "totalCost" | "commodityCharge" | "deliveryCharge" | "otherCharge" | "checked" | "totalDemand" | "basicCharge" | "supplyBlockAmount" | "supplyBlockCharge" | "flatRateAmount" | "flatRateCharge" | "peakAmount" | "peakCharge" | "offPeakAmount" | "offPeakCharge" |  "demandBlockAmount" | "demandBlockCharge" | "generalTransCharge" | "transCharge" | "powerFactor" | "powerFactorCharge" | "businessCharge" | "utilityTax" | "latePayment" | "otherCharge";
+export type GeneralAttributeTypes = "readDate" | "totalCost" | "commodityCharge" | "deliveryCharge" | "otherCharge" | "totalDemand" | "basicCharge" | "utilityTax" | "latePayment";
+export type Type = ElectricityAttributeTypes | GeneralAttributeTypes;

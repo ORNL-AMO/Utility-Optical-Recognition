@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { IdbAccount, utilityMeterScanProfile, MeterSource, AttributeTypes} from '../models/idb';
+import { IdbAccount, utilityMeterScanProfile, MeterSource, Type, ElectricityAttributeTypes} from '../models/idb';
 import { FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { AccountdbService } from './account-db.service';
+import { UtilityMeterDataService } from '../facility/utility-data/energy-consumption/utility-meter-data/utility-meter-data.service';
 
 @Injectable({
     providedIn: 'root'
@@ -11,7 +12,7 @@ import { AccountdbService } from './account-db.service';
 export class UtilityMeterScanProfileService {
 
     utilityMeterScanProfileItems: BehaviorSubject<Array<utilityMeterScanProfile>>; //Getting it from idb.ts
-    constructor(private formBuilder: FormBuilder, private dbService: NgxIndexedDBService, private accountDbService: AccountdbService) { 
+    constructor(private formBuilder: FormBuilder, private dbService: NgxIndexedDBService, private accountDbService: AccountdbService, private type: UtilityMeterDataService) { 
         this.utilityMeterScanProfileItems = new BehaviorSubject<Array<utilityMeterScanProfile>>([]);
     }
 
@@ -23,7 +24,7 @@ export class UtilityMeterScanProfileService {
         // return this.dbService.add('utilityMeterScanProfile', utilityMeterScanProfileItem);
         //Add more here.
         let source: MeterSource;
-        let attribute: AttributeTypes;
+        let attribute: Type;
         return {
             id: null,
             guid: Math.random().toString(36).substr(2, 9),
@@ -95,11 +96,16 @@ export class UtilityMeterScanProfileService {
         })
       }
 
-    updateElectricityMeterProfileForm(meterData: utilityMeterScanProfile, form: FormGroup): utilityMeterScanProfile {
+    updateElectricityMeterProfileForm(meterData: utilityMeterScanProfile, form: FormGroup, attribute: ElectricityAttributeTypes, source: MeterSource): utilityMeterScanProfile {
         meterData.id = null;
         meterData.guid = Math.random().toString(36).substr(2, 9);
         meterData.accountId = meterData.guid;
-        
+        meterData[source] = 'Electricity';
+        meterData[attribute] = null;
+        meterData.x1 = 0;
+        meterData.x2 = 0;
+        meterData.y1 = 0;
+        meterData.y2 = 0;
         return meterData;
     }
 

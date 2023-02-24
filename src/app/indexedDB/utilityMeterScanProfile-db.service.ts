@@ -97,15 +97,15 @@ export class UtilityMeterScanProfileService {
       }
 
     updateElectricityMeterProfileForm(meterData: utilityMeterScanProfile, form: FormGroup, attribute: ElectricityAttributeTypes, source: MeterSource): utilityMeterScanProfile {
-        meterData.id = null;
-        meterData.guid = Math.random().toString(36).substr(2, 9);
-        meterData.accountId = meterData.guid;
-        meterData[source] = 'Electricity';
-        meterData[attribute] = null;
-        meterData.x1 = 0;
-        meterData.x2 = 0;
-        meterData.y1 = 0;
-        meterData.y2 = 0;
+        meterData.id = form.controls.meterId.value;
+        meterData.guid = form.controls.guid.value;
+        meterData.accountId = form.controls.accountId.value;
+        meterData.source = form.controls.source.value;
+        meterData.attribute = form.controls.ElectricityAttributeTypes.value; 
+        meterData.x1 = form.controls.x1.value;
+        meterData.x2 = form.controls.x2.value;
+        meterData.y1 = form.controls.y1.value;
+        meterData.y2 = form.controls.y2.value;
         return meterData;
     }
 

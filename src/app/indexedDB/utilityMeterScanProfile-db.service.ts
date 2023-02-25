@@ -92,10 +92,6 @@ export class UtilityMeterScanProfileService {
 
     //This is the UPDATE of the CRUD Function for Electricity.
     updateElectricityMeterProfileForm(meterData: utilityMeterScanProfile, form: FormGroup): utilityMeterScanProfile {
-        meterData.id = form.controls.meterId.value;
-        meterData.guid = form.controls.guid.value;
-        meterData.accountId = form.controls.accountId.value;
-        meterData.source = form.controls.source.value;
         meterData.attribute = form.controls.ElectricityAttributeTypes.value; 
         meterData.x1 = form.controls.x1.value;
         meterData.x2 = form.controls.x2.value;

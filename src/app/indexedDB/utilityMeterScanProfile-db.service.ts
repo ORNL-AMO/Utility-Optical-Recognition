@@ -100,9 +100,18 @@ export class UtilityMeterScanProfileService {
         return meterData;
     }
 
-    // getGeneralMeterDataForm(meterData: utilityMeterScanProfile, displayVolumeInput: boolean, displayEnergyInput: boolean): FormGroup {
-    //     //need to use date string for calander to work in form
-        
+     getGeneralMeterDataForm(meterData: utilityMeterScanProfile): FormGroup {
+        return this.formBuilder.group({
+            id: [meterData.id, [Validators.min(0)]],
+            guid: [meterData.guid, [Validators.min(0)]],
+            accountId: [meterData.accountId, [Validators.min(0)]],
+            source: [meterData.source],
+            attribute: [meterData.attribute],
+            x1: [meterData.x1, [Validators.min(0)]],
+            x2: [meterData.x2, [Validators.min(0)]],
+            y1: [meterData.y1, [Validators.min(0)]],
+            y2: [meterData.y2, [Validators.min(0)]]
+        })
     //     let dateString: string;
     //     if (meterData.readDate && isNaN(new Date(meterData.readDate).getTime()) == false) {
     //       let datePipe: DatePipe = new DatePipe(navigator.language);
@@ -127,14 +136,15 @@ export class UtilityMeterScanProfileService {
     //       otherCharge: [meterData.otherCharge],
     //     });
         
-    // }
+    }
 
     updateGeneralMeterDataFromForm(meterData: utilityMeterScanProfile, form: FormGroup): utilityMeterScanProfile {
         //UTC date is one day behind from form
-        meterData.id = null;
-        meterData.guid = Math.random().toString(36).substr(2, 9);
-        meterData.accountId = meterData.guid;
-        
+        meterData.attribute = form.controls.GeneralAttributeTypes.value; 
+        meterData.x1 = form.controls.x1.value;
+        meterData.x2 = form.controls.x2.value;
+        meterData.y1 = form.controls.y1.value;
+        meterData.y2 = form.controls.y2.value;
         return meterData;
         /*
         let formDate: Date = new Date(form.controls.readDate.value)

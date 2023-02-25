@@ -21,8 +21,6 @@ export class UtilityMeterScanProfileService {
     }
 
     addWithObservable(utilityMeterScanProfileItem: utilityMeterScanProfile): utilityMeterScanProfile { //CRUD > Create
-        // return this.dbService.add('utilityMeterScanProfile', utilityMeterScanProfileItem);
-        //Add more here.
         let source: MeterSource;
         let attribute: Type;
         return {
@@ -45,18 +43,6 @@ export class UtilityMeterScanProfileService {
     updateWithObservable(values: utilityMeterScanProfile): Observable<utilityMeterScanProfile> { //CRUD > Update
         return this.dbService.update('utilityMeterScanProfile', values);
     }
-
-    // getNewAccountEmissionsItem(selectedAccount: IdbAccount): IdbCustomEmissionsItem {
-    //     // let selectedAccount: IdbAccount = this.accountDbService.selectedAccount.getValue();
-    //     return {
-    //         accountId: selectedAccount.guid,
-    //         id: Math.random().toString(36).substr(2, 9),
-    //         date: new Date(),
-    //         subregion: 'New Custom Subregion',
-    //         locationEmissionRates: [],
-    //         residualEmissionRates: []
-    //     }
-    // }
 
     getElectricityMeterProfile(meterData: utilityMeterScanProfile): FormGroup {
         return this.formBuilder.group({
@@ -85,34 +71,34 @@ export class UtilityMeterScanProfileService {
         return meterData;
     }
 
-    getGeneralMeterDataForm(meterData: utilityMeterScanProfile, displayVolumeInput: boolean, displayEnergyInput: boolean): FormGroup {
-        //need to use date string for calander to work in form
+    // getGeneralMeterDataForm(meterData: utilityMeterScanProfile, displayVolumeInput: boolean, displayEnergyInput: boolean): FormGroup {
+    //     //need to use date string for calander to work in form
         
-        let dateString: string;
-        if (meterData.readDate && isNaN(new Date(meterData.readDate).getTime()) == false) {
-          let datePipe: DatePipe = new DatePipe(navigator.language);
-          let stringFormat: string = 'y-MM-dd'; // YYYY-MM-DD  
-          dateString = datePipe.transform(meterData.readDate, stringFormat);
-        }
-        let totalVolumeValidators: Array<ValidatorFn> = [];
-        if (displayVolumeInput) {
-          totalVolumeValidators = [Validators.required, Validators.min(0)]
-        }
-        let totalEnergyUseValidators: Array<ValidatorFn> = [];
-        if (displayEnergyInput) {
-          totalEnergyUseValidators = [Validators.required, Validators.min(0)];
-        }
-        return this.formBuilder.group({
-          readDate: [dateString, Validators.required],
-          totalVolume: [meterData.totalVolume, totalVolumeValidators],
-          totalEnergyUse: [meterData.totalEnergyUse, totalEnergyUseValidators],
-          totalCost: [meterData.totalCost],
-          commodityCharge: [meterData.commodityCharge],
-          deliveryCharge: [meterData.deliveryCharge],
-          otherCharge: [meterData.otherCharge],
-        });
+    //     let dateString: string;
+    //     if (meterData.readDate && isNaN(new Date(meterData.readDate).getTime()) == false) {
+    //       let datePipe: DatePipe = new DatePipe(navigator.language);
+    //       let stringFormat: string = 'y-MM-dd'; // YYYY-MM-DD  
+    //       dateString = datePipe.transform(meterData.readDate, stringFormat);
+    //     }
+    //     let totalVolumeValidators: Array<ValidatorFn> = [];
+    //     if (displayVolumeInput) {
+    //       totalVolumeValidators = [Validators.required, Validators.min(0)]
+    //     }
+    //     let totalEnergyUseValidators: Array<ValidatorFn> = [];
+    //     if (displayEnergyInput) {
+    //       totalEnergyUseValidators = [Validators.required, Validators.min(0)];
+    //     }
+    //     return this.formBuilder.group({
+    //       readDate: [dateString, Validators.required],
+    //       totalVolume: [meterData.totalVolume, totalVolumeValidators],
+    //       totalEnergyUse: [meterData.totalEnergyUse, totalEnergyUseValidators],
+    //       totalCost: [meterData.totalCost],
+    //       commodityCharge: [meterData.commodityCharge],
+    //       deliveryCharge: [meterData.deliveryCharge],
+    //       otherCharge: [meterData.otherCharge],
+    //     });
         
-    }
+    // }
 
     updateGeneralMeterDataFromForm(meterData: utilityMeterScanProfile, form: FormGroup): utilityMeterScanProfile {
         //UTC date is one day behind from form

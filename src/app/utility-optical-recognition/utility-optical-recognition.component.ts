@@ -4,6 +4,7 @@ import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 import html2canvas from 'html2canvas';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { createWorker } from 'tesseract.js'
+import { UtilityMeterScanProfileService } from '../indexedDB/utilityMeterScanProfile-db.service';
 
 @Component({
   selector: 'app-utility-optical-recognition',

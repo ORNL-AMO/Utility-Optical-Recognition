@@ -3,9 +3,9 @@ import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 import html2canvas from 'html2canvas';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { createWorker } from 'tesseract.js'
-import { IdbUtilityMeter } from '../models/idb';
-import { UtilityColors } from 'src/app/shared/utilityColors';
+import { IdbUtilityMeter, IdbUtilityMeterData } from '../models/idb';
 import { SourceOptions } from 'src/app/facility/utility-data/energy-consumption/energy-source/edit-meter-form/editMeterOptions';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-utility-optical-recognition',
@@ -13,12 +13,12 @@ import { SourceOptions } from 'src/app/facility/utility-data/energy-consumption/
   styleUrls: ['./utility-optical-recognition.component.css']
 })
 
-  //sourceOptions - types of utilities
-
 export class UtilityOpticalRecognitionComponent implements OnInit {
   //#region Variables
-  @Input() selectedMeter: IdbUtilityMeter;
-
+  @Input() editMeter: IdbUtilityMeter;
+  @Input() editMeterData: IdbUtilityMeterData;
+  public undefinedMeterData;
+  
   public showScanProfileSelectorDiv: boolean = true;        //aka preset profiles
   public showUtilitySelectorDiv: boolean = false;
   public showFileUploadDiv: boolean = false;
@@ -31,11 +31,10 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public isOcrResult: boolean = false;
   public pdfSrc: any = '';
   public totalPages: number = 0;
-  public currentpage: number = 0;
+  public currentpage: number = 1;
   public cropingImage: any = '';
   public ocrResult: any = '';
-  public sourceOptions: Array<string> = SourceOptions;      // provides the types of utilities
-  public utilityOptionsHTML: string;
+  // public sourceOptions: Array<string> = SourceOptions;      // provides the types of utilities
 
     //"Getter method", Angular will call the getter method whenever it needs to update the value of the `src` attribute.
     get strdPdf2Img(): string {
@@ -49,14 +48,19 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {}
-
-  getColor(): string {
-    return UtilityColors[this.selectedMeter.source].color
+  ngOnInit(): void {
+    this.undefinedMeterData = Object.entries(this.editMeterData).filter(
+      ([key, value]) => value === undefined || value === null || value === '' || value === false || value === 'false' || key.includes('checked')
+    );
+    console.log(this.undefinedMeterData)
+    this.undefinedMeterData = this.undefinedMeterData.map(subArray => [
+      _.startCase(subArray[0]),
+      subArray[1]
+    ]);
   }
 
   skipToUploadPdf() {
-    if(this.selectedMeter.source){
+    if(this.editMeter.source){
       this.showScanProfileSelectorDiv = false; 
       this.showFileUploadDiv = true
     } else {
@@ -64,8 +68,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
       this.showUtilitySelectorDiv = true;
     }
   }
-
-
 
   //#region PDF Viewer
   public uploadPdf(event:any){
@@ -110,7 +112,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   //#endregion
 
   //#region Html2Canvas
-  public pdfToCanvas() {       
+  public pdfToCanvas() {  
     html2canvas(document.querySelector(".pdf-container") as HTMLElement).then((canvas: any) => {
       this.getCanvasToStorage(canvas)
     })

@@ -100,6 +100,7 @@ export class UtilityMeterScanProfileService {
         return meterData;
     }
 
+    //This is the READ of the CRUD Fucntion for Other Meter Sources.
      getGeneralMeterDataForm(meterData: utilityMeterScanProfile): FormGroup {
         return this.formBuilder.group({
             id: [meterData.id, [Validators.min(0)]],
@@ -111,51 +112,16 @@ export class UtilityMeterScanProfileService {
             x2: [meterData.x2, [Validators.min(0)]],
             y1: [meterData.y1, [Validators.min(0)]],
             y2: [meterData.y2, [Validators.min(0)]]
-        })
-    //     let dateString: string;
-    //     if (meterData.readDate && isNaN(new Date(meterData.readDate).getTime()) == false) {
-    //       let datePipe: DatePipe = new DatePipe(navigator.language);
-    //       let stringFormat: string = 'y-MM-dd'; // YYYY-MM-DD  
-    //       dateString = datePipe.transform(meterData.readDate, stringFormat);
-    //     }
-    //     let totalVolumeValidators: Array<ValidatorFn> = [];
-    //     if (displayVolumeInput) {
-    //       totalVolumeValidators = [Validators.required, Validators.min(0)]
-    //     }
-    //     let totalEnergyUseValidators: Array<ValidatorFn> = [];
-    //     if (displayEnergyInput) {
-    //       totalEnergyUseValidators = [Validators.required, Validators.min(0)];
-    //     }
-    //     return this.formBuilder.group({
-    //       readDate: [dateString, Validators.required],
-    //       totalVolume: [meterData.totalVolume, totalVolumeValidators],
-    //       totalEnergyUse: [meterData.totalEnergyUse, totalEnergyUseValidators],
-    //       totalCost: [meterData.totalCost],
-    //       commodityCharge: [meterData.commodityCharge],
-    //       deliveryCharge: [meterData.deliveryCharge],
-    //       otherCharge: [meterData.otherCharge],
-    //     });
-        
+        })    
     }
 
+    //This is the UPDATE of the CRUD Function for Other Meter Sources.
     updateGeneralMeterDataFromForm(meterData: utilityMeterScanProfile, form: FormGroup): utilityMeterScanProfile {
-        //UTC date is one day behind from form
         meterData.attribute = form.controls.GeneralAttributeTypes.value; 
         meterData.x1 = form.controls.x1.value;
         meterData.x2 = form.controls.x2.value;
         meterData.y1 = form.controls.y1.value;
         meterData.y2 = form.controls.y2.value;
         return meterData;
-        /*
-        let formDate: Date = new Date(form.controls.readDate.value)
-        meterData.readDate = new Date(formDate.getUTCFullYear(), formDate.getUTCMonth(), formDate.getUTCDate());
-        meterData.totalVolume = form.controls.totalVolume.value;
-        meterData.totalEnergyUse = form.controls.totalEnergyUse.value;
-        meterData.totalCost = form.controls.totalCost.value;
-        meterData.commodityCharge = form.controls.commodityCharge.value;
-        meterData.deliveryCharge = form.controls.deliveryCharge.value;
-        meterData.otherCharge = form.controls.otherCharge.value;
-        return meterData;
-        */
     }
 }

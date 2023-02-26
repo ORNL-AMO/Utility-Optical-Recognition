@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LoadingService } from 'src/app/core-components/loading/loading.service';
 import { ToastNotificationsService } from 'src/app/core-components/toast-notifications/toast-notifications.service';
 import { AccountdbService } from 'src/app/indexedDB/account-db.service';
@@ -33,8 +32,7 @@ export class EditBillComponent implements OnInit {
     private utilityMeterDbService: UtilityMeterdbService, private loadingService: LoadingService,
     private dbChangesService: DbChangesService, private facilityDbService: FacilitydbService, private accountDbService: AccountdbService,
     private utilityMeterDataService: UtilityMeterDataService, private toastNotificationService: ToastNotificationsService,
-    private energyUnitsHelperService: EnergyUnitsHelperService, private router: Router,
-    private modalService: NgbModal) { }
+    private energyUnitsHelperService: EnergyUnitsHelperService, private router: Router) { }
 
   ngOnInit(): void {
     this.activatedRoute.parent.params.subscribe(parentParams => {

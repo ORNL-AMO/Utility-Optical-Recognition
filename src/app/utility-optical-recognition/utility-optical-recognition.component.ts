@@ -1,31 +1,41 @@
-import { Component } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, Input, OnInit } from '@angular/core';
 import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 import html2canvas from 'html2canvas';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { createWorker } from 'tesseract.js'
+import { IdbUtilityMeter, IdbUtilityMeterData } from '../models/idb';
+import { SourceOptions } from 'src/app/facility/utility-data/energy-consumption/energy-source/edit-meter-form/editMeterOptions';
+import * as _ from 'lodash';
+import { UtilityMeterScanProfileService } from '../indexedDB/utilityMeterScanProfile-db.service';
 
 @Component({
   selector: 'app-utility-optical-recognition',
   templateUrl: './utility-optical-recognition.component.html',
   styleUrls: ['./utility-optical-recognition.component.css']
 })
-export class UtilityOpticalRecognitionComponent {
+
+export class UtilityOpticalRecognitionComponent implements OnInit {
   //#region Variables
-  public showScanProfileSelector: boolean = true;        //aka preset profiles
-  public showUtilitySelector: boolean = false;
+  @Input() editMeter: IdbUtilityMeter;
+  @Input() editMeterData: IdbUtilityMeterData;
+  public undefinedMeterData;
+  
+  public showScanProfileSelectorDiv: boolean = true;        //aka preset profiles
+  public showUtilitySelectorDiv: boolean = false;
+  public showFileUploadDiv: boolean = false;
   public showPdfModalDiv: boolean = false;
   public showCropButtons: boolean = false;
   public showPdfDiv: boolean = false;
-  public isPdfUploaded :boolean = false;
-  public isPdf2Image :boolean = false;
-  public isOcrResult :boolean = false;
-  public is :boolean = false;
+
+  public isPdfUploaded: boolean = false;
+  public isPdf2Image: boolean = false;
+  public isOcrResult: boolean = false;
   public pdfSrc: any = '';
   public totalPages: number = 0;
-  public currentpage: number = 0;
+  public currentpage: number = 1;
   public cropingImage: any = '';
   public ocrResult: any = '';
+  // public sourceOptions: Array<string> = SourceOptions;      // provides the types of utilities
 
     //"Getter method", Angular will call the getter method whenever it needs to update the value of the `src` attribute.
     get strdPdf2Img(): string {
@@ -37,13 +47,30 @@ export class UtilityOpticalRecognitionComponent {
     }  
 //#endregion
 
-  constructor(public activeModal: NgbActiveModal) {}
+  constructor() {}
 
-  // closeModal() {            
-  //   document.getElementById("modalUploadPDF").style.display = "none";
-  // }
+  ngOnInit(): void {
+    this.undefinedMeterData = Object.entries(this.editMeterData).filter(
+      ([key, value]) => value === undefined || value === null || value === '' || value === false || value === 'false' || key.includes('checked')
+    );
+    console.log(this.undefinedMeterData)
+    this.undefinedMeterData = this.undefinedMeterData.map(subArray => [
+      _.startCase(subArray[0]),
+      subArray[1]
+    ]);
+  }
 
-//#region PDF Viewer
+  skipToUploadPdf() {
+    if(this.editMeter.source){
+      this.showScanProfileSelectorDiv = false; 
+      this.showFileUploadDiv = true
+    } else {
+      this.showScanProfileSelectorDiv = false;
+      this.showUtilitySelectorDiv = true;
+    }
+  }
+
+  //#region PDF Viewer
   public uploadPdf(event:any){
     let $img: any = document.querySelector('#upload-doc');
     if(event.target.files[0].type == 'application/pdf'){
@@ -86,7 +113,7 @@ export class UtilityOpticalRecognitionComponent {
   //#endregion
 
   //#region Html2Canvas
-  public pdfToCanvas() {       
+  public pdfToCanvas() {  
     html2canvas(document.querySelector(".pdf-container") as HTMLElement).then((canvas: any) => {
       this.getCanvasToStorage(canvas)
     })
@@ -119,8 +146,8 @@ export class UtilityOpticalRecognitionComponent {
   }
   //#endregion
 
-//#region Tesseract
-    async doOCR(){
+  //#region Tesseract
+  async doOCR(){
       this.isPdf2Image = false;
       this.isOcrResult = true;
     const worker = createWorker({

@@ -345,8 +345,23 @@ export interface IdbCustomEmissionsItem {
     residualEmissionRates: Array<{ co2Emissions: number, year: number }>,
 }
 
+export interface utilityMeterScanProfile {
+    //keys (id primary)
+    id?: number,
+    guid: string,
+    accountId: string,
+    //data
+    source: MeterSource,
+    attribute: ElectricityAttributeTypes | GeneralAttributeTypes, 
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+}
 
 
 export type AnalysisType = 'absoluteEnergyConsumption' | 'energyIntensity' | 'modifiedEnergyIntensity' | 'regression';
 export type MeterSource = "Electricity" | "Natural Gas" | "Other Fuels" | "Other Energy" | "Water" | "Waste Water" | "Other Utility";
 export type MeterPhase = "Solid" | "Liquid" | "Gas";
+export type ElectricityAttributeTypes = "readDate" | "totalEnergyUse" | "totalCost" | "commodityCharge" | "deliveryCharge" | "otherCharge" | "checked" | "totalDemand" | "basicCharge" | "supplyBlockAmount" | "supplyBlockCharge" | "flatRateAmount" | "flatRateCharge" | "peakAmount" | "peakCharge" | "offPeakAmount" | "offPeakCharge" |  "demandBlockAmount" | "demandBlockCharge" | "generalTransCharge" | "transCharge" | "powerFactor" | "powerFactorCharge" | "businessCharge" | "utilityTax" | "latePayment" | "otherCharge";
+export type GeneralAttributeTypes = "readDate" | "totalCost" | "commodityCharge" | "deliveryCharge" | "otherCharge" | "totalDemand" | "basicCharge" | "utilityTax" | "latePayment";

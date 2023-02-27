@@ -6,6 +6,7 @@ import { createWorker } from 'tesseract.js'
 import { IdbUtilityMeter, IdbUtilityMeterData } from '../models/idb';
 import { SourceOptions } from 'src/app/facility/utility-data/energy-consumption/energy-source/edit-meter-form/editMeterOptions';
 import * as _ from 'lodash';
+import { UtilityMeterScanProfileService } from '../indexedDB/utilityMeterScanProfile-db.service';
 
 @Component({
   selector: 'app-utility-optical-recognition',

@@ -141,6 +141,21 @@ export const dbConfig: DBConfig = {
     ]
   },
   {
+    store: 'utilityMeterScanProfile',
+    storeConfig: { keyPath: 'id', autoIncrement: true },
+    storeSchema: [
+      { name: 'accountId', keypath: 'accountId', options: { unique: false } },
+      { name: 'guid', keypath: 'guid', options: { unique: false } },
+      {name: 'presetName', keypath: 'presetName', options: { unique: false }},
+      { name: 'MeterSource', keypath: 'MeterSource', options: { unique: false } },
+      { name: 'UtilityAttribute', keypath: 'UtilityAttribute', options: { unique: false } },
+      { name: 'x1', keypath: 'x1', options: { unique: false } }, //make sure to setup vars elsewhere
+      { name: 'y1', keypath: 'y1', options: { unique: false } },
+      { name: 'x2', keypath: 'x2', options: { unique: false } },
+      { name: 'y2', keypath: 'y2', options: { unique: false } }//,
+    ]
+  },
+  {
     store: 'customEmissionsItems',
     storeConfig: { keyPath: 'id', autoIncrement: true },
     storeSchema: [

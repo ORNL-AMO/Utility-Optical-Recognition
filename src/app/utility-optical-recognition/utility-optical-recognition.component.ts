@@ -161,6 +161,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.ocrResult = text;
     console.log(text);
     await (await worker).terminate();
+    
   }
 //#endregion
 

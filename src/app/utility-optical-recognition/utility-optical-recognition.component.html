@@ -113,6 +113,7 @@
     <!-- crop image button -->
     <div class="pagescount ms-auto" *ngIf="isPdf2Image">
       <button (click)="doOCR()" class="btn btn-primary">Crop Image</button>
+      <!-- <button (click)="" class="btn btn-primary">Add json object</button> -->
     </div>
   </div>
 
@@ -121,7 +122,7 @@
       <!-- attribute buttons -->
       <div class="ms-e me-3" *ngIf="showCropButtons">
         <div class="d-flex flex-column justify-content-center" *ngFor="let attr of undefinedMeterData">
-          <button class="btn action-btn p-3 mb-3" (click)="pdfToCanvas()" 
+          <button class="btn action-btn p-3 mb-3" (click)="pdfToCanvas($event)" 
           [id]="attr[0]" [disabled]="isPdf2Image ? true : false">
             {{ attr[0] }}
           </button>

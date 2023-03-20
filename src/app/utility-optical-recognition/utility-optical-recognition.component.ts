@@ -37,6 +37,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public cropingImage: any = '';
   public ocrResult: any = '';
   public newScanProfile: any;
+  public presetName: string = '';
   // public sourceOptions: Array<string> = SourceOptions;      // provides the types of utilities
 
     //"Getter method", Angular will call the getter method whenever it needs to update the value of the `src` attribute.
@@ -167,6 +168,13 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
   private rtrvCrppdImgFrmStrg(){
     return window.sessionStorage.getItem("CrppdImg");
+  }
+  public updatePreset(){
+    let inputValue = (<HTMLInputElement>document.getElementById("preset-name")).value;
+    //this.presetName = inputValue;
+    this.newScanProfile.presetName = inputValue;
+    return this.newScanProfile.presetName;
+    
   }
   //#endregion
 

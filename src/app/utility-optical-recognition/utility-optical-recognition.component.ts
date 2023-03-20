@@ -67,17 +67,20 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
 
   async testAPIs() {
-    this.newScanProfile = this.scanProfileDbService.getnewUtilityMeterProfile();
-    this.scanProfileDbService.addWithObservable(this.newScanProfile).subscribe((addedProfile: utilityMeterScanProfile) => {
-      console.log('Added profile:', addedProfile);
-    }, error => {
-        console.error('Error adding profile:', error);
-    });
+    // this.newScanProfile = this.scanProfileDbService.getnewUtilityMeterProfile();
+    // this.scanProfileDbService.addWithObservable(this.newScanProfile).subscribe((addedProfile: utilityMeterScanProfile) => {
+    //   console.log('Added profile:', addedProfile);
+    // }, error => {
+    //     console.error('Error adding profile:', error);
+    // });
   }
 
   skipToUploadPdf() {
+    this.newScanProfile = this.scanProfileDbService.getnewUtilityMeterProfile();
+    this.newScanProfile.accountId = this.editMeter.accountId;
     if(this.editMeter.source){
-      this.showScanProfileSelectorDiv = false; 
+      this.newScanProfile.source = this.editMeter.source;
+      this.showScanProfileSelectorDiv = false;
       this.showFileUploadDiv = true
     } else {
       this.showScanProfileSelectorDiv = false;
@@ -128,7 +131,13 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   //#endregion
 
   //#region Html2Canvas
-  public pdfToCanvas() {  
+  public pdfToCanvas(event: any) {
+    this.newScanProfile.attribute = event.target.id;
+    this.scanProfileDbService.addWithObservable(this.newScanProfile).subscribe((addedProfile: utilityMeterScanProfile) => {
+      console.log('Added profile:', addedProfile);
+    }, error => {
+        console.error('Error adding profile:', error);
+    });
     html2canvas(document.querySelector(".pdf-container") as HTMLElement).then((canvas: any) => {
       this.getCanvasToStorage(canvas)
     })
@@ -166,7 +175,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
       this.isPdf2Image = false;
       this.isOcrResult = true;
     const worker = createWorker({
-      logger: m => console.log(m),
+      // logger: m => console.log(m),
     });
     await (await worker).load();
     await (await worker).loadLanguage('eng');
@@ -174,7 +183,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     const {data: { text } } = await (await worker).recognize(this.cropingImage);
     sessionStorage.setItem("CrppdImg", this.cropingImage);
     this.ocrResult = text;
-    console.log(text);
+    // console.log(text);
     await (await worker).terminate();
     
   }

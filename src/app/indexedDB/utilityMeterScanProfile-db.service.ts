@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { utilityMeterScanProfile, MeterSource, ElectricityAttributeTypes, GeneralAttributeTypes} from '../models/idb';
+import { utilityMeterScanProfile, MeterSource, ElectricityAttributeTypes, GeneralAttributeTypes, IdbAccount} from '../models/idb';
 import { FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { AccountdbService } from './account-db.service';
 import { UtilityMeterDataService } from '../facility/utility-data/energy-consumption/utility-meter-data/utility-meter-data.service';
@@ -11,8 +11,8 @@ import { UtilityMeterDataService } from '../facility/utility-data/energy-consump
 })
 export class UtilityMeterScanProfileService {
 
-    utilityMeterScanProfileItems: BehaviorSubject<Array<utilityMeterScanProfile>>; //Getting it from idb.ts
-    constructor(private formBuilder: FormBuilder, private dbService: NgxIndexedDBService, private accountDbService: AccountdbService, private type: UtilityMeterDataService) { 
+    utilityMeterScanProfileItems: BehaviorSubject<any>; //Getting it from idb.ts
+    constructor(private formBuilder: FormBuilder, private dbService: NgxIndexedDBService, private accountDbService: AccountdbService) { 
         this.utilityMeterScanProfileItems = new BehaviorSubject<Array<utilityMeterScanProfile>>([]);
     }
 
@@ -22,8 +22,8 @@ export class UtilityMeterScanProfileService {
         return this.dbService.getAll('utilityMeterScanProfile');
     }
 
-    addWithObservable(utilityProfile: utilityMeterScanProfile): Observable<utilityMeterScanProfile> {
-        return this.dbService.add('utilityMeterScanProfile', utilityProfile);
+    addWithObservable(item: utilityMeterScanProfile): Observable<utilityMeterScanProfile> {
+        return this.dbService.add('utilityMeterScanProfile', item);
     }
     
     deleteWithObservable(guid: string, ): Observable<any> {
@@ -36,36 +36,22 @@ export class UtilityMeterScanProfileService {
 
     /*This is the CREATE of the CRUD functions both profiles. If the source is Electricity then return
     electricity attributes else it will return general attributes.*/
-    getnewUtilityMeterProfile(utilityMeterScanProfileItem: utilityMeterScanProfile): utilityMeterScanProfile{
+    getnewUtilityMeterProfile(): utilityMeterScanProfile{
         let eSource: 'Electricity';
         let gSource: MeterSource;
         let eAttributes: ElectricityAttributeTypes;
         let gAttributes: GeneralAttributeTypes;
-        if(eSource){
-            return {
-                //id: undefined,
-                guid: Math.random().toString(36).substr(2, 9),
-                accountId: utilityMeterScanProfileItem.accountId,
-                presetName: undefined,
-                source: eSource,
-                attribute: eAttributes,
-                x1: undefined,
-                y1: undefined,
-                x2: undefined,
-                y2: undefined
-            }
-        }
-        return{
-                //id: undefined,
-                guid: Math.random().toString(36).substr(2, 9),
-                accountId: utilityMeterScanProfileItem.accountId,
-                presetName: undefined,
-                source: gSource,
-                attribute: gAttributes,
-                x1: undefined,
-                y1: undefined,
-                x2: undefined,
-                y2: undefined
+        return {
+            //id: undefined,
+            guid: Math.random().toString(36).substr(2, 9),
+            accountId: undefined,
+            presetName: undefined,
+            source: eSource || gSource,
+            attribute: eAttributes || gAttributes,
+            x1: undefined,
+            y1: undefined,
+            x2: undefined,
+            y2: undefined
         }
     }
 

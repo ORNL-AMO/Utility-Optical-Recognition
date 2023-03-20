@@ -351,8 +351,8 @@ export interface utilityMeterScanProfile {
     guid: string,
     presetName: string,
     accountId: string,
+    
     //data
-
     source: MeterSource,
     attribute: ElectricityAttributeTypes | GeneralAttributeTypes, 
     x1: number,

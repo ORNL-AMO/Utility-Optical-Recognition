@@ -3,7 +3,7 @@ import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 import html2canvas from 'html2canvas';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { createWorker } from 'tesseract.js'
-import { IdbAccount, IdbUtilityMeter, IdbUtilityMeterData } from '../models/idb';
+import { IdbAccount, IdbUtilityMeter, IdbUtilityMeterData, utilityMeterScanProfile } from '../models/idb';
 import { SourceOptions } from 'src/app/facility/utility-data/energy-consumption/energy-source/edit-meter-form/editMeterOptions';
 import * as _ from 'lodash';
 import { AccountdbService } from 'src/app/indexedDB/account-db.service';
@@ -36,7 +36,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public currentpage: number = 1;
   public cropingImage: any = '';
   public ocrResult: any = '';
-  scanProfile: any;
+  public newScanProfile: any;
   // public sourceOptions: Array<string> = SourceOptions;      // provides the types of utilities
 
     //"Getter method", Angular will call the getter method whenever it needs to update the value of the `src` attribute.
@@ -67,9 +67,12 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
 
   async testAPIs() {
-    let selectedAccount: IdbAccount = this.accountDbService.selectedAccount.getValue();
-    this.scanProfile = await this.scanProfileDbService.getnewUtilityMeterProfile();
-    console.log("after getnewUtilityMeterProfile");
+    this.newScanProfile = this.scanProfileDbService.getnewUtilityMeterProfile();
+    this.scanProfileDbService.addWithObservable(this.newScanProfile).subscribe((addedProfile: utilityMeterScanProfile) => {
+      console.log('Added profile:', addedProfile);
+    }, error => {
+        console.error('Error adding profile:', error);
+    });
   }
 
   skipToUploadPdf() {

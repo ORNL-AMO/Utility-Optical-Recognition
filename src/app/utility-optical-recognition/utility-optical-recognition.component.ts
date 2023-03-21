@@ -66,17 +66,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.undefinedMeterData = this.undefinedMeterData.map(subArray => [
       _.startCase(subArray[0]), subArray[1]
     ]);
-
-    this.testAPIs();
-  }
-
-  async testAPIs() {
-    // this.newScanProfile = this.scanProfileDbService.getnewUtilityMeterProfile();
-    // this.scanProfileDbService.addWithObservable(this.newScanProfile).subscribe((addedProfile: utilityMeterScanProfile) => {
-    //   console.log('Added profile:', addedProfile);
-    // }, error => {
-    //     console.error('Error adding profile:', error);
-    // });
   }
 
   skipToUploadPdf() {
@@ -183,7 +172,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
   public updatePreset(){
     let inputValue = (<HTMLInputElement>document.getElementById("preset-name")).value;
-    //this.presetName = inputValue;
     this.newScanProfile.presetName = inputValue;
     
   }

@@ -3,10 +3,9 @@ import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 import html2canvas from 'html2canvas';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { createWorker } from 'tesseract.js'
-import { IdbAccount, IdbUtilityMeter, IdbUtilityMeterData, utilityMeterScanProfile } from '../models/idb';
+import { IdbUtilityMeter, IdbUtilityMeterData, utilityMeterScanProfile } from '../models/idb';
 import { SourceOptions } from 'src/app/facility/utility-data/energy-consumption/energy-source/edit-meter-form/editMeterOptions';
 import * as _ from 'lodash';
-import { AccountdbService } from 'src/app/indexedDB/account-db.service';
 import { UtilityMeterScanProfileService } from '../indexedDB/utilityMeterScanProfile-db.service';
 
 @Component({
@@ -51,7 +50,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 //#endregion
 
   constructor(
-    private accountDbService: AccountdbService,
     private scanProfileDbService: UtilityMeterScanProfileService
   ) {}
 
@@ -135,9 +133,9 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public pdfToCanvas(event: any) {
     this.newScanProfile.attribute = event.target.id;
     this.scanProfileDbService.addWithObservable(this.newScanProfile).subscribe((addedProfile: utilityMeterScanProfile) => {
-      console.log('Added profile:', addedProfile);
+      console.log("Added profile:", addedProfile);
     }, error => {
-        console.error('Error adding profile:', error);
+        console.error("Error adding profile:", error);
     });
     html2canvas(document.querySelector(".pdf-container") as HTMLElement).then((canvas: any) => {
       this.getCanvasToStorage(canvas)
@@ -156,6 +154,13 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
   //#region Image Cropper
   public cropImage(event: ImageCroppedEvent){
+    // when we have x1, y1, we can update their rows here
+    // this.newScanProfile.x1 = event.imagePosition.x1;
+    // this.newScanProfile.updateWithObservable(this.newScanProfile).subscribe((updatedProfile: utilityMeterScanProfile) => {
+    //   console.log('Edited profile:', updatedProfile);
+    // }, error => {
+    //     console.error('Error adding profile:', error);
+    // });
     this.cropingImage = event.base64;
     sessionStorage.setItem("CrppdImg", this.cropingImage);
   }
@@ -185,13 +190,11 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     const worker = createWorker({
       // logger: m => console.log(m),
     });
-    await (await worker).load();
     await (await worker).loadLanguage('eng');
     await (await worker).initialize('eng');
     const {data: { text } } = await (await worker).recognize(this.cropingImage);
     sessionStorage.setItem("CrppdImg", this.cropingImage);
     this.ocrResult = text;
-    // console.log(text);
     await (await worker).terminate();
     
   }

@@ -81,6 +81,15 @@
     </ul>
   </div>
   <hr>
+  <!-- scan profile/preset name -->
+  <div class="col-4 mb-3">
+    <label for="preset-name" class="form-label">Scan Profile Name</label>
+    <span class="required">*</span>
+    <div class="input-group">
+      <input class="presetname form-control" type="text" id="preset-name" placeholder="Scan Profile Name" required [required]="true">
+      <button class="presetname btn btn-primary" type="button" (click)="updatePreset()">Save</button>
+    </div>
+  </div>
   <input class="form-control" type="file" id="upload-doc" accept=".pdf" (change)="uploadPdf($event); this.showFileUploadDiv = false; this.showPdfModalDiv = true" />
   <hr>
 </div>
@@ -99,13 +108,6 @@
   </div>
 
   <div class="d-flex mt-5">
-    <!-- scan profile/preset name -->
-    <div class="col-4">
-      <div class="input-group">
-        <input class="presetname form-control" type="text" id="preset-name" placeholder="Scan Profile Name">
-        <button class="presetname btn btn-primary" type="button" (click)="updatePreset()">Save</button>
-      </div>
-    </div>
     <!-- page numbers -->
     <div class="d-inline-flex ms-auto" *ngIf="isPdfUploaded">
       <button class="btn action-btn" type="button" (click)="previous()">

@@ -37,6 +37,11 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public ocrResult: any = '';
   public newScanProfile: any;
   public presetName: string = '';
+  public coordinatesx1: number = 0;
+  public coordinatesy1: number = 0;
+  public coordinatesx2: number = 0;
+  public coordinatesy2: number = 0;
+
   // public sourceOptions: Array<string> = SourceOptions;      // provides the types of utilities
 
     //"Getter method", Angular will call the getter method whenever it needs to update the value of the `src` attribute.
@@ -154,8 +159,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
   //#region Image Cropper
   public cropImage(event: ImageCroppedEvent){
-    // when we have x1, y1, we can update their rows here
-    // this.newScanProfile.x1 = event.imagePosition.x1;
     // this.newScanProfile.updateWithObservable(this.newScanProfile).subscribe((updatedProfile: utilityMeterScanProfile) => {
     //   console.log('Edited profile:', updatedProfile);
     // }, error => {
@@ -163,6 +166,10 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     // });
     this.cropingImage = event.base64;
     sessionStorage.setItem("CrppdImg", this.cropingImage);
+    this.coordinatesx1 = event.cropperPosition.x1;
+    this.coordinatesy1 = event.cropperPosition.y1;
+    this.coordinatesx2 = event.cropperPosition.x2;
+    this.coordinatesy2 = event.cropperPosition.y2; 
   }
   //#endregion
 
@@ -178,7 +185,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     let inputValue = (<HTMLInputElement>document.getElementById("preset-name")).value;
     //this.presetName = inputValue;
     this.newScanProfile.presetName = inputValue;
-    return this.newScanProfile.presetName;
     
   }
   //#endregion
@@ -194,6 +200,10 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     await (await worker).initialize('eng');
     const {data: { text } } = await (await worker).recognize(this.cropingImage);
     sessionStorage.setItem("CrppdImg", this.cropingImage);
+    this.newScanProfile.x1 = this.coordinatesx1;
+    this.newScanProfile.y1 = this.coordinatesy1;
+    this.newScanProfile.x2 = this.coordinatesx2;
+    this.newScanProfile.y2 = this.coordinatesy2;
     this.ocrResult = text;
     await (await worker).terminate();
     

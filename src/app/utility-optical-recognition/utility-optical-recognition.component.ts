@@ -7,6 +7,7 @@ import { IdbUtilityMeter, IdbUtilityMeterData, utilityMeterScanProfile } from '.
 import { SourceOptions } from 'src/app/facility/utility-data/energy-consumption/energy-source/edit-meter-form/editMeterOptions';
 import * as _ from 'lodash';
 import { UtilityMeterScanProfileService } from '../indexedDB/utilityMeterScanProfile-db.service';
+import { exit } from 'process';
 
 @Component({
   selector: 'app-utility-optical-recognition',
@@ -41,7 +42,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public coordinatesy1: number = 0;
   public coordinatesx2: number = 0;
   public coordinatesy2: number = 0;
-
+  public inputValue123: any = (<HTMLInputElement>document.getElementById("inputDiv"))
   // public sourceOptions: Array<string> = SourceOptions;      // provides the types of utilities
 
     //"Getter method", Angular will call the getter method whenever it needs to update the value of the `src` attribute.
@@ -125,7 +126,9 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
   //#region Html2Canvas
   public pdfToCanvas(event: any) {
+    if(this.newScanProfile.attribute == undefined || this.newScanProfile.attribute == null || this.newScanProfile.attribute == ''){
     this.newScanProfile.attribute = event.target.id;
+    }
     this.scanProfileDbService.addWithObservable(this.newScanProfile).subscribe((addedProfile: utilityMeterScanProfile) => {
       console.log("Added profile:", addedProfile);
     }, error => {
@@ -155,6 +158,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     // });
     this.cropingImage = event.base64;
     sessionStorage.setItem("CrppdImg", this.cropingImage);
+    
     this.coordinatesx1 = event.cropperPosition.x1;
     this.coordinatesy1 = event.cropperPosition.y1;
     this.coordinatesx2 = event.cropperPosition.x2;
@@ -172,8 +176,19 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
   public updatePreset(){
     let inputValue = (<HTMLInputElement>document.getElementById("preset-name")).value;
-    this.newScanProfile.presetName = inputValue;
-    
+    this.presetName = inputValue;
+    //sets the preset value from input prompt
+  }
+  public updateDisabled(){
+    let presetName: any = (<HTMLInputElement>document.getElementById("preset-name")).value;
+    if(this.presetName == "" || this.presetName == null || this.presetName == undefined || this.presetName == "0"){
+      alert("Please do not leave the input field empty for the Preset name.");
+      (<HTMLInputElement>document.getElementById("inputDiv")).style['pointer-events'] = 'none';
+      return;
+      //input validation to verify they do not remove the input field and try to submit
+    }
+    (<HTMLInputElement>document.getElementById("inputDiv")).removeAttribute("style");
+    //happy case success
   }
   //#endregion
 
@@ -188,14 +203,28 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     await (await worker).initialize('eng');
     const {data: { text } } = await (await worker).recognize(this.cropingImage);
     sessionStorage.setItem("CrppdImg", this.cropingImage);
+    alert(this.newScanProfile.attribute );
     this.newScanProfile.x1 = this.coordinatesx1;
     this.newScanProfile.y1 = this.coordinatesy1;
     this.newScanProfile.x2 = this.coordinatesx2;
     this.newScanProfile.y2 = this.coordinatesy2;
+    this.newScanProfile.presetName = this.presetName;
     this.ocrResult = text;
     await (await worker).terminate();
-    
+    return;
   }
+  async endProfile(){
+    const worker1 = createWorker({
+    });
+      this.showFileUploadDiv = false;
+      this.showScanProfileSelectorDiv = true;
+      this.showUtilitySelectorDiv = false;
+      this.showPdfModalDiv = false;
+      await (await worker1).terminate();
+  }
+
+
+
 //#endregion
 
 }

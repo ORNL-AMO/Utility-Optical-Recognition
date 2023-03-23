@@ -129,7 +129,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     if(this.newScanProfile.attribute == undefined || this.newScanProfile.attribute == null || this.newScanProfile.attribute == ''){
     this.newScanProfile.attribute = event.target.id;
     }
-    this.scanProfileDbService.addWithObservable(this.newScanProfile).subscribe((addedProfile: utilityMeterScanProfile) => {
+    this.scanProfileDbService.updateWithObservable(this.newScanProfile).subscribe((addedProfile: utilityMeterScanProfile) => {
       console.log("Added profile:", addedProfile);
     }, error => {
         console.error("Error adding profile:", error);
@@ -177,7 +177,15 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public updatePreset(){
     let inputValue = (<HTMLInputElement>document.getElementById("preset-name")).value;
     this.presetName = inputValue;
-    //sets the preset value from input prompt
+
+  }
+  public Test123(){
+    this.scanProfileDbService.updateWithObservable(this.newScanProfile).subscribe((addedProfile: utilityMeterScanProfile) => {
+      console.log("Added profile:", addedProfile);
+    }, error => {
+        console.error("Error adding profile:", error);
+    });
+    return;
   }
   public updateDisabled(){
     let presetName: any = (<HTMLInputElement>document.getElementById("preset-name")).value;
@@ -203,7 +211,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     await (await worker).initialize('eng');
     const {data: { text } } = await (await worker).recognize(this.cropingImage);
     sessionStorage.setItem("CrppdImg", this.cropingImage);
-    alert(this.newScanProfile.attribute );
     this.newScanProfile.x1 = this.coordinatesx1;
     this.newScanProfile.y1 = this.coordinatesy1;
     this.newScanProfile.x2 = this.coordinatesx2;
@@ -220,6 +227,10 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
       this.showScanProfileSelectorDiv = true;
       this.showUtilitySelectorDiv = false;
       this.showPdfModalDiv = false;
+      this.showCropButtons = false;
+      
+      //this.pdfToCanvas(null); //for some reason without this function it will not update the last element for database
+      this.Test123();
       await (await worker1).terminate();
   }
 

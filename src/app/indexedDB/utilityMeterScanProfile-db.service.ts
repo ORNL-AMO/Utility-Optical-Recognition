@@ -22,6 +22,11 @@ export class UtilityMeterScanProfileService {
         return this.dbService.getAll('utilityMeterScanProfile');
     }
 
+    getByPresetName(presetName: string): Observable<Array<utilityMeterScanProfile>> {
+        let idbKeyRange: IDBKeyRange = IDBKeyRange.only(presetName);
+        return this.dbService.getAllByIndex('utilityMeterScanProfile', 'presetName', idbKeyRange);
+    }      
+
     addWithObservable(item: utilityMeterScanProfile): Observable<utilityMeterScanProfile> {
         return this.dbService.add('utilityMeterScanProfile', item);
     }

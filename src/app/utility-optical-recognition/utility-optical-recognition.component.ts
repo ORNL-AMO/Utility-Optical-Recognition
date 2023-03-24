@@ -7,6 +7,9 @@ import { IdbUtilityMeter, IdbUtilityMeterData } from '../models/idb';
 import { SourceOptions } from 'src/app/facility/utility-data/energy-consumption/energy-source/edit-meter-form/editMeterOptions';
 import * as _ from 'lodash';
 import { UtilityMeterScanProfileService } from '../indexedDB/utilityMeterScanProfile-db.service';
+import { element } from 'protractor';
+import { color } from 'html2canvas/dist/types/css/types/color';
+import { AnyCnameRecord } from 'dns';
 
 @Component({
   selector: 'app-utility-optical-recognition',
@@ -58,6 +61,11 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
       _.startCase(subArray[0]),
       subArray[1]
     ]);
+    this.undefinedMeterData = this.undefinedMeterData
+
+    this.undefinedMeterData.forEach(subArray=>{
+      this.undefinedMeterData.subArray.push("backgroundColor","black");
+    })
   }
 
   skipToUploadPdf() {
@@ -113,12 +121,16 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   //#endregion
 
   //#region Html2Canvas
-  public pdfToCanvas() {  
+  public pdfToCanvas(event:any, index:number) { 
+    this.undefinedMeterData[index][1] = "red" 
     html2canvas(document.querySelector(".pdf-container") as HTMLElement).then((canvas: any) => {
       this.getCanvasToStorage(canvas)
     })
     this.isPdfUploaded = false;
     this.isPdf2Image = true;
+    if (this.isPdf2Image == true){
+      
+    }
   }
 
   private getCanvasToStorage(canvas:any){

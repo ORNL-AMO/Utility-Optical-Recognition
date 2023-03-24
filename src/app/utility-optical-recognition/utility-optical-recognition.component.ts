@@ -128,6 +128,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public pdfToCanvas(event: any) {
     if(this.newScanProfile.attribute == undefined || this.newScanProfile.attribute == null || this.newScanProfile.attribute == ''){
     this.newScanProfile.attribute = event.target.id;
+
     }
     this.scanProfileDbService.updateWithObservable(this.newScanProfile).subscribe((addedProfile: utilityMeterScanProfile) => {
       console.log("Added profile:", addedProfile);
@@ -218,6 +219,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.newScanProfile.presetName = this.presetName;
     this.ocrResult = text;
     await (await worker).terminate();
+
     return;
   }
   async endProfile(){

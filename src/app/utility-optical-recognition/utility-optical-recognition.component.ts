@@ -43,7 +43,19 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public coordinatesx2: number = 0;
   public coordinatesy2: number = 0;
   public inputValue123: any = (<HTMLInputElement>document.getElementById("inputDiv"))
-  // public sourceOptions: Array<string> = SourceOptions;      // provides the types of utilities
+  public interface = 
+  {
+    guid: "",
+    accountId: "",
+    name123: "",
+    source123: "",
+    attribute123: "",
+    coordinatesx1: 0,
+    coordinatesy1: 0,
+    coordinatesx2: 0,
+    coordinatesy2: 0,
+
+  }
 
     //"Getter method", Angular will call the getter method whenever it needs to update the value of the `src` attribute.
     get strdPdf2Img(): string {
@@ -70,10 +82,9 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
 
   skipToUploadPdf() {
-    this.newScanProfile = this.scanProfileDbService.getnewUtilityMeterProfile();
-    this.newScanProfile.accountId = this.editMeter.accountId;
+    this.interface.accountId = this.editMeter.accountId;
+    this.interface.source123 = this.editMeter.source;
     if(this.editMeter.source){
-      this.newScanProfile.source = this.editMeter.source;
       this.showScanProfileSelectorDiv = false;
       this.showFileUploadDiv = true
     } else {
@@ -81,6 +92,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
       this.showUtilitySelectorDiv = true;
     }
   }
+
 
   //#region PDF Viewer
   public uploadPdf(event:any){
@@ -126,15 +138,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
   //#region Html2Canvas
   public pdfToCanvas(event: any) {
-    if(this.newScanProfile.attribute == undefined || this.newScanProfile.attribute == null || this.newScanProfile.attribute == ''){
-    this.newScanProfile.attribute = event.target.id;
-
-    }
-    this.scanProfileDbService.updateWithObservable(this.newScanProfile).subscribe((addedProfile: utilityMeterScanProfile) => {
-      console.log("Added profile:", addedProfile);
-    }, error => {
-        console.error("Error adding profile:", error);
-    });
+    this.interface.attribute123 = event.target.id;
     html2canvas(document.querySelector(".pdf-container") as HTMLElement).then((canvas: any) => {
       this.getCanvasToStorage(canvas)
     })
@@ -152,18 +156,13 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
   //#region Image Cropper
   public cropImage(event: ImageCroppedEvent){
-    // this.newScanProfile.updateWithObservable(this.newScanProfile).subscribe((updatedProfile: utilityMeterScanProfile) => {
-    //   console.log('Edited profile:', updatedProfile);
-    // }, error => {
-    //     console.error('Error adding profile:', error);
-    // });
     this.cropingImage = event.base64;
     sessionStorage.setItem("CrppdImg", this.cropingImage);
-    
-    this.coordinatesx1 = event.cropperPosition.x1;
-    this.coordinatesy1 = event.cropperPosition.y1;
-    this.coordinatesx2 = event.cropperPosition.x2;
-    this.coordinatesy2 = event.cropperPosition.y2; 
+
+    this.interface.coordinatesx1 = event.cropperPosition.x1;
+    this.interface.coordinatesy1 = event.cropperPosition.y1;
+    this.interface.coordinatesx2 = event.cropperPosition.x2;
+    this.interface.coordinatesy2 = event.cropperPosition.y2; 
   }
   //#endregion
 
@@ -178,7 +177,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public updatePreset(){
     let inputValue = (<HTMLInputElement>document.getElementById("preset-name")).value;
     this.presetName = inputValue;
-
+    this.interface.name123 = inputValue;
   }
   public Test123(){
     this.scanProfileDbService.updateWithObservable(this.newScanProfile).subscribe((addedProfile: utilityMeterScanProfile) => {
@@ -203,7 +202,16 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
   //#region Tesseract
   async doOCR(){
-      this.isPdf2Image = false;
+    this.newScanProfile = this.scanProfileDbService.getnewUtilityMeterProfile();
+    this.newScanProfile.accountId = this.interface.accountId;  
+    this.newScanProfile.source = this.interface.source123;
+    this.newScanProfile.x1 = this.interface.coordinatesx1;
+    this.newScanProfile.y1 = this.interface.coordinatesy1;
+    this.newScanProfile.x2 = this.interface.coordinatesx2;
+    this.newScanProfile.y2 = this.interface.coordinatesy2;
+    this.newScanProfile.presetName = this.interface.name123;
+    this.newScanProfile.attribute = this.interface.attribute123;
+        this.isPdf2Image = false;
       this.isOcrResult = true;
     const worker = createWorker({
       // logger: m => console.log(m),
@@ -212,14 +220,15 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     await (await worker).initialize('eng');
     const {data: { text } } = await (await worker).recognize(this.cropingImage);
     sessionStorage.setItem("CrppdImg", this.cropingImage);
-    this.newScanProfile.x1 = this.coordinatesx1;
-    this.newScanProfile.y1 = this.coordinatesy1;
-    this.newScanProfile.x2 = this.coordinatesx2;
-    this.newScanProfile.y2 = this.coordinatesy2;
-    this.newScanProfile.presetName = this.presetName;
     this.ocrResult = text;
     await (await worker).terminate();
-
+    //alert("accountId: " + this.newScanProfile.accountId + "\n" + "source: " + this.newScanProfile.source + "\n" + "x1: " + this.newScanProfile.x1 + "\n" + "y1: " + this.newScanProfile.y1 + "\n" + "x2: " + this.newScanProfile.x2 + "\n" + "y2: " + this.newScanProfile.y2 + "\n" + "presetName: " + this.newScanProfile.presetName + "\n" + "attribute: " + this.newScanProfile.attribute + "\n" );
+    this.Test123();
+    this.interface.coordinatesx1 = 0;
+    this.interface.coordinatesy1 = 0;
+    this.interface.coordinatesx2 = 0;
+    this.interface.coordinatesy2 = 0;
+    this.interface.attribute123 = "";
     return;
   }
   async endProfile(){
@@ -230,12 +239,10 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
       this.showUtilitySelectorDiv = false;
       this.showPdfModalDiv = false;
       this.showCropButtons = false;
-      
-      //this.pdfToCanvas(null); //for some reason without this function it will not update the last element for database
-      this.Test123();
       await (await worker1).terminate();
   }
 
+  
 
 
 //#endregion

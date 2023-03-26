@@ -8,6 +8,7 @@ import { SourceOptions } from 'src/app/facility/utility-data/energy-consumption/
 import * as _ from 'lodash';
 import { UtilityMeterScanProfileService } from '../indexedDB/utilityMeterScanProfile-db.service';
 import { exit } from 'process';
+import { Interface } from 'readline';
 
 @Component({
   selector: 'app-utility-optical-recognition',
@@ -57,6 +58,11 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     coordinatesy2: 0,
 
   }
+  public last_attritbute = '';
+  public JSON_object = {};
+
+
+  // public sourceOptions: Array<string> = SourceOptions;      // provides the types of utilities
 
     //"Getter method", Angular will call the getter method whenever it needs to update the value of the `src` attribute.
     get strdPdf2Img(): string {
@@ -152,6 +158,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     })
     this.isPdfUploaded = false;
     this.isPdf2Image = true;
+    this.last_attritbute = event.target.id;
   }
 
   private getCanvasToStorage(canvas:any){
@@ -245,8 +252,12 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     await (await worker).loadLanguage('eng');
     await (await worker).initialize('eng');
     const {data: { text } } = await (await worker).recognize(this.cropingImage);
-    sessionStorage.setItem("CrppdImg", this.cropingImage);
+    sessionStorage.setItem("CrppdImg", this.cropingImage); 
     this.ocrResult = text;
+    this.ocrResult = this.ocrResult.replace(/[$\n]/g, '') //splice out $ and new lines
+    this.add_to_json(this.last_attritbute, this.ocrResult);
+    this.set_json();
+    console.log(text);
     await (await worker).terminate();
 
     this.Test123();
@@ -270,5 +281,24 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
   
 //#endregion
+
+  async add_to_json(key:string, value:any){
+
+    this.JSON_object[key] = value;
+    
+    }
+
+  public clear_json(){
+    this.JSON_object = {}
+  }
+
+  public set_json(){
+    sessionStorage.setItem("scan_output", JSON.stringify(this.JSON_object));
+  }
+
+  public get_json(){
+
+    return this.JSON_object;
+  }
 
 }

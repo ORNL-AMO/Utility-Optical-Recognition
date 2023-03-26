@@ -73,18 +73,24 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // find bill attribute types
     this.undefinedMeterData = Object.entries(this.editMeterData).filter(
       ([key, value]) => value === undefined || value === null || value === '' || value === false || value === 'false' || key.includes('checked')
     );
 
+    // keep only the undefined attributes
     this.undefinedMeterData = this.undefinedMeterData.map(subArray => [
       _.startCase(subArray[0]), subArray[1]
     ]);
+
+    // start scan profile
+    this.newScanProfile = this.scanProfileDbService.getnewUtilityMeterProfile();
+    this.interface.accountId = this.editMeter.accountId;
+    this.interface.source123 = this.editMeter.source;
   }
 
   skipToUploadPdf() {
-    this.interface.accountId = this.editMeter.accountId;
-    this.interface.source123 = this.editMeter.source;
+    // if source found, skip to upload pdf
     if(this.editMeter.source){
       this.showScanProfileSelectorDiv = false;
       this.showFileUploadDiv = true
@@ -93,7 +99,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
       this.showUtilitySelectorDiv = true;
     }
   }
-
 
   //#region PDF Viewer
   public uploadPdf(event:any){
@@ -139,7 +144,9 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
   //#region Html2Canvas
   public pdfToCanvas(event: any) {
+    // set attribute for scan profile
     this.interface.attribute123 = event.target.id;
+
     html2canvas(document.querySelector(".pdf-container") as HTMLElement).then((canvas: any) => {
       this.getCanvasToStorage(canvas)
     })
@@ -160,6 +167,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.cropingImage = event.base64;
     sessionStorage.setItem("CrppdImg", this.cropingImage);
 
+    // set coordinates for scan profile
     this.interface.coordinatesx1 = event.cropperPosition.x1;
     this.interface.coordinatesy1 = event.cropperPosition.y1;
     this.interface.coordinatesx2 = event.cropperPosition.x2;
@@ -175,30 +183,30 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   private rtrvCrppdImgFrmStrg(){
     return window.sessionStorage.getItem("CrppdImg");
   }
+
   public async updatePreset(){
     let inputValue = (<HTMLInputElement>document.getElementById("preset-name")).value;
-  await this.scanProfileDbService.checkPresetName(inputValue)
-    .then((isTaken) => {
-      console.log(isTaken);
-      this.booleanAns = isTaken;
-  
-    });
-    if(this.booleanAns == true){
-      return;
-     
-    }
+    await this.scanProfileDbService.checkPresetName(inputValue)
+      .then((isTaken) => {
+        this.booleanAns = isTaken;
+      });
+    if(this.booleanAns == true){ return; }
     this.presetName = inputValue;
     this.interface.name123 = inputValue;
     this.updateDisabled();
   }
+
   public Test123(){
+    // add new scan profile row
     this.scanProfileDbService.updateWithObservable(this.newScanProfile).subscribe((addedProfile: utilityMeterScanProfile) => {
       console.log("Added profile:", addedProfile);
     }, error => {
         console.error("Error adding profile:", error);
     });
+
     return;
   }
+
   public updateDisabled(){
     if(this.booleanAns == true){
       (<HTMLInputElement>document.getElementById("inputDiv")).style['pointer-events'] = 'none';
@@ -218,8 +226,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
   //#region Tesseract
   async doOCR(){
-    // this.scanProfileDbService.checkPresetName(this.presetName); 
-    this.newScanProfile = this.scanProfileDbService.getnewUtilityMeterProfile();
     this.newScanProfile.accountId = this.interface.accountId;  
     this.newScanProfile.source = this.interface.source123;
     this.newScanProfile.x1 = this.interface.coordinatesx1;
@@ -228,8 +234,11 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.newScanProfile.y2 = this.interface.coordinatesy2;
     this.newScanProfile.presetName = this.interface.name123;
     this.newScanProfile.attribute = this.interface.attribute123;
-        this.isPdf2Image = false;
-      this.isOcrResult = true;
+
+    // show/hide divs
+    this.isPdf2Image = false;
+    this.isOcrResult = true;
+
     const worker = createWorker({
       // logger: m => console.log(m),
     });
@@ -239,6 +248,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     sessionStorage.setItem("CrppdImg", this.cropingImage);
     this.ocrResult = text;
     await (await worker).terminate();
+
     this.Test123();
     this.interface.coordinatesx1 = 0;
     this.interface.coordinatesy1 = 0;
@@ -248,25 +258,17 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     return;
   }
 
-
-
-
-
-
   async endProfile(){
-    const worker1 = createWorker({
-    });
-      this.showFileUploadDiv = false;
-      this.showScanProfileSelectorDiv = true;
-      this.showUtilitySelectorDiv = false;
-      this.showPdfModalDiv = false;
-      this.showCropButtons = false;
-      await (await worker1).terminate();
+    const worker1 = createWorker();
+    this.showFileUploadDiv = false;
+    this.showScanProfileSelectorDiv = true;
+    this.showUtilitySelectorDiv = false;
+    this.showPdfModalDiv = false;
+    this.showCropButtons = false;
+    await (await worker1).terminate();
   }
 
   
-
-
 //#endregion
 
 }

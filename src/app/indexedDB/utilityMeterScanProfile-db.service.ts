@@ -4,7 +4,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { utilityMeterScanProfile, MeterSource, ElectricityAttributeTypes, GeneralAttributeTypes, IdbAccount} from '../models/idb';
 import { FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { AccountdbService } from './account-db.service';
-import { UtilityMeterDataService } from '../facility/utility-data/energy-consumption/utility-meter-data/utility-meter-data.service';
 
 @Injectable({
     providedIn: 'root'
@@ -21,24 +20,26 @@ export class UtilityMeterScanProfileService {
     getAll(): Observable<Array<utilityMeterScanProfile>> {
         return this.dbService.getAll('utilityMeterScanProfile');
     }
+
     async checkPresetName(presetName: string): Promise<boolean> {
         const idbKeyRange: IDBKeyRange = IDBKeyRange.only(presetName);
         let isTaken = false;
-      
+        
         await new Promise<void>((resolve) => {
-          this.dbService
+            this.dbService
             .getAllByIndex('utilityMeterScanProfile', 'presetName', idbKeyRange)
             .subscribe((profiles) => {
-              if (profiles.length > 0) {
+                if (profiles.length > 0) {
                 alert('Preset name already taken.');
                 isTaken = true;
-              }
-              resolve();
+                }
+                resolve();
             });
         });
-      
+        
         return isTaken;
-      }
+    }
+
     getByPresetName(presetName: string): Observable<Array<utilityMeterScanProfile>> {
         let idbKeyRange: IDBKeyRange = IDBKeyRange.only(presetName);
         return this.dbService.getAllByIndex('utilityMeterScanProfile', 'presetName', idbKeyRange);
@@ -48,7 +49,7 @@ export class UtilityMeterScanProfileService {
         return this.dbService.add('utilityMeterScanProfile', item);
     }
     
-    deleteWithObservable(guid: string, ): Observable<any> {
+    deleteWithObservable(guid: string): Observable<any> {
         return this.dbService.delete('utilityMeterScanProfile', guid);
     }
     

@@ -42,6 +42,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public coordinatesy1: number = 0;
   public coordinatesx2: number = 0;
   public coordinatesy2: number = 0;
+  public booleanAns: any ;
   public inputValue123: any = (<HTMLInputElement>document.getElementById("inputDiv"))
   public interface = 
   {
@@ -174,10 +175,21 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   private rtrvCrppdImgFrmStrg(){
     return window.sessionStorage.getItem("CrppdImg");
   }
-  public updatePreset(){
+  public async updatePreset(){
     let inputValue = (<HTMLInputElement>document.getElementById("preset-name")).value;
+  await this.scanProfileDbService.checkPresetName(inputValue)
+    .then((isTaken) => {
+      console.log(isTaken);
+      this.booleanAns = isTaken;
+  
+    });
+    if(this.booleanAns == true){
+      return;
+     
+    }
     this.presetName = inputValue;
     this.interface.name123 = inputValue;
+    this.updateDisabled();
   }
   public Test123(){
     this.scanProfileDbService.updateWithObservable(this.newScanProfile).subscribe((addedProfile: utilityMeterScanProfile) => {
@@ -188,20 +200,25 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     return;
   }
   public updateDisabled(){
-    let presetName: any = (<HTMLInputElement>document.getElementById("preset-name")).value;
-    if(this.presetName == "" || this.presetName == null || this.presetName == undefined || this.presetName == "0"){
+    if(this.booleanAns == true){
+      (<HTMLInputElement>document.getElementById("inputDiv")).style['pointer-events'] = 'none';
+      return;
+    }
+    if(this.presetName == null || this.presetName == undefined || this.presetName == ""){
       alert("Please do not leave the input field empty for the Preset name.");
       (<HTMLInputElement>document.getElementById("inputDiv")).style['pointer-events'] = 'none';
       return;
       //input validation to verify they do not remove the input field and try to submit
     }
     (<HTMLInputElement>document.getElementById("inputDiv")).removeAttribute("style");
+    return;
     //happy case success
   }
   //#endregion
 
   //#region Tesseract
   async doOCR(){
+    // this.scanProfileDbService.checkPresetName(this.presetName); 
     this.newScanProfile = this.scanProfileDbService.getnewUtilityMeterProfile();
     this.newScanProfile.accountId = this.interface.accountId;  
     this.newScanProfile.source = this.interface.source123;
@@ -222,7 +239,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     sessionStorage.setItem("CrppdImg", this.cropingImage);
     this.ocrResult = text;
     await (await worker).terminate();
-    //alert("accountId: " + this.newScanProfile.accountId + "\n" + "source: " + this.newScanProfile.source + "\n" + "x1: " + this.newScanProfile.x1 + "\n" + "y1: " + this.newScanProfile.y1 + "\n" + "x2: " + this.newScanProfile.x2 + "\n" + "y2: " + this.newScanProfile.y2 + "\n" + "presetName: " + this.newScanProfile.presetName + "\n" + "attribute: " + this.newScanProfile.attribute + "\n" );
     this.Test123();
     this.interface.coordinatesx1 = 0;
     this.interface.coordinatesy1 = 0;
@@ -231,6 +247,12 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.interface.attribute123 = "";
     return;
   }
+
+
+
+
+
+
   async endProfile(){
     const worker1 = createWorker({
     });

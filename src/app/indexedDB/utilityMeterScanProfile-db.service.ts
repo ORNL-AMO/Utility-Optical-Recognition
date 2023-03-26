@@ -21,7 +21,24 @@ export class UtilityMeterScanProfileService {
     getAll(): Observable<Array<utilityMeterScanProfile>> {
         return this.dbService.getAll('utilityMeterScanProfile');
     }
-
+    async checkPresetName(presetName: string): Promise<boolean> {
+        const idbKeyRange: IDBKeyRange = IDBKeyRange.only(presetName);
+        let isTaken = false;
+      
+        await new Promise<void>((resolve) => {
+          this.dbService
+            .getAllByIndex('utilityMeterScanProfile', 'presetName', idbKeyRange)
+            .subscribe((profiles) => {
+              if (profiles.length > 0) {
+                alert('Preset name already taken.');
+                isTaken = true;
+              }
+              resolve();
+            });
+        });
+      
+        return isTaken;
+      }
     getByPresetName(presetName: string): Observable<Array<utilityMeterScanProfile>> {
         let idbKeyRange: IDBKeyRange = IDBKeyRange.only(presetName);
         return this.dbService.getAllByIndex('utilityMeterScanProfile', 'presetName', idbKeyRange);

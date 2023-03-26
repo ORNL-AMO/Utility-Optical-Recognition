@@ -39,6 +39,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public cropingImage: any = '';
   public ocrResult: any = '';
   public colorIndex: number = null;
+  // public attributeIndex: number;
   // public sourceOptions: Array<string> = SourceOptions;      // provides the types of utilities
 
     //"Getter method", Angular will call the getter method whenever it needs to update the value of the `src` attribute.
@@ -57,7 +58,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.undefinedMeterData = Object.entries(this.editMeterData).filter(
       ([key, value]) => value === undefined || value === null || value === '' || value === false || value === 'false' || key.includes('checked')
     );
-    console.log(this.undefinedMeterData)
+
     this.undefinedMeterData = this.undefinedMeterData.map(subArray => [
       _.startCase(subArray[0]),
       subArray[1]
@@ -125,9 +126,8 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     })
     this.isPdfUploaded = false;
     this.isPdf2Image = true;
-    
-    //send the index of the button clicked in undefinedMeterData array to doOCR function
-    this.doOCR(index);
+
+    this.updateAttributeColor(index);
   }
 
   private getCanvasToStorage(canvas:any){
@@ -155,18 +155,16 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
   //#endregion
 
-  //#region Tesseract
-  async doOCR(index:number){
+  private updateAttributeColor(index:number){
     //store the index variable when it is sent from pdfToCanvas for when this function is called from HTML file
-    if (index != null)
-      this.colorIndex = index
-    //Function only needs to run when the HTML file sends index = null.
-    if (index == null){
-      this.isPdf2Image = false;
-      this.isOcrResult = true;
-    const worker = createWorker({
-      logger: m => console.log(m),
-    });
+    this.colorIndex = index;
+  }
+
+  //#region Tesseract
+  async doOCR(){
+    this.isPdf2Image = false;
+    this.isOcrResult = true;
+    const worker = createWorker();
     this.undefinedMeterData[this.colorIndex][1] = "lightgray"
     await (await worker).load();
     await (await worker).loadLanguage('eng');
@@ -174,9 +172,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     const {data: { text } } = await (await worker).recognize(this.cropingImage);
     sessionStorage.setItem("CrppdImg", this.cropingImage);
     this.ocrResult = text;
-    console.log(text);
     await (await worker).terminate();
-    }
   }
 //#endregion
 

@@ -7,6 +7,9 @@ import { IdbUtilityMeter, IdbUtilityMeterData } from '../models/idb';
 import { SourceOptions } from 'src/app/facility/utility-data/energy-consumption/energy-source/edit-meter-form/editMeterOptions';
 import * as _ from 'lodash';
 import { UtilityMeterScanProfileService } from '../indexedDB/utilityMeterScanProfile-db.service';
+import { element } from 'protractor';
+import { color } from 'html2canvas/dist/types/css/types/color';
+import { AnyCnameRecord } from 'dns';
 
 @Component({
   selector: 'app-utility-optical-recognition',
@@ -35,6 +38,8 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public currentpage: number = 1;
   public cropingImage: any = '';
   public ocrResult: any = '';
+  public colorIndex: number = null;
+  // public attributeIndex: number;
   // public sourceOptions: Array<string> = SourceOptions;      // provides the types of utilities
 
     //"Getter method", Angular will call the getter method whenever it needs to update the value of the `src` attribute.
@@ -53,11 +58,12 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.undefinedMeterData = Object.entries(this.editMeterData).filter(
       ([key, value]) => value === undefined || value === null || value === '' || value === false || value === 'false' || key.includes('checked')
     );
-    console.log(this.undefinedMeterData)
+
     this.undefinedMeterData = this.undefinedMeterData.map(subArray => [
       _.startCase(subArray[0]),
       subArray[1]
     ]);
+    this.undefinedMeterData = this.undefinedMeterData
   }
 
   skipToUploadPdf() {
@@ -113,12 +119,15 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   //#endregion
 
   //#region Html2Canvas
-  public pdfToCanvas() {  
+  public pdfToCanvas(event:any, index:number) {
+    this.undefinedMeterData[index][1] = "red"
     html2canvas(document.querySelector(".pdf-container") as HTMLElement).then((canvas: any) => {
       this.getCanvasToStorage(canvas)
     })
     this.isPdfUploaded = false;
     this.isPdf2Image = true;
+
+    this.updateAttributeColor(index);
   }
 
   private getCanvasToStorage(canvas:any){
@@ -146,20 +155,23 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
   //#endregion
 
+  private updateAttributeColor(index:number){
+    //store the index variable when it is sent from pdfToCanvas for when this function is called from HTML file
+    this.colorIndex = index;
+  }
+
   //#region Tesseract
   async doOCR(){
-      this.isPdf2Image = false;
-      this.isOcrResult = true;
-    const worker = createWorker({
-      logger: m => console.log(m),
-    });
+    this.isPdf2Image = false;
+    this.isOcrResult = true;
+    const worker = createWorker();
+    this.undefinedMeterData[this.colorIndex][1] = "lightgray"
     await (await worker).load();
     await (await worker).loadLanguage('eng');
     await (await worker).initialize('eng');
     const {data: { text } } = await (await worker).recognize(this.cropingImage);
     sessionStorage.setItem("CrppdImg", this.cropingImage);
     this.ocrResult = text;
-    console.log(text);
     await (await worker).terminate();
   }
 //#endregion

@@ -43,7 +43,10 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public coordinatesy1: number = 0;
   public coordinatesx2: number = 0;
   public coordinatesy2: number = 0;
-  public booleanAns: any ;
+  public booleanAns: any;
+  public last_attritbute = '';
+  public JSON_object = {};
+  public uniqueProfiles: utilityMeterScanProfile[];
   public inputValue123: any = (<HTMLInputElement>document.getElementById("inputDiv"))
   public interface = 
   {
@@ -58,8 +61,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     coordinatesy2: 0,
 
   }
-  public last_attritbute = '';
-  public JSON_object = {};
+
 
 
   // public sourceOptions: Array<string> = SourceOptions;      // provides the types of utilities
@@ -93,6 +95,8 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.newScanProfile = this.scanProfileDbService.getnewUtilityMeterProfile();
     this.interface.accountId = this.editMeter.accountId;
     this.interface.source123 = this.editMeter.source;
+
+    this.onGetUniqueProfiles();
   }
 
   skipToUploadPdf() {
@@ -270,6 +274,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
 
   async endProfile(){
+    this.onGetUniqueProfiles();
     const worker1 = createWorker();
     this.showFileUploadDiv = false;
     this.showScanProfileSelectorDiv = true;
@@ -299,6 +304,15 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public get_json(){
 
     return this.JSON_object;
+  }
+
+  onGetUniqueProfiles() {
+    this.scanProfileDbService.getAll().subscribe(profiles => {
+      // Filter out profiles with duplicate presetName
+      this.uniqueProfiles = profiles.filter((profile, index, self) =>
+        index === self.findIndex(p => p.presetName === profile.presetName)
+      );
+    });
   }
 
 }

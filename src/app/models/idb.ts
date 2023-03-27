@@ -349,7 +349,9 @@ export interface utilityMeterScanProfile {
     //keys (id primary)
     id?: number,
     guid: string,
+    presetName: string,
     accountId: string,
+    
     //data
     source: MeterSource,
     attribute: ElectricityAttributeTypes | GeneralAttributeTypes, 

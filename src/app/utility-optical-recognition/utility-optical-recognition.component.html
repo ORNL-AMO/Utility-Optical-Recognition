@@ -3,26 +3,11 @@
   <div class="row mb-5">
     <h4>Please select a scan profile</h4>
   </div>
-  <div class="row mb-5">
-    <div class="col">
-      <button class="btn btn-primary col-12">Company 1 - Electricity</button>
-    </div>
-    <div class="col">
-      <button class="btn btn-primary col-12">Company 2 - Electricity</button>
-    </div>
-    <div class="col">
-      <button class="btn btn-primary col-12">Company 3 - Electricity</button>
-    </div>
-  </div>
-  <div class="row mb-5">
-    <div class="col">
-      <button class="btn btn-primary col-12">Company 1 - Gas</button>
-    </div>
-    <div class="col">
-      <button class="btn btn-primary col-12">Company 1 - Solar</button>
-    </div>
-    <div class="col">
-      <button class="btn btn-primary col-12">Company 1 - Something</button>
+  <div class="container text-center">
+    <div class="row row-cols-3 mb-5">
+      <div class="col-12">
+        <button class="btn btn-primary col-3 m-2" *ngFor="let profile of uniqueProfiles" [value]="profile.presetName">{{profile.presetName}}</button>
+      </div>
     </div>
   </div>
   <div class="row p-1">
@@ -31,10 +16,10 @@
     </div>
   </div>
   <div class="row justify-content-center mb-5">
-    <button class="btn btn-primary col-6" (click)="skipToUploadPdf()">New Scan Profile</button>
+    <button class="btn btn-primary col-6" (click)="skipToUploadPdf()" >New Scan Profile</button> 
+    
   </div>
 </div>
-
 <!-- utility selector -->
 <div class="utility-selector container p-4" *ngIf="showUtilitySelectorDiv">
   <div class="row justify-content-center mb-5">
@@ -82,7 +67,19 @@
     </ul>
   </div>
   <hr>
+  
+  <!-- scan profile/preset name -->
+  <div class="col-4 mb-3">
+    <label for="preset-name" class="form-label">Scan Profile Name</label>
+    <span class="required">*</span>
+    <div class="input-group">
+      <input class="presetname form-control" type="text" id="preset-name" placeholder="Scan Profile Name">
+      <button class="presetname btn btn-primary" type="button" (click)="updatePreset()">Save</button>
+    </div>
+  </div>
+  <div id ="inputDiv" class="form-control" style="pointer-events: none;">
   <input class="form-control" type="file" id="upload-doc" accept=".pdf" (change)="uploadPdf($event); this.showFileUploadDiv = false; this.showPdfModalDiv = true" />
+  </div>
   <hr>
 </div>
 
@@ -99,8 +96,9 @@
     </ul>
   </div>
 
-  <div class="d-flex">
+  <div class="d-flex mt-5">
     <!-- page numbers -->
+    <button class="btn btn-primary"id="saveAll" type="button" (click)="endProfile()">Save Profile Changes</button>
     <div class="d-inline-flex ms-auto" *ngIf="isPdfUploaded">
       <button class="btn action-btn" type="button" (click)="previous()">
         <i class="fa fa-chevron-left"></i>
@@ -113,6 +111,7 @@
     <!-- crop image button -->
     <div class="pagescount ms-auto" *ngIf="isPdf2Image">
       <button (click)="doOCR()" class="btn btn-primary">Crop Image</button>
+      <!-- <button (click)="" class="btn btn-primary">Add json object</button> -->
     </div>
   </div>
 
@@ -120,9 +119,9 @@
     <div class="col-4 mt-5">
       <!-- attribute buttons -->
       <div class="ms-e me-3" *ngIf="showCropButtons">
-        <div class="d-flex flex-column justify-content-center" *ngFor="let attr of undefinedMeterData">
-          <button class="btn action-btn p-3 mb-3" (click)="pdfToCanvas()" 
-          [id]="attr[0]" [disabled]="isPdf2Image ? true : false">
+        <div class="d-flex flex-column justify-content-center" *ngFor="let attr of undefinedMeterData; let i=index">
+          <button class="btn action-btn p-3 mb-3" (click)="pdfToCanvas($event,i)" [style.color] = "attr[1]"
+            [id]="attr[0]" [disabled]="isPdf2Image ? true : false">
             {{ attr[0] }}
           </button>
         </div>
@@ -147,6 +146,8 @@
         [imageBase64]="strdPdf2Img"
         (imageCropped)="cropImage($event)"
         [maintainAspectRatio]="false"
+        [containWithinAspectRatio]="false" 
+
         [aspectRatio]="2 / 2">
         </image-cropper>
       </div>
@@ -159,6 +160,3 @@
     </div>
   </div>
 </div>
-
-  
-

@@ -57,7 +57,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     coordinatesy1: 0,
     coordinatesx2: 0,
     coordinatesy2: 0,
-
+    pgNum: 1,
   }
   public colorIndex: number = null;
 
@@ -134,8 +134,10 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     if (this.currentpage > 0) {
       if (this.currentpage == 1) {
         this.currentpage = this.totalPages;
+        this.interface.pgNum = this.currentpage;
       } else {
         this.currentpage--;
+        this.interface.pgNum = this.currentpage;
       }
     }
   }
@@ -143,8 +145,10 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public next() {
     if (this.totalPages > this.currentpage) {
       this.currentpage++;
+      this.interface.pgNum = this.currentpage;
     } else {
       this.currentpage = 1;
+      this.interface.pgNum = this.currentpage;
     }
   }
   //#endregion
@@ -159,7 +163,8 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     html2canvas(document.querySelector(".pdf-container") as HTMLElement).then((canvas: any) => {
       this.getCanvasToStorage(canvas)
     })
-    this.isPdfUploaded = false;
+    
+     this.isPdfUploaded = false;
     this.isPdf2Image = true;
     
     this.last_attritbute = event.target.id;
@@ -185,6 +190,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.interface.coordinatesy1 = event.cropperPosition.y1;
     this.interface.coordinatesx2 = event.cropperPosition.x2;
     this.interface.coordinatesy2 = event.cropperPosition.y2; 
+     
   }
   //#endregion
 
@@ -252,7 +258,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.newScanProfile.y2 = this.interface.coordinatesy2;
     this.newScanProfile.presetName = this.interface.name123;
     this.newScanProfile.attribute = this.interface.attribute123;
-
+    this.newScanProfile.pgNum = this.interface.pgNum;
     // show/hide divs
     this.isPdf2Image = false;
     this.isOcrResult = true;
@@ -277,6 +283,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.interface.coordinatesx2 = 0;
     this.interface.coordinatesy2 = 0;
     this.interface.attribute123 = "";
+    this.isPdfUploaded = true;
     return;
   }
 

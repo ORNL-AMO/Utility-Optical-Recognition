@@ -152,7 +152,8 @@ export const dbConfig: DBConfig = {
       { name: 'x1', keypath: 'x1', options: { unique: false } }, //make sure to setup vars elsewhere
       { name: 'y1', keypath: 'y1', options: { unique: false } },
       { name: 'x2', keypath: 'x2', options: { unique: false } },
-      { name: 'y2', keypath: 'y2', options: { unique: false } }//,
+      { name: 'y2', keypath: 'y2', options: { unique: false } },
+      { name: 'pgNum', keypath: 'pgNum', options: { unique: false } }//,
     ]
   },
   {

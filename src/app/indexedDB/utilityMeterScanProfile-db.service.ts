@@ -74,7 +74,8 @@ export class UtilityMeterScanProfileService {
             x1: undefined,
             y1: undefined,
             x2: undefined,
-            y2: undefined
+            y2: undefined,
+            pgNum: undefined,
         }
     }
 

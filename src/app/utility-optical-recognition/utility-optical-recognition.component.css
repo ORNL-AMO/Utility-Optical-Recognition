@@ -5,9 +5,9 @@
     margin-top: 1.5rem;
 }
 pdf-viewer{
-    height: 300vh !important;
+    height: 100vh !important;
 }
 .pdf-container {
-    height: 200vh !important;
+    height: 100vh !important;
     overflow: scroll;
 }

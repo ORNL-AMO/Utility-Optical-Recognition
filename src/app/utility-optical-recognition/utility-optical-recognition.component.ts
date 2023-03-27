@@ -3,10 +3,12 @@ import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 import html2canvas from 'html2canvas';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { createWorker } from 'tesseract.js'
-import { IdbUtilityMeter, IdbUtilityMeterData } from '../models/idb';
+import { IdbUtilityMeter, IdbUtilityMeterData, utilityMeterScanProfile } from '../models/idb';
 import { SourceOptions } from 'src/app/facility/utility-data/energy-consumption/energy-source/edit-meter-form/editMeterOptions';
 import * as _ from 'lodash';
 import { UtilityMeterScanProfileService } from '../indexedDB/utilityMeterScanProfile-db.service';
+import { exit } from 'process';
+import { Interface } from 'readline';
 import { element } from 'protractor';
 import { color } from 'html2canvas/dist/types/css/types/color';
 import { AnyCnameRecord } from 'dns';
@@ -38,8 +40,32 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public currentpage: number = 1;
   public cropingImage: any = '';
   public ocrResult: any = '';
+  public newScanProfile: any;
+  public presetName: string = '';
+  public coordinatesx1: number = 0;
+  public coordinatesy1: number = 0;
+  public coordinatesx2: number = 0;
+  public coordinatesy2: number = 0;
+  public booleanAns: any;
+  public last_attritbute = '';
+  public JSON_object = {};
+  public uniqueProfiles: utilityMeterScanProfile[];
+  public inputValue123: any = (<HTMLInputElement>document.getElementById("inputDiv"))
+  public interface = 
+  {
+    guid: "",
+    accountId: "",
+    name123: "",
+    source123: "",
+    attribute123: "",
+    coordinatesx1: 0,
+    coordinatesy1: 0,
+    coordinatesx2: 0,
+    coordinatesy2: 0,
+
+  }
   public colorIndex: number = null;
-  // public attributeIndex: number;
+
   // public sourceOptions: Array<string> = SourceOptions;      // provides the types of utilities
 
     //"Getter method", Angular will call the getter method whenever it needs to update the value of the `src` attribute.
@@ -52,23 +78,33 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     }  
 //#endregion
 
-  constructor() {}
+  constructor(
+    private scanProfileDbService: UtilityMeterScanProfileService
+  ) {}
 
   ngOnInit(): void {
+    // find bill attribute types
     this.undefinedMeterData = Object.entries(this.editMeterData).filter(
       ([key, value]) => value === undefined || value === null || value === '' || value === false || value === 'false' || key.includes('checked')
     );
-
+    
+    // keep only the undefined attributes
     this.undefinedMeterData = this.undefinedMeterData.map(subArray => [
-      _.startCase(subArray[0]),
-      subArray[1]
+      _.startCase(subArray[0]), subArray[1]
     ]);
-    this.undefinedMeterData = this.undefinedMeterData
+
+    // start scan profile
+    this.newScanProfile = this.scanProfileDbService.getnewUtilityMeterProfile();
+    this.interface.accountId = this.editMeter.accountId;
+    this.interface.source123 = this.editMeter.source;
+
+    this.onGetUniqueProfiles();
   }
 
   skipToUploadPdf() {
+    // if source found, skip to upload pdf
     if(this.editMeter.source){
-      this.showScanProfileSelectorDiv = false; 
+      this.showScanProfileSelectorDiv = false;
       this.showFileUploadDiv = true
     } else {
       this.showScanProfileSelectorDiv = false;
@@ -121,11 +157,17 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   //#region Html2Canvas
   public pdfToCanvas(event:any, index:number) {
     this.undefinedMeterData[index][1] = "red"
+    
+    // set attribute for scan profile
+    this.interface.attribute123 = event.target.id;
+    
     html2canvas(document.querySelector(".pdf-container") as HTMLElement).then((canvas: any) => {
       this.getCanvasToStorage(canvas)
     })
     this.isPdfUploaded = false;
     this.isPdf2Image = true;
+    
+    this.last_attritbute = event.target.id;
 
     this.updateAttributeColor(index);
   }
@@ -142,6 +184,12 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public cropImage(event: ImageCroppedEvent){
     this.cropingImage = event.base64;
     sessionStorage.setItem("CrppdImg", this.cropingImage);
+
+    // set coordinates for scan profile
+    this.interface.coordinatesx1 = event.cropperPosition.x1;
+    this.interface.coordinatesy1 = event.cropperPosition.y1;
+    this.interface.coordinatesx2 = event.cropperPosition.x2;
+    this.interface.coordinatesy2 = event.cropperPosition.y2; 
   }
   //#endregion
 
@@ -153,6 +201,45 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   private rtrvCrppdImgFrmStrg(){
     return window.sessionStorage.getItem("CrppdImg");
   }
+
+  public async updatePreset(){
+    let inputValue = (<HTMLInputElement>document.getElementById("preset-name")).value;
+    await this.scanProfileDbService.checkPresetName(inputValue)
+      .then((isTaken) => {
+        this.booleanAns = isTaken;
+      });
+    if(this.booleanAns == true){ return; }
+    this.presetName = inputValue;
+    this.interface.name123 = inputValue;
+    this.updateDisabled();
+  }
+
+  public Test123(){
+    // add new scan profile row
+    this.scanProfileDbService.updateWithObservable(this.newScanProfile).subscribe((addedProfile: utilityMeterScanProfile) => {
+      console.log("Added profile:", addedProfile);
+    }, error => {
+        console.error("Error adding profile:", error);
+    });
+
+    return;
+  }
+
+  public updateDisabled(){
+    if(this.booleanAns == true){
+      (<HTMLInputElement>document.getElementById("inputDiv")).style['pointer-events'] = 'none';
+      return;
+    }
+    if(this.presetName == null || this.presetName == undefined || this.presetName == ""){
+      alert("Please do not leave the input field empty for the Preset name.");
+      (<HTMLInputElement>document.getElementById("inputDiv")).style['pointer-events'] = 'none';
+      return;
+      //input validation to verify they do not remove the input field and try to submit
+    }
+    (<HTMLInputElement>document.getElementById("inputDiv")).removeAttribute("style");
+    return;
+    //happy case success
+  }
   //#endregion
 
   private updateAttributeColor(index:number){
@@ -162,18 +249,82 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
   //#region Tesseract
   async doOCR(){
+    this.newScanProfile.accountId = this.interface.accountId;  
+    this.newScanProfile.source = this.interface.source123;
+    this.newScanProfile.x1 = this.interface.coordinatesx1;
+    this.newScanProfile.y1 = this.interface.coordinatesy1;
+    this.newScanProfile.x2 = this.interface.coordinatesx2;
+    this.newScanProfile.y2 = this.interface.coordinatesy2;
+    this.newScanProfile.presetName = this.interface.name123;
+    this.newScanProfile.attribute = this.interface.attribute123;
+
+    // show/hide divs
     this.isPdf2Image = false;
     this.isOcrResult = true;
+
     const worker = createWorker();
     this.undefinedMeterData[this.colorIndex][1] = "lightgray"
     await (await worker).load();
     await (await worker).loadLanguage('eng');
     await (await worker).initialize('eng');
     const {data: { text } } = await (await worker).recognize(this.cropingImage);
-    sessionStorage.setItem("CrppdImg", this.cropingImage);
+    sessionStorage.setItem("CrppdImg", this.cropingImage); 
     this.ocrResult = text;
+
+    this.ocrResult = this.ocrResult.replace(/[$\n]/g, '') //splice out $ and new lines
+    this.add_to_json(this.last_attritbute, this.ocrResult);
+    this.set_json();
     await (await worker).terminate();
+
+    this.Test123();
+    this.interface.coordinatesx1 = 0;
+    this.interface.coordinatesy1 = 0;
+    this.interface.coordinatesx2 = 0;
+    this.interface.coordinatesy2 = 0;
+    this.interface.attribute123 = "";
+    return;
   }
+
+  async endProfile(){
+    this.onGetUniqueProfiles();
+    const worker1 = createWorker();
+    this.showFileUploadDiv = false;
+    this.showScanProfileSelectorDiv = true;
+    this.showUtilitySelectorDiv = false;
+    this.showPdfModalDiv = false;
+    this.showCropButtons = false;
+    await (await worker1).terminate();
+  }
+
+  
 //#endregion
+
+  async add_to_json(key:string, value:any){
+
+    this.JSON_object[key] = value;
+    
+    }
+
+  public clear_json(){
+    this.JSON_object = {}
+  }
+
+  public set_json(){
+    sessionStorage.setItem("scan_output", JSON.stringify(this.JSON_object));
+  }
+
+  public get_json(){
+
+    return this.JSON_object;
+  }
+
+  onGetUniqueProfiles() {
+    this.scanProfileDbService.getAll().subscribe(profiles => {
+      // Filter out profiles with duplicate presetName
+      this.uniqueProfiles = profiles.filter((profile, index, self) =>
+        index === self.findIndex(p => p.presetName === profile.presetName)
+      );
+    });
+  }
 
 }

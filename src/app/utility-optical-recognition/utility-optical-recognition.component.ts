@@ -7,11 +7,6 @@ import { IdbUtilityMeter, IdbUtilityMeterData, utilityMeterScanProfile } from '.
 import { SourceOptions } from 'src/app/facility/utility-data/energy-consumption/energy-source/edit-meter-form/editMeterOptions';
 import * as _ from 'lodash';
 import { UtilityMeterScanProfileService } from '../indexedDB/utilityMeterScanProfile-db.service';
-import { exit } from 'process';
-import { Interface } from 'readline';
-import { element } from 'protractor';
-import { color } from 'html2canvas/dist/types/css/types/color';
-import { AnyCnameRecord } from 'dns';
 
 @Component({
   selector: 'app-utility-optical-recognition',
@@ -294,6 +289,10 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.showPdfModalDiv = false;
     this.showCropButtons = false;
     await (await worker1).terminate();
+
+    for(var index in this.undefinedMeterData){
+      this.undefinedMeterData[index][1] = "black";
+    }
   }
 
   

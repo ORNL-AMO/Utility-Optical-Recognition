@@ -78,12 +78,12 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // find bill attribute types
+    // filter out some attributes
     this.undefinedMeterData = Object.entries(this.editMeterData).filter(
-      ([key, value]) => value === undefined || value === null || value === '' || value === false || value === 'false' || key.includes('checked')
+      ([key, value]) => key != "guid" && key != "meterId" && key != "facilityId" && key != "accountId" && key != "checked"
     );
     
-    // keep only the undefined attributes
+    // update attribute names from camelCase to Title Case
     this.undefinedMeterData = this.undefinedMeterData.map(subArray => [
       _.startCase(subArray[0]), subArray[1]
     ]);
@@ -164,7 +164,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
       this.getCanvasToStorage(canvas)
     })
     
-     this.isPdfUploaded = false;
+    this.isPdfUploaded = false;
     this.isPdf2Image = true;
     
     this.last_attritbute = event.target.id;
@@ -189,8 +189,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.interface.coordinatesx1 = event.cropperPosition.x1;
     this.interface.coordinatesy1 = event.cropperPosition.y1;
     this.interface.coordinatesx2 = event.cropperPosition.x2;
-    this.interface.coordinatesy2 = event.cropperPosition.y2; 
-     
+    this.interface.coordinatesy2 = event.cropperPosition.y2;
   }
   //#endregion
 
@@ -220,7 +219,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.scanProfileDbService.updateWithObservable(this.newScanProfile).subscribe((addedProfile: utilityMeterScanProfile) => {
       console.log("Added profile:", addedProfile);
     }, error => {
-        console.error("Error adding profile:", error);
+      console.error("Error adding profile:", error);
     });
 
     return;
@@ -306,10 +305,8 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 //#endregion
 
   async add_to_json(key:string, value:any){
-
     this.JSON_object[key] = value;
-    
-    }
+  }
 
   public clear_json(){
     this.JSON_object = {}
@@ -320,7 +317,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
 
   public get_json(){
-
     return this.JSON_object;
   }
 

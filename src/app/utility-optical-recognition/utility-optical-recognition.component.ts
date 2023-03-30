@@ -57,7 +57,12 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public JSON_object = {};
   public uniqueProfiles: utilityMeterScanProfile[];
   public inputValue123: any = (<HTMLInputElement>document.getElementById("inputDiv"));
-
+  public tempArrayAttributeNames = [];
+  public tempArrayAttributex1 = [];
+  public tempArrayAttributey1 = [];
+  public tempArrayAttributex2 = [];
+  public tempArrayAttributey2 = [];
+  public tempArrayAttributePgNum = [];
   //mabe
   public pdf: PDFDocumentProxy;
   public GetProfile =
@@ -147,12 +152,13 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
         let reader = new FileReader();
         reader.onload = (e: any) => {
           this.pdfSrc = e.target.result;
-          
+
         };
         this.isPdfUploaded = true;
         this.showPdfDiv = true;
         this.showCropButtons = true;
         reader.readAsArrayBuffer($img.files[0]);
+        
       }
     } else{
       alert('please upload pdf file')
@@ -160,13 +166,13 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
 
   public afterLoadComplete(pdf: PDFDocumentProxy) {
-   this.totalPages = pdf.numPages;
-   if(this.GetProfile.pgNum != this.currentpage){
-   pdf.getPage(1).then((currentpage) => {
-    this.currentpage = this.GetProfile.pgNum;
+    this.totalPages = pdf.numPages;
+//    if(this.GetProfile.pgNum != this.currentpage){
+//    pdf.getPage(1).then((currentpage) => {
+//     this.currentpage = this.GetProfile.pgNum;
+//   });
+// }
 
-  });
-}
   }
 
   public previous() {
@@ -193,17 +199,32 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   //#endregion
 
   //#region Html2Canvas
-  public pdfToCanvas(event:any, index:number| null ) {
+  public pdfToCanvas(event:any, index:number| null, attr: string | null ) {
     
+    for(let i = 0; i < this.tempArrayAttributeNames.length; i++){
+      alert(this.tempArrayAttributeNames[i] + " " + attr);
+    if(attr == this.tempArrayAttributeNames[i]){
+      this.GetProfile.coordinatesx1 = this.tempArrayAttributex1[i];
+      this.GetProfile.coordinatesy1 = this.tempArrayAttributey1[i];
+      this.GetProfile.coordinatesx2 = this.tempArrayAttributex2[i];
+      this.GetProfile.coordinatesy2 = this.tempArrayAttributey2[i];
+      this.GetProfile.pgNum = this.tempArrayAttributePgNum[i];
+      this.GetProfile.attribute123 = this.tempArrayAttributeNames[i];
+      //alert(this.GetProfile.coordinatesx1 + " " + this.GetProfile.coordinatesy1 + " " + this.GetProfile.coordinatesx2 + " " + this.GetProfile.coordinatesy2 + " " + this.GetProfile.pgNum + " " + this.GetProfile.attribute123);
+    }
+    }
      if(this.GetProfile.pgNum != this.currentpage && index == null){
-      this.currentpage = this.GetProfile.pgNum;
-      this.pdfSrc = this.pdfSrc;
+      //set page numbers
+      if(this.GetProfile.pgNum != this.currentpage){
+        this.pdfSrc.getPage(1).then((currentpage) => {
+         this.currentpage = this.GetProfile.pgNum;
+       });
+     }
     }
     if(index != null){
     this.undefinedMeterData[index][1] = "red"
     this.interface.attribute123 = event.target.id;
   }
-
      html2canvas(document.querySelector(".pdf-container") as HTMLElement).then((canvas: any) => {
       this.getCanvasToStorage(canvas)
     })
@@ -258,28 +279,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     const y2 = this.GetProfile.coordinatesy2;// calculate y2 position based on passed y2 and dimensions
     return { x1, y1, x2, y2 };
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   private getCanvasToStorage(canvas:any){
@@ -421,6 +420,8 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.showCropButtons = false;
 
     await (await worker1).terminate();
+    this.tempArrayAttributeNames = [];
+    this.counterVar = 0;
   }
 
   
@@ -462,20 +463,26 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     if(event != null){
       this.GetProfile.name123 = event.target.value;
     }
-    await this.scanProfileDbService.getByPresetName(this.GetProfile.name123).subscribe(profiles => {
+      this.scanProfileDbService.getByPresetName(this.GetProfile.name123).subscribe(profiles => {
       let tempArray = profiles;
-      this.GetProfile.accountId = tempArray[this.counterVar].accountId;
-      this.GetProfile.source123 = tempArray[this.counterVar].source;
-      this.GetProfile.coordinatesx1 = tempArray[this.counterVar].x1;
-      this.GetProfile.coordinatesy1 = tempArray[this.counterVar].y1;
-      this.GetProfile.coordinatesx2 = tempArray[this.counterVar].x2;
-      this.GetProfile.coordinatesy2 = tempArray[this.counterVar].y2;
-      this.GetProfile.pgNum = tempArray[this.counterVar].pgNum;
-      this.GetProfile.attribute123 = tempArray[this.counterVar].attribute;
+      
       if(event != null){
       this.showFileUploadDiv1 = true;
       this.showScanProfileSelectorDiv = false;
       
+      }
+      
+      let i = 0;
+      
+      if(this.counterVar == 0){
+        for(i = 0; i < tempArray.length; i++){
+        this.tempArrayAttributeNames.push(tempArray[i].attribute);
+        this.tempArrayAttributex1.push(tempArray[i].x1);
+        this.tempArrayAttributey1.push(tempArray[i].y1);
+        this.tempArrayAttributex2.push(tempArray[i].x2);
+        this.tempArrayAttributey2.push(tempArray[i].y2);
+        this.tempArrayAttributePgNum.push(tempArray[i].pgNum);
+      }
       }
       this.counterVar++;
     });

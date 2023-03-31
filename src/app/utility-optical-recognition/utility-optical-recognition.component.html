@@ -122,7 +122,7 @@
         <div class="d-flex flex-column justify-content-center" *ngFor="let attr of undefinedMeterData; let i=index">
           <button class="btn action-btn p-3 mb-3" (click)="pdfToCanvas($event,i)" [style.color] = "attr[1]"
             [id]="attr[0]" [disabled]="isPdf2Image ? true : false">
-            {{ attr[0] }} <span *ngIf="attr.includes('Total Energy Use') || attr.includes('Read Date')" class="required">*</span>
+            {{ attr[0] }} <span *ngIf="attr.includes('Total Volume') ||attr.includes('Total Energy Use') || attr.includes('Read Date')" class="required">*</span>
           </button>
         </div>
       </div>

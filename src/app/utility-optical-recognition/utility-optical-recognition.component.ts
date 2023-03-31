@@ -78,15 +78,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // filter out some attributes
-    this.undefinedMeterData = Object.entries(this.editMeterData).filter(
-      ([key, value]) => key != "guid" && key != "meterId" && key != "facilityId" && key != "accountId" && key != "checked"
-    );
-    
-    // update attribute names from camelCase to Title Case
-    this.undefinedMeterData = this.undefinedMeterData.map(subArray => [
-      _.startCase(subArray[0]), subArray[1]
-    ]);
+    this.setupBillAttributes();
 
     // start scan profile
     this.newScanProfile = this.scanProfileDbService.getnewUtilityMeterProfile();
@@ -94,6 +86,24 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.interface.source123 = this.editMeter.source;
 
     this.onGetUniqueProfiles();
+  }
+
+  setupBillAttributes() {
+    // filter out unnecessary attributes
+    if(this.editMeter.source == 'Electricity'){
+      this.undefinedMeterData = Object.entries(this.editMeterData).filter(
+        ([key, value]) => key != "totalVolume" && key != "guid" && key != "meterId" && key != "facilityId" && key != "accountId" && key != "checked"
+      );
+    } else {
+      this.undefinedMeterData = Object.entries(this.editMeterData).filter(
+        ([key, value]) => key != "guid" && key != "meterId" && key != "facilityId" && key != "accountId" && key != "checked"
+      );
+    }
+    
+    // update attribute names from camelCase to Title Case
+    this.undefinedMeterData = this.undefinedMeterData.map(subArray => [
+      _.startCase(subArray[0]), subArray[1]
+    ]);
   }
 
   skipToUploadPdf() {

@@ -127,19 +127,12 @@
   <div class="d-flex mt-5">
     <!-- page numbers -->
     <button class="btn btn-primary"id="saveAll" type="button" (click)="endProfile1()">Save Profile Changes</button>
-    <div class="d-inline-flex ms-auto" *ngIf="isPdfUploaded">
-      <button class="btn action-btn" type="button" (click)="previous()">
-        <i class="fa fa-chevron-left"></i>
-      </button>
-      <p class="pagescount">Page {{currentpage}} of {{totalPages}}</p>
-      <button class="btn action-btn" type="button" (click)="next()">
-        <i class="fa fa-chevron-right"></i>
-      </button>
+    <div class="d-inline-flex ms-auto" *ngIf="isButtonReady">
+      <button class="btn btn-primary"id="saveAll" type="button" (click)="test($event);">Load Set Location</button>
     </div>
     <!-- crop image button -->
     <div class="pagescount ms-auto" *ngIf="isPdf2Image">
-      <button (click)="doOCR2()" class="btn btn-primary">Looks Good to Me</button>
-      <!-- <button (click)="" class="btn btn-primary">Add json object</button> -->
+      <button (click)="doOCR2()" class="btn btn-primary">Fetch This Data</button>
     </div>
   </div>
 
@@ -148,24 +141,24 @@
       <!-- attribute buttons -->
       <div class="ms-e me-3" *ngIf="showCropButtons">
         <div class="d-flex flex-column justify-content-center" *ngFor="let attr of this.tempArrayAttributeNames; let i=index">
-          <button class="btn action-btn p-3 mb-3" (click)="pdfToCanvas($event,null, attr);" 
+          <button class="btn action-btn p-3 mb-3" (click)="upatePage(attr);" 
             [id]="attr[0]" [disabled]="isPdf2Image ? true : false" >
             {{ attr }}
           </button>
         </div>
       </div>
     </div>
-
+<!-- pdfToCanvas($event, null, attr); -->
     <div class="col-8">
       <div class="pdf-container top-margin" *ngIf="isPdfUploaded">
         <pdf-viewer #pdfViewer
         [src]="pdfSrc" 
         [render-text]="true" 
-        [page]="currentpage" 
+        [(page)]="currentpage"
         [show-all]="false" 
         [original-size]="false"
         [zoom-scale]="'page-fit'"
-        (after-load-complete)="afterLoadComplete($event)">
+        (after-load-complete)="afterLoadComplete($event);">
         </pdf-viewer>
       </div>
   

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { PDFDocumentProxy } from 'ng2-pdf-viewer';
+import { PDFDocumentProxy, PdfViewerComponent } from 'ng2-pdf-viewer';
 import html2canvas from 'html2canvas';
 import { Dimensions, ImageCroppedEvent, ImageTransform, ImageCropperComponent, CropperPosition } from 'ngx-image-cropper'
 import { createWorker } from 'tesseract.js'
@@ -21,7 +21,8 @@ import { AnyCnameRecord } from 'dns';
 
 export class UtilityOpticalRecognitionComponent implements OnInit {
   //#region Variables
-  @ViewChild('pdfViewer') pdfViewer;
+  //@ViewChild(PdfViewerComponent) pdfViewer: PdfViewerComponent;
+  @ViewChild(PdfViewerComponent, {static: false}) private pdfViewer: PdfViewerComponent;
   @Input() editMeter: IdbUtilityMeter;
   @Input() editMeterData: IdbUtilityMeterData;
   public page: number = 1;
@@ -45,6 +46,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public currentpage: number = 1;
   public cropingImage: any = '';
   public grabbingImage: any = '';
+  public isButtonReady: boolean = false;
   public ocrResult: any = '';
   public newScanProfile: any;
   public presetName: string = '';
@@ -129,10 +131,8 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.newScanProfile = this.scanProfileDbService.getnewUtilityMeterProfile();
     this.interface.accountId = this.editMeter.accountId;
     this.interface.source123 = this.editMeter.source;
-
     this.onGetUniqueProfiles();
   }
-
   skipToUploadPdf() {
     // if source found, skip to upload pdf
     if(this.editMeter.source){
@@ -143,7 +143,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
       this.showUtilitySelectorDiv = true;
     }
   }
-
   //#region PDF Viewer
   public uploadPdf(event:any){
     let $img: any = document.querySelector('#upload-doc');
@@ -167,13 +166,11 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
   public afterLoadComplete(pdf: PDFDocumentProxy) {
     this.totalPages = pdf.numPages;
-//    if(this.GetProfile.pgNum != this.currentpage){
-//    pdf.getPage(1).then((currentpage) => {
-//     this.currentpage = this.GetProfile.pgNum;
-//   });
-// }
-
-  }
+  //  pdf.getPage(1).then((currentpage) => {  
+  //     this.currentpage = 1 ;
+  //   });
+   
+}
 
   public previous() {
     if (this.currentpage > 0) {
@@ -195,14 +192,11 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
       this.currentpage = 1;
       this.interface.pgNum = this.currentpage;
     }
+    return;
   }
-  //#endregion
-
-  //#region Html2Canvas
-  public pdfToCanvas(event:any, index:number| null, attr: string | null ) {
-    
+  public upatePage(attr: string){
     for(let i = 0; i < this.tempArrayAttributeNames.length; i++){
-      alert(this.tempArrayAttributeNames[i] + " " + attr);
+      //alert(this.tempArrayAttributeNames[i] + " " + attr);
     if(attr == this.tempArrayAttributeNames[i]){
       this.GetProfile.coordinatesx1 = this.tempArrayAttributex1[i];
       this.GetProfile.coordinatesy1 = this.tempArrayAttributey1[i];
@@ -212,19 +206,63 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
       this.GetProfile.attribute123 = this.tempArrayAttributeNames[i];
       //alert(this.GetProfile.coordinatesx1 + " " + this.GetProfile.coordinatesy1 + " " + this.GetProfile.coordinatesx2 + " " + this.GetProfile.coordinatesy2 + " " + this.GetProfile.pgNum + " " + this.GetProfile.attribute123);
     }
+
     }
-     if(this.GetProfile.pgNum != this.currentpage && index == null){
-      //set page numbers
-      if(this.GetProfile.pgNum != this.currentpage){
-        this.pdfSrc.getPage(1).then((currentpage) => {
-         this.currentpage = this.GetProfile.pgNum;
-       });
-     }
+    this.currentpage = this.GetProfile.pgNum;
+    alert(this.GetProfile.pgNum);
+    // this.isPdfUploaded = false;
+    // this.isPdf2Image = true;
+    this.isButtonReady = true;
+    return;
+  }
+  //#endregion
+  
+  //#region Html2Canvas
+  
+public async test(event:any){
+    this.interface.attribute123 = event.target.id;
+     await html2canvas(document.querySelector(".pdf-container") as HTMLElement).then((canvas: any) => {
+      this.getCanvasToStorage(canvas)
+    })
+      this.cropperPosition.x1 = this.GetProfile.coordinatesx1;
+      this.cropperPosition.y1 = this.GetProfile.coordinatesy1;
+      this.cropperPosition.x2 = this.GetProfile.coordinatesx2;
+      this.cropperPosition.y2 = this.GetProfile.coordinatesy2;
+    //await this.doOCR2();
+    this.isPdfUploaded = false;
+    this.isButtonReady = false;
+    this.isPdf2Image = true;
+    return;
+}
+
+
+
+
+
+
+
+
+  public pdfToCanvas(event:any, index:number| null, attr: string | null ) {    
+    for(let i = 0; i < this.tempArrayAttributeNames.length; i++){
+      //alert(this.tempArrayAttributeNames[i] + " " + attr);
+    if(attr == this.tempArrayAttributeNames[i]){
+      this.GetProfile.coordinatesx1 = this.tempArrayAttributex1[i];
+      this.GetProfile.coordinatesy1 = this.tempArrayAttributey1[i];
+      this.GetProfile.coordinatesx2 = this.tempArrayAttributex2[i];
+      this.GetProfile.coordinatesy2 = this.tempArrayAttributey2[i];
+      this.GetProfile.pgNum = this.tempArrayAttributePgNum[i];
+      this.GetProfile.attribute123 = this.tempArrayAttributeNames[i];
+      //alert(this.GetProfile.coordinatesx1 + " " + this.GetProfile.coordinatesy1 + " " + this.GetProfile.coordinatesx2 + " " + this.GetProfile.coordinatesy2 + " " + this.GetProfile.pgNum + " " + this.GetProfile.attribute123);
+    }
+
+    }
+    if(this.currentpage != this.GetProfile.pgNum){
     }
     if(index != null){
     this.undefinedMeterData[index][1] = "red"
     this.interface.attribute123 = event.target.id;
   }
+    
      html2canvas(document.querySelector(".pdf-container") as HTMLElement).then((canvas: any) => {
       this.getCanvasToStorage(canvas)
     })
@@ -242,6 +280,8 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
       this.updateAttributeColor(index);
     }
   }
+  
+
   croppedImage: any = null;
   aspectRatio = 1;
   resizeToWidth = 0;
@@ -446,10 +486,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     return this.JSON_object;
   }
 
-//   fileChangeEvent(event: any): void {
-//     this.imageChangedEvent = event;
-// }
-
   onGetUniqueProfiles() {
     this.scanProfileDbService.getAll().subscribe(profiles => {
       // Filter out profiles with duplicate presetName
@@ -486,6 +522,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
       }
       this.counterVar++;
     });
+    
     return;
 }
   async doOCR2(){
@@ -501,17 +538,15 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     sessionStorage.setItem("CrppdImg", this.cropingImage); 
     this.ocrResult = text;
     this.ocrResult = this.ocrResult.replace(/[$\n]/g, '') //splice out $ and new lines
-    this.add_to_json(this.last_attritbute, this.ocrResult);
+    this.add_to_json(this.GetProfile.attribute123, this.ocrResult);
     this.set_json();
     await (await worker).terminate();
-    this.isPdfUploaded = true;
     this.startProcessing(null);
     this.currentpage = 1;
+    this.isButtonReady = false;
+    this.isPdfUploaded = true;
     return;
   }
  
-
-
-
 //edit bill component
   }

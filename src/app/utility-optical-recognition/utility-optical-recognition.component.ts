@@ -234,14 +234,6 @@ public async test(event:any){
     this.isPdf2Image = true;
     return;
 }
-
-
-
-
-
-
-
-
   public pdfToCanvas(event:any, index:number| null, attr: string | null ) {    
     for(let i = 0; i < this.tempArrayAttributeNames.length; i++){
       //alert(this.tempArrayAttributeNames[i] + " " + attr);
@@ -422,7 +414,15 @@ public async test(event:any){
     sessionStorage.setItem("CrppdImg", this.cropingImage); 
     this.ocrResult = text;
 
-    this.ocrResult = this.ocrResult.replace(/[$\n]/g, '') //splice out $ and new lines
+    this.ocrResult = await this.ocrResult.replace(/[$\n]/g, '') //splice out $ and new lines
+    if(this.ocrResult == ""){
+      alert("Nothing was able to be read from the image. Please try again.");
+      this.startProcessing(null);
+      this.currentpage = 1;
+      this.isButtonReady = false;
+      this.isPdfUploaded = true;
+      return;
+    }
     this.add_to_json(this.last_attritbute, this.ocrResult);
     this.set_json();
     await (await worker).terminate();
@@ -449,6 +449,9 @@ public async test(event:any){
     this.showPdfModalDiv = false;
     this.showCropButtons = false;
     await (await worker1).terminate();
+    location.reload();
+    //reload pages for database to update
+    return;
   }
 
   async endProfile1(){
@@ -464,6 +467,7 @@ public async test(event:any){
     await (await worker1).terminate();
     this.tempArrayAttributeNames = [];
     this.counterVar = 0;
+    return;
   }
 
   
@@ -539,7 +543,7 @@ public async test(event:any){
     const {data: { text } } = await (await worker).recognize(this.cropingImage);
     sessionStorage.setItem("CrppdImg", this.cropingImage); 
     this.ocrResult = text;
-    this.ocrResult = this.ocrResult.replace(/[$\n]/g, '') //splice out $ and new lines
+    this.ocrResult = await this.ocrResult.replace(/[$\n]/g, '') //splice out $ and new lines
     if(this.ocrResult == ""){
       alert("Nothing was able to be read from the image. Please try again.");
       this.startProcessing(null);

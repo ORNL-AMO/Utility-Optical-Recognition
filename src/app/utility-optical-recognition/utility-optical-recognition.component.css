@@ -7,7 +7,19 @@
 pdf-viewer{
     height: 100vh !important;
 }
-.pdf-container {
+/* .pdf-container {
     height: 100vh !important;
-    overflow: scroll;
+} */
+
+/* :host ::ng-deep .ng2-pdf-viewer-container{
+    height: 100vh !important;
+} */
+
+:host ::ng-deep .ng2-pdf-viewer-container {
+    overflow-x: hidden !important;
+    height: max-content !important;
+}
+
+.attributeButtons{
+
 }

@@ -442,7 +442,8 @@ public async test(event:any){
     this.onGetUniqueProfiles();
     const worker1 = createWorker();
     this.showFileUploadDiv = false;
-
+    sessionStorage.removeItem("pdf2Img");
+    sessionStorage.removeItem("CrppdImg");
     this.showScanProfileSelectorDiv = true;
     this.showUtilitySelectorDiv = false;
     this.showPdfModalDiv = false;
@@ -458,7 +459,8 @@ public async test(event:any){
     this.showUtilitySelectorDiv = false;
     this.showPdfModalDiv1 = false;
     this.showCropButtons = false;
-
+    sessionStorage.removeItem("pdf2Img");
+    sessionStorage.removeItem("CrppdImg");
     await (await worker1).terminate();
     this.tempArrayAttributeNames = [];
     this.counterVar = 0;
@@ -538,6 +540,14 @@ public async test(event:any){
     sessionStorage.setItem("CrppdImg", this.cropingImage); 
     this.ocrResult = text;
     this.ocrResult = this.ocrResult.replace(/[$\n]/g, '') //splice out $ and new lines
+    if(this.ocrResult == ""){
+      alert("Nothing was able to be read from the image. Please try again.");
+      this.startProcessing(null);
+      this.currentpage = 1;
+      this.isButtonReady = false;
+      this.isPdfUploaded = true;
+      return;
+    }
     this.add_to_json(this.GetProfile.attribute123, this.ocrResult);
     this.set_json();
     await (await worker).terminate();

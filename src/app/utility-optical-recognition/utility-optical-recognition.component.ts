@@ -65,7 +65,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public tempArrayAttributex2 = [];
   public tempArrayAttributey2 = [];
   public tempArrayAttributePgNum = [];
-  //mabe
   public pdf: PDFDocumentProxy;
   public GetProfile =
   {
@@ -165,11 +164,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
 
   public afterLoadComplete(pdf: PDFDocumentProxy) {
-    this.totalPages = pdf.numPages;
-  //  pdf.getPage(1).then((currentpage) => {  
-  //     this.currentpage = 1 ;
-  //   });
-   
+    this.totalPages = pdf.numPages;   
 }
 
   public previous() {
@@ -196,7 +191,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
   public upatePage(attr: string){
     for(let i = 0; i < this.tempArrayAttributeNames.length; i++){
-      //alert(this.tempArrayAttributeNames[i] + " " + attr);
     if(attr == this.tempArrayAttributeNames[i]){
       this.GetProfile.coordinatesx1 = this.tempArrayAttributex1[i];
       this.GetProfile.coordinatesy1 = this.tempArrayAttributey1[i];
@@ -204,14 +198,10 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
       this.GetProfile.coordinatesy2 = this.tempArrayAttributey2[i];
       this.GetProfile.pgNum = this.tempArrayAttributePgNum[i];
       this.GetProfile.attribute123 = this.tempArrayAttributeNames[i];
-      //alert(this.GetProfile.coordinatesx1 + " " + this.GetProfile.coordinatesy1 + " " + this.GetProfile.coordinatesx2 + " " + this.GetProfile.coordinatesy2 + " " + this.GetProfile.pgNum + " " + this.GetProfile.attribute123);
     }
 
     }
     this.currentpage = this.GetProfile.pgNum;
-    alert(this.GetProfile.pgNum);
-    // this.isPdfUploaded = false;
-    // this.isPdf2Image = true;
     this.isButtonReady = true;
     return;
   }
@@ -228,15 +218,15 @@ public async test(event:any){
       this.cropperPosition.y1 = this.GetProfile.coordinatesy1;
       this.cropperPosition.x2 = this.GetProfile.coordinatesx2;
       this.cropperPosition.y2 = this.GetProfile.coordinatesy2;
-    //await this.doOCR2();
     this.isPdfUploaded = false;
     this.isButtonReady = false;
     this.isPdf2Image = true;
     return;
 }
+
+
   public pdfToCanvas(event:any, index:number| null, attr: string | null ) {    
     for(let i = 0; i < this.tempArrayAttributeNames.length; i++){
-      //alert(this.tempArrayAttributeNames[i] + " " + attr);
     if(attr == this.tempArrayAttributeNames[i]){
       this.GetProfile.coordinatesx1 = this.tempArrayAttributex1[i];
       this.GetProfile.coordinatesy1 = this.tempArrayAttributey1[i];
@@ -244,7 +234,6 @@ public async test(event:any){
       this.GetProfile.coordinatesy2 = this.tempArrayAttributey2[i];
       this.GetProfile.pgNum = this.tempArrayAttributePgNum[i];
       this.GetProfile.attribute123 = this.tempArrayAttributeNames[i];
-      //alert(this.GetProfile.coordinatesx1 + " " + this.GetProfile.coordinatesy1 + " " + this.GetProfile.coordinatesx2 + " " + this.GetProfile.coordinatesy2 + " " + this.GetProfile.pgNum + " " + this.GetProfile.attribute123);
     }
 
     }
@@ -298,21 +287,31 @@ public async test(event:any){
   }
 
   cropperReady(dimensions: Dimensions): void {
-    // Do something when the cropper is ready
-    // For example, set the initial cropper position
     const { x1, y1, x2, y2 } = this.calculateInitialPosition(dimensions);
     this.cropperPosition = { x1, y1, x2, y2 };
   }
 
   calculateInitialPosition(dimensions: Dimensions): CropperPosition {
-    const x1 = this.GetProfile.coordinatesx1;// calculate x1 position based on passed x1 and dimensions
-    const y1 = this.GetProfile.coordinatesy1;// calculate y1 position based on passed y1 and dimensions
-    const x2 = this.GetProfile.coordinatesx2;// calculate x2 position based on passed x2 and dimensions
-    const y2 = this.GetProfile.coordinatesy2;// calculate y2 position based on passed y2 and dimensions
+    const x1 = this.GetProfile.coordinatesx1;
+    const y1 = this.GetProfile.coordinatesy1;
+    const x2 = this.GetProfile.coordinatesx2;
+    const y2 = this.GetProfile.coordinatesy2;
     return { x1, y1, x2, y2 };
   }
 
+  cropperReady1(dimensions: Dimensions): void {
+    const { x1, y1, x2, y2 } = this.calculateInitialPosition1(dimensions);
+    this.cropperPosition = { x1, y1, x2, y2 };
+  }
 
+  calculateInitialPosition1(dimensions: Dimensions): CropperPosition {
+    const x1 = 192;
+    const y1 = 227;
+    const x2 = 452;
+    const y2 = 320;
+    return { x1, y1, x2, y2 };
+  }
+  
   private getCanvasToStorage(canvas:any){
     let ctx = canvas.getContext('2d');
     ctx.scale(1, 1);
@@ -325,9 +324,6 @@ public async test(event:any){
   public cropImage(event: ImageCroppedEvent ){
     this.cropingImage = event.base64;
     sessionStorage.setItem("CrppdImg", this.cropingImage);
-
-    // set coordinates for scan profile
-
     this.interface.coordinatesx1 = event.cropperPosition.x1;
     this.interface.coordinatesy1 = event.cropperPosition.y1;
     this.interface.coordinatesx2 = event.cropperPosition.x2;
@@ -414,15 +410,7 @@ public async test(event:any){
     sessionStorage.setItem("CrppdImg", this.cropingImage); 
     this.ocrResult = text;
 
-    this.ocrResult = await this.ocrResult.replace(/[$\n]/g, '') //splice out $ and new lines
-    if(this.ocrResult == ""){
-      alert("Nothing was able to be read from the image. Please try again.");
-      this.startProcessing(null);
-      this.currentpage = 1;
-      this.isButtonReady = false;
-      this.isPdfUploaded = true;
-      return;
-    }
+    this.ocrResult = this.ocrResult.replace(/[$\n]/g, '') //splice out $ and new lines
     this.add_to_json(this.last_attritbute, this.ocrResult);
     this.set_json();
     await (await worker).terminate();
@@ -448,10 +436,8 @@ public async test(event:any){
     this.showUtilitySelectorDiv = false;
     this.showPdfModalDiv = false;
     this.showCropButtons = false;
+    this.currentpage = 1;
     await (await worker1).terminate();
-    location.reload();
-    //reload pages for database to update
-    return;
   }
 
   async endProfile1(){
@@ -467,6 +453,8 @@ public async test(event:any){
     await (await worker1).terminate();
     this.tempArrayAttributeNames = [];
     this.counterVar = 0;
+    this.currentpage = 1;
+    location.reload();
     return;
   }
 
@@ -543,7 +531,7 @@ public async test(event:any){
     const {data: { text } } = await (await worker).recognize(this.cropingImage);
     sessionStorage.setItem("CrppdImg", this.cropingImage); 
     this.ocrResult = text;
-    this.ocrResult = await this.ocrResult.replace(/[$\n]/g, '') //splice out $ and new lines
+    this.ocrResult = this.ocrResult.replace(/[$\n]/g, '') //splice out $ and new lines
     if(this.ocrResult == ""){
       alert("Nothing was able to be read from the image. Please try again.");
       this.startProcessing(null);
@@ -561,6 +549,8 @@ public async test(event:any){
     this.isPdfUploaded = true;
     return;
   }
- 
+  deletePreset(){
+    return;
+  }
 //edit bill component
   }

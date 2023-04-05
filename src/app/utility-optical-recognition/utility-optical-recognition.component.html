@@ -103,6 +103,7 @@
   <!-- scan profile/preset name -->
   <div class="col-4 mb-3">
     <div class="input-group">
+      <button class="btn btn-danger" type="button" (click)="deletePreset() ">Delete</button>
     </div>
   </div>
   <div id ="inputDiv" class="form-control">
@@ -195,23 +196,7 @@
   </div>
 </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<!-- End Duplicate Section  -->
 <!-- show pdf -->
 <div class="show-pdf container p-4" *ngIf="showPdfModalDiv">
   <div class="row justify-content-center mb-2">
@@ -276,7 +261,9 @@
         (imageCropped)="cropImage($event)"
         [maintainAspectRatio]="false"
         [containWithinAspectRatio]="false" 
-        [aspectRatio]="2 / 2">
+        [aspectRatio]="2 / 2"
+        [cropper]="cropperPosition"
+        (cropperReady)="cropperReady1($event)">
         </image-cropper>
       </div>
       

@@ -3,10 +3,11 @@ import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 import html2canvas from 'html2canvas';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
 import { createWorker } from 'tesseract.js'
-import { IdbUtilityMeter, IdbUtilityMeterData, utilityMeterScanProfile } from '../models/idb';
+import { ElectricityAttributeTypes, GeneralAttributeTypes, IdbUtilityMeter, IdbUtilityMeterData, utilityMeterScanProfile } from '../models/idb';
 import { SourceOptions } from 'src/app/facility/utility-data/energy-consumption/energy-source/edit-meter-form/editMeterOptions';
 import * as _ from 'lodash';
 import { UtilityMeterScanProfileService } from '../indexedDB/utilityMeterScanProfile-db.service';
+import { UtilityMeterDataService } from '../facility/utility-data/energy-consumption/utility-meter-data/utility-meter-data.service';
 
 @Component({
   selector: 'app-utility-optical-recognition',
@@ -60,6 +61,8 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     pgNum: 1,
   }
   public colorIndex: number = null;
+  public electricityAttributes: ElectricityAttributeTypes;
+  public generalAttributes: GeneralAttributeTypes;
 
   // public sourceOptions: Array<string> = SourceOptions;      // provides the types of utilities
 
@@ -74,7 +77,8 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 //#endregion
 
   constructor(
-    private scanProfileDbService: UtilityMeterScanProfileService
+    private scanProfileDbService: UtilityMeterScanProfileService,
+    private utilityMeterDataService: UtilityMeterDataService,
   ) {}
 
   ngOnInit(): void {
@@ -91,14 +95,13 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   setupBillAttributes() {
     // filter out unnecessary attributes
     if(this.editMeter.source == 'Electricity'){
-      this.undefinedMeterData = Object.entries(this.editMeterData).filter(
-        ([key, value]) => key != "totalVolume" && key != "guid" && key != "meterId" && key != "facilityId" && key != "accountId" && key != "checked"
-      );
+      this.undefinedMeterData = this.utilityMeterDataService.getElectricityMeterDataForm(this.editMeterData);
     } else {
-      this.undefinedMeterData = Object.entries(this.editMeterData).filter(
-        ([key, value]) => key != "guid" && key != "meterId" && key != "facilityId" && key != "accountId" && key != "checked"
-      );
+      this.undefinedMeterData = this.utilityMeterDataService.getGeneralMeterDataForm(this.editMeterData, true, true);
     }
+
+    // set object to iterable array
+    this.undefinedMeterData = Object.entries(this.undefinedMeterData.value);
     
     // update attribute names from camelCase to Title Case
     this.undefinedMeterData = this.undefinedMeterData.map(subArray => [

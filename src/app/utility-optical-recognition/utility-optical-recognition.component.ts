@@ -156,7 +156,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
   //#region Html2Canvas
   public pdfToCanvas(event:any, index:number) {
-    this.undefinedMeterData[index][1] = "red"
+    this.undefinedMeterData[index][1] = "red";
     
     // set attribute for scan profile
     this.interface.attribute123 = event.target.id;
@@ -263,7 +263,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.isOcrResult = true;
 
     const worker = createWorker();
-    this.undefinedMeterData[this.colorIndex][1] = "lightgray"
+    this.undefinedMeterData[this.colorIndex][1] = "lightgray";
     await (await worker).load();
     await (await worker).loadLanguage('eng');
     await (await worker).initialize('eng');
@@ -294,6 +294,10 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.showPdfModalDiv = false;
     this.showCropButtons = false;
     await (await worker1).terminate();
+
+    for(var index in this.undefinedMeterData){
+      this.undefinedMeterData[index][1] = "black";
+    }
   }
 
   

@@ -22,6 +22,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   
   public showScanProfileSelectorDiv: boolean = true;        //aka preset profiles
   public showUtilitySelectorDiv: boolean = false;
+  public show_ocr_results_div: boolean = false;
   public showFileUploadDiv: boolean = false;
   public showPdfModalDiv: boolean = false;
   public showCropButtons: boolean = false;
@@ -272,7 +273,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     sessionStorage.setItem("CrppdImg", this.cropingImage); 
     this.ocrResult = text;
 
-    this.ocrResult = this.ocrResult.replace(/[$\n]/g, '') //splice out $ and new lines
+    this.ocrResult = this.ocrResult.replace(/[^\d.]/g, "") //splice out everything besides numbers and "."
     this.add_to_json(this.last_attritbute, this.ocrResult);
     this.set_json();
     await (await worker).terminate();
@@ -295,7 +296,11 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.showUtilitySelectorDiv = false;
     this.showPdfModalDiv = false;
     this.showCropButtons = false;
+    this.show_ocr_results_div = false;
     await (await worker1).terminate();
+
+    this.clear_json();
+    this.set_json();
 
     for(var index in this.undefinedMeterData){
       this.undefinedMeterData[index][1] = "black";

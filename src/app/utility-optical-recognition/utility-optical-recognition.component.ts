@@ -160,11 +160,18 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     // set attribute for scan profile
     this.interface.attribute123 = event.target.id;
     
-    html2canvas(document.querySelector(".pdf-container") as HTMLElement).then((canvas: any) => {
+    // html2canvas(document.querySelector(".pdf-container") as HTMLElement).then((canvas: any) => {
+    //   this.getCanvasToStorage(canvas)
+    // })
+
+    html2canvas(document.querySelector(".pdf-container") as HTMLElement, {
+      width: document.querySelector(".pdf-container").clientWidth,
+      height: document.querySelector(".pdf-container").clientHeight
+    }).then((canvas: any) => {
       this.getCanvasToStorage(canvas)
     })
     
-     this.isPdfUploaded = false;
+    this.isPdfUploaded = false;
     this.isPdf2Image = true;
     
     this.last_attritbute = event.target.id;

@@ -6,6 +6,7 @@
 }
 pdf-viewer{
     height: 100vh !important;
+    /* width: 100vw !important; */
 }
 /* .pdf-container {
     height: 100vh !important;
@@ -17,9 +18,22 @@ pdf-viewer{
 
 :host ::ng-deep .ng2-pdf-viewer-container {
     overflow-x: hidden !important;
-    height: max-content !important;
+    height: 100vh !important;
 }
 
 .attributeButtons{
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    max-height: 100vh;
+}
 
+.pdf-img-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.img-container{
+    height: 100vh !important;
 }

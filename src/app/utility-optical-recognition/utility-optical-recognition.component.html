@@ -6,7 +6,7 @@
   <div class="container text-center">
     <div class="row row-cols-3 mb-5">
       <div class="col-12">
-        <button class="btn btn-primary col-3 m-2" *ngFor="let profile of uniqueProfiles" [value]="profile.presetName">{{profile.presetName}}</button>
+        <button class="btn btn-primary col-3 m-2" *ngFor="let profile of uniqueProfiles" [value]="profile.presetName" (click)="startProcessing($event)">{{profile.presetName}}</button>
       </div>
     </div>
   </div>
@@ -78,11 +78,125 @@
     </div>
   </div>
   <div id ="inputDiv" class="form-control" style="pointer-events: none;">
-  <input class="form-control" type="file" id="upload-doc" accept=".pdf" (change)="uploadPdf($event); this.showFileUploadDiv = false; this.showPdfModalDiv = true" />
+  <input class="form-control" type="file" id="upload-doc" accept=".pdf" (change)="uploadPdf($event); this.showFileUploadDiv = false; this.showPdfModalDiv = true;" />
+  </div>
+  <hr>
+</div>
+<!-- DUPLICATE SECTIon -->
+
+
+<div class="file-upload container p-4" *ngIf="showFileUploadDiv1">
+  <div class="row mb-2">
+    <h4>Import Data from .PDF Files</h4>
+  </div>
+  <div class="alert alert-info">
+    <ul class="mb-0">
+      <li>Select the file you wish to upload.</li>
+      <li>Data must be a .PDF file type.</li>
+      <li>Once the files have been selected, we will work through selecting the relevant data on the bill.</li>
+      <li>Click the "Choose Files" button or drag and drop files into the grey box.</li>
+      <li>One file can be uploaded at a time.</li>
+    </ul>
+  </div>
+  <hr>
+  
+  <!-- scan profile/preset name -->
+  <div class="col-4 mb-3">
+    <div class="input-group">
+      <button class="btn btn-danger" type="button" (click)="deletePreset() ">Delete</button>
+    </div>
+  </div>
+  <div id ="inputDiv" class="form-control">
+  <input class="form-control" type="file" id="upload-doc" accept=".pdf" (change)="uploadPdf($event); this.showFileUploadDiv1 = false; this.showPdfModalDiv1 = true" />
   </div>
   <hr>
 </div>
 
+
+<div class="show-pdf container p-4" *ngIf="showPdfModalDiv1">
+  <div class="row justify-content-center mb-2">
+    <h4>Set up scan profile</h4>
+  </div>
+  <div class="alert alert-info">
+    <ul class="mb-0">
+      <li>Please select the required fields.</li>
+      <li>Click a box to the left to begin snipping.</li>
+      <li>Once all of the required fields are selected, we will work through reading in the bill.</li>
+    </ul>
+  </div>
+
+  <div class="d-flex mt-5">
+    <!-- page numbers -->
+    <button class="btn btn-primary"id="saveAll" type="button" (click)="endProfile1()">Save Profile Changes</button>
+    <div class="d-inline-flex ms-auto" *ngIf="isButtonReady">
+      <button class="btn btn-primary"id="saveAll" type="button" (click)="test($event);">Load Set Location</button>
+    </div>
+    <!-- crop image button -->
+    <div class="pagescount ms-auto" *ngIf="isPdf2Image">
+      <button (click)="doOCR2()" class="btn btn-primary">Fetch This Data</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-4 mt-5">
+      <!-- attribute buttons -->
+      <div class="ms-e me-3" *ngIf="showCropButtons">
+        <div class="d-flex flex-column justify-content-center" *ngFor="let attr of this.tempArrayAttributeNames; let i=index">
+          <button class="btn action-btn p-3 mb-3" (click)="upatePage(attr);" 
+            [id]="attr[0]" [disabled]="isPdf2Image ? true : false" >
+            {{ attr }}
+          </button>
+        </div>
+      </div>
+    </div>
+<!-- pdfToCanvas($event, null, attr); -->
+    <div class="col-8">
+      <div class="pdf-container top-margin" *ngIf="isPdfUploaded">
+        <pdf-viewer #pdfViewer
+        [src]="pdfSrc" 
+        [render-text]="true" 
+        [(page)]="currentpage"
+        [show-all]="false" 
+        [original-size]="false"
+        [zoom-scale]="'page-fit'"
+        (after-load-complete)="afterLoadComplete($event);">
+        </pdf-viewer>
+      </div>
+  
+      <div class="container" *ngIf="isPdf2Image">
+        <image-cropper 
+        [imageChangedEvent]="imageChangedEvent"
+        [imageBase64]="strdPdf2Img"
+        [maintainAspectRatio]="false"
+        [aspectRatio]="aspectRatio"
+        [resizeToWidth]="resizeToWidth"
+        [resizeToHeight]="resizeToHeight"
+        [cropperMinWidth]="cropperMinWidth"
+        [cropperMinHeight]="cropperMinHeight"
+        [onlyScaleDown]="onlyScaleDown"
+        [imageQuality]="imageQuality"
+        [autoCrop]="autoCrop"
+        [backgroundColor]="backgroundColor"
+        [disabled]="disabled"
+        [canvasRotation]="canvasRotation"
+        [allowMoveImage]="allowMoveImage"
+        [cropper]="cropperPosition"
+        (imageCropped)="cropImage($event)"
+        (imageLoaded)="imageLoaded()"
+        (cropperReady)="cropperReady($event)">
+        </image-cropper>
+      </div>
+      
+      <div class="container" *ngIf="isOcrResult">
+        <h1>OCR Result</h1>
+        <h3>{{ ocrResult }}</h3>
+        <h3 *ngIf="isOcrResult && ocrResult == ''">No text could be read</h3>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- End Duplicate Section  -->
 <!-- show pdf -->
 <div class="show-pdf container" *ngIf="showPdfModalDiv">
   <div class="row justify-content-center mb-2">
@@ -120,7 +234,7 @@
       <!-- attribute buttons -->
       <div class="me-3" *ngIf="showCropButtons">
         <div class="d-flex flex-column justify-content-center" *ngFor="let attr of undefinedMeterData; let i=index">
-          <button class="btn action-btn p-3 mb-3" (click)="pdfToCanvas($event,i)" [style.color] = "attr[1]"
+          <button class="btn action-btn p-3 mb-3" (click)="pdfToCanvas($event,i, null)" [style.color] = "attr[1]"
             [id]="attr[0]" [disabled]="isPdf2Image ? true : false">
             {{ attr[0] }}
           </button>
@@ -145,10 +259,11 @@
         <image-cropper 
         [imageBase64]="strdPdf2Img"
         (imageCropped)="cropImage($event)"
-        [maintainAspectRatio]="true"
-        [containWithinAspectRatio]="true" 
-
-        [aspectRatio]="2 / 2">
+        [maintainAspectRatio]="false"
+        [containWithinAspectRatio]="false" 
+        [aspectRatio]="2 / 2"
+        [cropper]="cropperPosition"
+        (cropperReady)="cropperReady1($event)">
         </image-cropper>
       </div>
       

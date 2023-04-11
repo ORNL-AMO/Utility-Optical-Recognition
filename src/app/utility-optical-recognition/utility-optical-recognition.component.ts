@@ -27,6 +27,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public showPdfModalDiv: boolean = false;
   public showCropButtons: boolean = false;
   public showPdfDiv: boolean = false;
+  public showToDoAlert: boolean = false;
 
   public isPdfUploaded: boolean = false;
   public isPdf2Image: boolean = false;
@@ -61,8 +62,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     pgNum: 1,
   }
   public colorIndex: number = null;
-  public electricityAttributes: ElectricityAttributeTypes;
-  public generalAttributes: GeneralAttributeTypes;
+  public toDo: any[] = [];
 
   // public sourceOptions: Array<string> = SourceOptions;      // provides the types of utilities
 
@@ -84,12 +84,17 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   ngOnInit(): void {
     this.setupBillAttributes();
 
+    // set required attributes
+    this.toDo.push(this.undefinedMeterData[0][0]);
+    this.toDo.push(this.undefinedMeterData[1][0]);
+
     // start scan profile
     this.newScanProfile = this.scanProfileDbService.getnewUtilityMeterProfile();
     this.interface.accountId = this.editMeter.accountId;
     this.interface.source123 = this.editMeter.source;
 
     this.onGetUniqueProfiles();
+    console.log(this.toDo)
   }
 
   setupBillAttributes() {
@@ -228,9 +233,26 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
 
   public Test123(){
+    // convert attribute name from Title Case to camelCase
+    // this.newScanProfile.attribute = _.camelCase(this.newScanProfile.attribute);
+
     // add new scan profile row
     this.scanProfileDbService.updateWithObservable(this.newScanProfile).subscribe((addedProfile: utilityMeterScanProfile) => {
       console.log("Added profile:", addedProfile);
+
+      // if toDo list item, remove it from toDo list
+      if(addedProfile.attribute.includes("Read Date")){
+        this.toDo = this.toDo.filter(item => item !== "Read Date");
+      } else if(addedProfile.attribute.includes("Total Energy Use")){
+        this.toDo = this.toDo.filter(item => item !== "Total Energy Use");
+      } else if(addedProfile.attribute.includes("Total Volume")){
+        this.toDo = this.toDo.filter(item => item !== "Total Volume");
+      }
+
+      if(this.toDo.length == 0){
+        this.showToDoAlert = false;
+      }
+
     }, error => {
       console.error("Error adding profile:", error);
     });
@@ -271,13 +293,13 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.newScanProfile.presetName = this.interface.name123;
     this.newScanProfile.attribute = this.interface.attribute123;
     this.newScanProfile.pgNum = this.interface.pgNum;
+    
     // show/hide divs
     this.isPdf2Image = false;
     this.isOcrResult = true;
 
     const worker = createWorker();
     this.undefinedMeterData[this.colorIndex][1] = "lightgray"
-    await (await worker).load();
     await (await worker).loadLanguage('eng');
     await (await worker).initialize('eng');
     const {data: { text } } = await (await worker).recognize(this.cropingImage);
@@ -297,6 +319,15 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.interface.attribute123 = "";
     this.isPdfUploaded = true;
     return;
+  }
+
+  saveChanges(){
+    if(this.toDo.length == 0){
+      this.showToDoAlert = false;
+      this.endProfile();
+    } else {
+      this.showToDoAlert = true;
+    }
   }
 
   async endProfile(){

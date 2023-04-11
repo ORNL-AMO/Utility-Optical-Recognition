@@ -3,10 +3,11 @@ import { PDFDocumentProxy, PdfViewerComponent } from 'ng2-pdf-viewer';
 import html2canvas from 'html2canvas';
 import { Dimensions, ImageCroppedEvent, ImageTransform, ImageCropperComponent, CropperPosition } from 'ngx-image-cropper'
 import { createWorker } from 'tesseract.js'
-import { IdbUtilityMeter, IdbUtilityMeterData, utilityMeterScanProfile } from '../models/idb';
+import { ElectricityAttributeTypes, GeneralAttributeTypes, IdbUtilityMeter, IdbUtilityMeterData, utilityMeterScanProfile } from '../models/idb';
 import { SourceOptions } from 'src/app/facility/utility-data/energy-consumption/energy-source/edit-meter-form/editMeterOptions';
 import * as _ from 'lodash';
 import { UtilityMeterScanProfileService } from '../indexedDB/utilityMeterScanProfile-db.service';
+import { UtilityMeterDataService } from '../facility/utility-data/energy-consumption/utility-meter-data/utility-meter-data.service';
 import { exit } from 'process';
 import { Interface } from 'readline';
 import { element } from 'protractor';
@@ -25,6 +26,8 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   @ViewChild(PdfViewerComponent, {static: false}) private pdfViewer: PdfViewerComponent;
   @Input() editMeter: IdbUtilityMeter;
   @Input() editMeterData: IdbUtilityMeterData;
+  public undefinedMeterData: any;
+  
   public page: number = 1;
   public undefinedMeterData;
   public counterVar: number = 0;
@@ -36,7 +39,9 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public showPdfModalDiv: boolean = false;
   public showCropButtons: boolean = false;
   public showPdfDiv: boolean = false;
+  public showToDoAlert: boolean = false;
   public showPdfModalDiv1: boolean = false;
+
   public isPdfUploaded: boolean = false;
   public isPdf2Image: boolean = false;
   public isPdf2Image1: boolean = false;
@@ -92,7 +97,9 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     coordinatesy2: 0,
     pgNum: 1,
   };
+  // public sourceOptions: Array<string> = SourceOptions;      // provides the types of utilities
   public colorIndex: number = 0;
+  public toDo: any[] = [];
   cropperPosition: CropperPosition = {
     x1: 0,
     y1: 0,
@@ -112,19 +119,23 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 //#endregion
 
   constructor(
-    private scanProfileDbService: UtilityMeterScanProfileService
+    private scanProfileDbService: UtilityMeterScanProfileService,
+    private utilityMeterDataService: UtilityMeterDataService,
   ) {}
 
   ngOnInit(): void {
-    // find bill attribute types
-    this.undefinedMeterData = Object.entries(this.editMeterData).filter(
-      ([key, value]) => value === undefined || value === null || value === '' || value === false || value === 'false' || key.includes('checked')
-    );
-    
-    // keep only the undefined attributes
-    this.undefinedMeterData = this.undefinedMeterData.map(subArray => [
-      _.startCase(subArray[0]), subArray[1]
-    ]);
+    this.setupBillAttributes();
+
+    // set required attributes
+    this.undefinedMeterData.forEach(subArray => {
+      if(subArray.includes('Read Date')){
+        this.toDo.push(subArray[0]);
+      } else if(subArray.includes('Total Volume')){
+        this.toDo.push(subArray[0]);
+      } else if(subArray.includes('Total Energy Use')){
+        this.toDo.push(subArray[0]);
+      }
+    });
 
     // start scan profile
     this.newScanProfile = this.scanProfileDbService.getnewUtilityMeterProfile();
@@ -132,6 +143,24 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.interface.source123 = this.editMeter.source;
     this.onGetUniqueProfiles();
   }
+
+  setupBillAttributes() {
+    // filter out unnecessary attributes
+    if(this.editMeter.source == 'Electricity'){
+      this.undefinedMeterData = this.utilityMeterDataService.getElectricityMeterDataForm(this.editMeterData);
+    } else {
+      this.undefinedMeterData = this.utilityMeterDataService.getGeneralMeterDataForm(this.editMeterData, true, true);
+    }
+
+    // set object to iterable array
+    this.undefinedMeterData = Object.entries(this.undefinedMeterData.value);
+    
+    // update attribute names from camelCase to Title Case
+    this.undefinedMeterData = this.undefinedMeterData.map(subArray => [
+      _.startCase(subArray[0]), subArray[1]
+    ]);
+  }
+
   skipToUploadPdf() {
     // if source found, skip to upload pdf
     if(this.editMeter.source){
@@ -142,6 +171,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
       this.showUtilitySelectorDiv = true;
     }
   }
+  
   //#region PDF Viewer
   public uploadPdf(event:any){
     let $img: any = document.querySelector('#upload-doc');
@@ -150,13 +180,13 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
         let reader = new FileReader();
         reader.onload = (e: any) => {
           this.pdfSrc = e.target.result;
-
         };
+        
         this.isPdfUploaded = true;
         this.showPdfDiv = true;
         this.showCropButtons = true;
         reader.readAsArrayBuffer($img.files[0]);
-        
+      
       }
     } else{
       alert('please upload pdf file')
@@ -189,20 +219,22 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     }
     return;
   }
+  
   public upatePage(attr: string){
     for(let i = 0; i < this.tempArrayAttributeNames.length; i++){
-    if(attr == this.tempArrayAttributeNames[i]){
-      this.GetProfile.coordinatesx1 = this.tempArrayAttributex1[i];
-      this.GetProfile.coordinatesy1 = this.tempArrayAttributey1[i];
-      this.GetProfile.coordinatesx2 = this.tempArrayAttributex2[i];
-      this.GetProfile.coordinatesy2 = this.tempArrayAttributey2[i];
-      this.GetProfile.pgNum = this.tempArrayAttributePgNum[i];
-      this.GetProfile.attribute123 = this.tempArrayAttributeNames[i];
+      if(attr == this.tempArrayAttributeNames[i]){
+        this.GetProfile.coordinatesx1 = this.tempArrayAttributex1[i];
+        this.GetProfile.coordinatesy1 = this.tempArrayAttributey1[i];
+        this.GetProfile.coordinatesx2 = this.tempArrayAttributex2[i];
+        this.GetProfile.coordinatesy2 = this.tempArrayAttributey2[i];
+        this.GetProfile.pgNum = this.tempArrayAttributePgNum[i];
+        this.GetProfile.attribute123 = this.tempArrayAttributeNames[i];
+      }
     }
-
-    }
+    
     this.currentpage = this.GetProfile.pgNum;
     this.isButtonReady = true;
+    
     return;
   }
   //#endregion
@@ -211,49 +243,54 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   
 public async test(event:any){
     this.interface.attribute123 = event.target.id;
-     await html2canvas(document.querySelector(".pdf-container") as HTMLElement).then((canvas: any) => {
+    await html2canvas(document.querySelector(".pdf-container") as HTMLElement).then((canvas: any) => {
       this.getCanvasToStorage(canvas)
     })
-      this.cropperPosition.x1 = this.GetProfile.coordinatesx1;
-      this.cropperPosition.y1 = this.GetProfile.coordinatesy1;
-      this.cropperPosition.x2 = this.GetProfile.coordinatesx2;
-      this.cropperPosition.y2 = this.GetProfile.coordinatesy2;
+    
+    this.cropperPosition.x1 = this.GetProfile.coordinatesx1;
+    this.cropperPosition.y1 = this.GetProfile.coordinatesy1;
+    this.cropperPosition.x2 = this.GetProfile.coordinatesx2;
+    this.cropperPosition.y2 = this.GetProfile.coordinatesy2;
+      
     this.isPdfUploaded = false;
     this.isButtonReady = false;
     this.isPdf2Image = true;
+    
     return;
 }
 
 
   public pdfToCanvas(event:any, index:number| null, attr: string | null ) {    
     for(let i = 0; i < this.tempArrayAttributeNames.length; i++){
-    if(attr == this.tempArrayAttributeNames[i]){
-      this.GetProfile.coordinatesx1 = this.tempArrayAttributex1[i];
-      this.GetProfile.coordinatesy1 = this.tempArrayAttributey1[i];
-      this.GetProfile.coordinatesx2 = this.tempArrayAttributex2[i];
-      this.GetProfile.coordinatesy2 = this.tempArrayAttributey2[i];
-      this.GetProfile.pgNum = this.tempArrayAttributePgNum[i];
-      this.GetProfile.attribute123 = this.tempArrayAttributeNames[i];
+      if(attr == this.tempArrayAttributeNames[i]){
+        this.GetProfile.coordinatesx1 = this.tempArrayAttributex1[i];
+        this.GetProfile.coordinatesy1 = this.tempArrayAttributey1[i];
+        this.GetProfile.coordinatesx2 = this.tempArrayAttributex2[i];
+        this.GetProfile.coordinatesy2 = this.tempArrayAttributey2[i];
+        this.GetProfile.pgNum = this.tempArrayAttributePgNum[i];
+        this.GetProfile.attribute123 = this.tempArrayAttributeNames[i];
+      }
     }
-
-    }
+    
     if(this.currentpage != this.GetProfile.pgNum){
     }
-    if(index != null){
-    this.undefinedMeterData[index][1] = "red"
-    this.interface.attribute123 = event.target.id;
-  }
     
-     html2canvas(document.querySelector(".pdf-container") as HTMLElement).then((canvas: any) => {
+    if(index != null){
+      this.undefinedMeterData[index][1] = "red"
+      this.interface.attribute123 = event.target.id;
+    }
+    
+    html2canvas(document.querySelector(".pdf-container") as HTMLElement).then((canvas: any) => {
       this.getCanvasToStorage(canvas)
     })
+
     if(index == null){
       this.cropperPosition.x1 = this.GetProfile.coordinatesx1;
       this.cropperPosition.y1 = this.GetProfile.coordinatesy1;
       this.cropperPosition.x2 = this.GetProfile.coordinatesx2;
       this.cropperPosition.y2 = this.GetProfile.coordinatesy2;
-
     }
+    
     this.isPdfUploaded = false;
     this.isPdf2Image = true;
     this.last_attritbute = event.target.id;
@@ -327,8 +364,7 @@ public async test(event:any){
     this.interface.coordinatesx1 = event.cropperPosition.x1;
     this.interface.coordinatesy1 = event.cropperPosition.y1;
     this.interface.coordinatesx2 = event.cropperPosition.x2;
-    this.interface.coordinatesy2 = event.cropperPosition.y2; 
-     
+    this.interface.coordinatesy2 = event.cropperPosition.y2;
   }
   //#endregion
 
@@ -354,11 +390,28 @@ public async test(event:any){
   }
 
   public Test123(){
+    // convert attribute name from Title Case to camelCase
+    // this.newScanProfile.attribute = _.camelCase(this.newScanProfile.attribute);
+
     // add new scan profile row
     this.scanProfileDbService.updateWithObservable(this.newScanProfile).subscribe((addedProfile: utilityMeterScanProfile) => {
       console.log("Added profile:", addedProfile);
+
+      // if toDo list item, remove it from toDo list
+      if(addedProfile.attribute.includes("Read Date")){
+        this.toDo = this.toDo.filter(item => item !== "Read Date");
+      } else if(addedProfile.attribute.includes("Total Energy Use")){
+        this.toDo = this.toDo.filter(item => item !== "Total Energy Use");
+      } else if(addedProfile.attribute.includes("Total Volume")){
+        this.toDo = this.toDo.filter(item => item !== "Total Volume");
+      }
+
+      if(this.toDo.length == 0){
+        this.showToDoAlert = false;
+      }
+
     }, error => {
-        console.error("Error adding profile:", error);
+      console.error("Error adding profile:", error);
     });
 
     return;
@@ -397,13 +450,13 @@ public async test(event:any){
     this.newScanProfile.presetName = this.interface.name123;
     this.newScanProfile.attribute = this.interface.attribute123;
     this.newScanProfile.pgNum = this.interface.pgNum;
+    
     // show/hide divs
     this.isPdf2Image = false;
     this.isOcrResult = true;
 
     const worker = createWorker();
     this.undefinedMeterData[this.colorIndex][1] = "lightgray"
-    await (await worker).load();
     await (await worker).loadLanguage('eng');
     await (await worker).initialize('eng');
     const {data: { text } } = await (await worker).recognize(this.cropingImage);
@@ -426,21 +479,16 @@ public async test(event:any){
     return;
   }
 
-  async endProfile(){
-    this.onGetUniqueProfiles();
-    const worker1 = createWorker();
-    this.showFileUploadDiv = false;
-    sessionStorage.removeItem("pdf2Img");
-    sessionStorage.removeItem("CrppdImg");
-    this.showScanProfileSelectorDiv = true;
-    this.showUtilitySelectorDiv = false;
-    this.showPdfModalDiv = false;
-    this.showCropButtons = false;
-    this.currentpage = 1;
-    await (await worker1).terminate();
+  saveChanges(){
+    if(this.toDo.length == 0){
+      this.showToDoAlert = false;
+      this.endProfile();
+    } else {
+      this.showToDoAlert = true;
+    }
   }
 
-  async endProfile1(){
+  async endProfile(){
     this.onGetUniqueProfiles();
     const worker1 = createWorker();
     this.showFileUploadDiv1 = false;
@@ -455,6 +503,12 @@ public async test(event:any){
     this.counterVar = 0;
     this.currentpage = 1;
     location.reload();
+    for(var index in this.undefinedMeterData){
+      this.undefinedMeterData[index][1] = "black";
+    }
+    this.undefinedMeterData = [];
+    this.toDo = [];
+    
     return;
   }
 
@@ -462,10 +516,8 @@ public async test(event:any){
 //#endregion
 
   async add_to_json(key:string, value:any){
-
     this.JSON_object[key] = value;
-    
-    }
+  }
 
   public clear_json(){
     this.JSON_object = {}
@@ -476,7 +528,6 @@ public async test(event:any){
   }
 
   public get_json(){
-
     return this.JSON_object;
   }
 
@@ -547,10 +598,13 @@ public async test(event:any){
     this.currentpage = 1;
     this.isButtonReady = false;
     this.isPdfUploaded = true;
+    
     return;
   }
+  
   deletePreset(){
     return;
   }
+  
 //edit bill component
   }

@@ -209,10 +209,17 @@
       <li>Once all of the required fields are selected, we will work through reading in the bill.</li>
     </ul>
   </div>
+  <div class="alert alert-danger" role="alert" *ngIf="showToDoAlert">
+    <p>Required fields</p>
+    <ul class="mb-0">
+      <li *ngFor="let i of toDo">{{ i }}</li>
+    </ul>
+  </div>
+  
 
   <div class="d-flex mt-5">
     <!-- page numbers -->
-    <button class="btn btn-primary"id="saveAll" type="button" (click)="endProfile()">Save Profile Changes</button>
+    <button class="btn btn-primary"id="saveAll" type="button" (click)="saveChanges()">Save Profile Changes</button>
     <div class="d-inline-flex ms-auto" *ngIf="isPdfUploaded">
       <button class="btn action-btn" type="button" (click)="previous()">
         <i class="fa fa-chevron-left"></i>
@@ -236,7 +243,7 @@
         <div class="d-flex flex-column justify-content-center" *ngFor="let attr of undefinedMeterData; let i=index">
           <button class="btn action-btn p-3 mb-3" (click)="pdfToCanvas($event,i, null)" [style.color] = "attr[1]"
             [id]="attr[0]" [disabled]="isPdf2Image ? true : false">
-            {{ attr[0] }}
+            {{ attr[0] }} <span *ngIf="attr.includes('Total Volume') || attr.includes('Total Energy Use') || attr.includes('Read Date')" class="required">*</span>
           </button>
         </div>
       </div>

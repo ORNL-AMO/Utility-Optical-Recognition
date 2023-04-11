@@ -19,7 +19,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   //#region Variables
   @Input() editMeter: IdbUtilityMeter;
   @Input() editMeterData: IdbUtilityMeterData;
-  public undefinedMeterData;
+  public undefinedMeterData: any;
   
   public showScanProfileSelectorDiv: boolean = true;        //aka preset profiles
   public showUtilitySelectorDiv: boolean = false;
@@ -85,8 +85,15 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.setupBillAttributes();
 
     // set required attributes
-    this.toDo.push(this.undefinedMeterData[0][0]);
-    this.toDo.push(this.undefinedMeterData[1][0]);
+    this.undefinedMeterData.forEach(subArray => {
+      if(subArray.includes('Read Date')){
+        this.toDo.push(subArray[0]);
+      } else if(subArray.includes('Total Volume')){
+        this.toDo.push(subArray[0]);
+      } else if(subArray.includes('Total Energy Use')){
+        this.toDo.push(subArray[0]);
+      }
+    });
 
     // start scan profile
     this.newScanProfile = this.scanProfileDbService.getnewUtilityMeterProfile();
@@ -94,7 +101,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.interface.source123 = this.editMeter.source;
 
     this.onGetUniqueProfiles();
-    console.log(this.toDo)
   }
 
   setupBillAttributes() {
@@ -343,6 +349,9 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     for(var index in this.undefinedMeterData){
       this.undefinedMeterData[index][1] = "black";
     }
+
+    this.undefinedMeterData = [];
+    this.toDo = [];
   }
 
   

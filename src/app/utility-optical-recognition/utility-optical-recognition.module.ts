@@ -4,6 +4,7 @@ import { UtilityOpticalRecognitionComponent } from './utility-optical-recognitio
 import { RouterModule } from '@angular/router';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { ImageCropperModule } from 'ngx-image-cropper';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -11,6 +12,7 @@ import { ImageCropperModule } from 'ngx-image-cropper';
   declarations: [UtilityOpticalRecognitionComponent],
   imports: [
     CommonModule,
+    FormsModule,
     RouterModule,
     PdfViewerModule,
     ImageCropperModule,

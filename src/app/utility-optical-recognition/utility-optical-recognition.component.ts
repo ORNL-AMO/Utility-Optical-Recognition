@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PDFDocumentProxy } from 'ng2-pdf-viewer';
 import html2canvas from 'html2canvas';
 import { ImageCroppedEvent } from 'ngx-image-cropper';
@@ -7,6 +8,7 @@ import { IdbUtilityMeter, IdbUtilityMeterData, utilityMeterScanProfile } from '.
 import { SourceOptions } from 'src/app/facility/utility-data/energy-consumption/energy-source/edit-meter-form/editMeterOptions';
 import * as _ from 'lodash';
 import { UtilityMeterScanProfileService } from '../indexedDB/utilityMeterScanProfile-db.service';
+
 
 @Component({
   selector: 'app-utility-optical-recognition',
@@ -44,7 +46,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public coordinatesy2: number = 0;
   public booleanAns: any;
   public last_attritbute = '';
-  public JSON_object = {};
+  public JSON_object: any[] = [];
   public uniqueProfiles: utilityMeterScanProfile[];
   public inputValue123: any = (<HTMLInputElement>document.getElementById("inputDiv"))
   public interface = 
@@ -165,7 +167,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
       this.getCanvasToStorage(canvas)
     })
     
-     this.isPdfUploaded = false;
+    this.isPdfUploaded = false;
     this.isPdf2Image = true;
     
     this.last_attritbute = event.target.id;
@@ -191,7 +193,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.interface.coordinatesy1 = event.cropperPosition.y1;
     this.interface.coordinatesx2 = event.cropperPosition.x2;
     this.interface.coordinatesy2 = event.cropperPosition.y2; 
-     
   }
   //#endregion
 
@@ -311,13 +312,17 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 //#endregion
 
   async add_to_json(key:string, value:any){
-
-    this.JSON_object[key] = value;
-    
+    const index = this.JSON_object.findIndex(item => item.key === key);
+    if(index !== -1){
+      this.JSON_object[index].value = value;
+    } else {
+      this.JSON_object.push({key: key, value: value});;
     }
+    
+  }
 
   public clear_json(){
-    this.JSON_object = {}
+    this.JSON_object = [];
   }
 
   public set_json(){

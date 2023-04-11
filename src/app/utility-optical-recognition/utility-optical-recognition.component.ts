@@ -65,6 +65,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public tempArrayAttributex2 = [];
   public tempArrayAttributey2 = [];
   public tempArrayAttributePgNum = [];
+  public profileNameSave: string = '';
   public pdf: PDFDocumentProxy;
   public GetProfile =
   {
@@ -402,7 +403,7 @@ public async test(event:any){
     this.isOcrResult = true;
 
     const worker = createWorker();
-    this.undefinedMeterData[this.colorIndex][1] = "lightgray";
+    this.undefinedMeterData[this.colorIndex][1] = "lightgray"
     await (await worker).load();
     await (await worker).loadLanguage('eng');
     await (await worker).initialize('eng');
@@ -505,7 +506,7 @@ public async test(event:any){
       this.showScanProfileSelectorDiv = false;
       
       }
-      
+      this.saveProfileName(event.target.value);
       let i = 0;
       
       if(this.counterVar == 0){
@@ -554,7 +555,18 @@ public async test(event:any){
     return;
   }
   deletePreset(){
+    let test = this.saveProfileName(null);
+    let test2 = this.scanProfileDbService.getByPresetName(test);
+    //this.scanProfileDbService.getByPresetName(test).deleteWithObservable(guid);
     return;
+  }
+
+  saveProfileName(name:string | null){
+    if (name != null)
+      this.profileNameSave = name;
+    
+    return this.profileNameSave;
+      
   }
 //edit bill component
   }

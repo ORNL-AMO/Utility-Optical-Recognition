@@ -227,15 +227,14 @@ public async test(event:any){
 
   public pdfToCanvas(event:any, index:number| null, attr: string | null ) {    
     for(let i = 0; i < this.tempArrayAttributeNames.length; i++){
-    if(attr == this.tempArrayAttributeNames[i]){
-      this.GetProfile.coordinatesx1 = this.tempArrayAttributex1[i];
-      this.GetProfile.coordinatesy1 = this.tempArrayAttributey1[i];
-      this.GetProfile.coordinatesx2 = this.tempArrayAttributex2[i];
-      this.GetProfile.coordinatesy2 = this.tempArrayAttributey2[i];
-      this.GetProfile.pgNum = this.tempArrayAttributePgNum[i];
-      this.GetProfile.attribute123 = this.tempArrayAttributeNames[i];
-    }
-
+      if(attr == this.tempArrayAttributeNames[i]){
+        this.GetProfile.coordinatesx1 = this.tempArrayAttributex1[i];
+        this.GetProfile.coordinatesy1 = this.tempArrayAttributey1[i];
+        this.GetProfile.coordinatesx2 = this.tempArrayAttributex2[i];
+        this.GetProfile.coordinatesy2 = this.tempArrayAttributey2[i];
+        this.GetProfile.pgNum = this.tempArrayAttributePgNum[i];
+        this.GetProfile.attribute123 = this.tempArrayAttributeNames[i];
+      }
     }
     if(this.currentpage != this.GetProfile.pgNum){
     }

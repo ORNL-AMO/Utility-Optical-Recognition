@@ -5,19 +5,18 @@
     margin-top: 1.5rem;
 }
 pdf-viewer{
-    height: 100vh !important;
-    /* width: 100vw !important; */
+    height: 120vh !important;
+    width: 100vh !important;
 }
-/* .pdf-container {
-    height: 100vh !important;
-} */
 
-/* :host ::ng-deep .ng2-pdf-viewer-container{
-    height: 100vh !important;
-} */
+.pdf-container {
+    height: 120vh !important;
+    width: 110vh !important;
+}
 
 :host ::ng-deep .ng2-pdf-viewer-container {
     overflow-x: hidden !important;
+    overflow-y: hidden !important;
     height: 100vh !important;
 }
 
@@ -25,15 +24,16 @@ pdf-viewer{
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    max-height: 100vh;
+    max-height: 120vh;
 }
 
 .pdf-img-wrapper {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 120vh;
+    width: 110vh;
 }
 
 .img-container{
-    height: 100vh !important;
+    height: 120vh !important;
 }

@@ -137,8 +137,8 @@
     </div>
   </div>
 
-  <div class="row">
-    <div class="col-4 mt-5">
+  <div class="row pdf-img-attribute-wrapper">
+    <div class="attributeButtons col-4 mt-5">
       <!-- attribute buttons -->
       <div class="ms-e me-3" *ngIf="showCropButtons">
         <div class="d-flex flex-column justify-content-center" *ngFor="let attr of this.tempArrayAttributeNames; let i=index">
@@ -163,12 +163,12 @@
         </pdf-viewer>
       </div>
   
-      <div class="container" *ngIf="isPdf2Image">
+      <div class="img-container" *ngIf="isPdf2Image">
         <image-cropper 
         [imageChangedEvent]="imageChangedEvent"
         [imageBase64]="strdPdf2Img"
         [maintainAspectRatio]="false"
-        [aspectRatio]="aspectRatio"
+        [aspectRatio]="2 / 2"
         [resizeToWidth]="resizeToWidth"
         [resizeToHeight]="resizeToHeight"
         [cropperMinWidth]="cropperMinWidth"
@@ -249,7 +249,7 @@
         [render-text]="true" 
         [page]="currentpage" 
         [show-all]="false" 
-        [original-size]="false"
+        [original-size]="true"
         (after-load-complete)="afterLoadComplete($event)">
         </pdf-viewer>
       </div>

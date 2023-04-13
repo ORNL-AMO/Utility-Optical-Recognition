@@ -66,7 +66,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public tempArrayAttributey2 = [];
   public tempArrayAttributePgNum = [];
   public profileNameSave: string = '';
-  public thing: any[];
+  public thing = [];
   public pdf: PDFDocumentProxy;
   public GetProfile =
   {
@@ -585,9 +585,8 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
           this.tempArrayAttributey2.push(tempArray[i].y2);
           this.tempArrayAttributePgNum.push(tempArray[i].pgNum);
           this.thing.push(tempArray[i].guid);
-          for(var index in this.thing)
-            console.log(this.thing[index]);
         }
+       
       }
       this.counterVar++;
     });
@@ -626,17 +625,18 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     return;
   }
   
-  deletePreset(){
-    let test = this.saveProfileName(null);
-    console.log(test);
-    for (var index in this.thing){
-      console.log(index)
-      this.scanProfileDbService.deleteWithObservable(this.thing[index]);
-      
-    }
-    //console.log(this.thing);
-    //this.scanProfileDbService.deleteWithObservable(this.presetName.guid);
-    return;
+ async deletePreset() {
+    alert(this.thing[0] + " is going to be deleted");
+    await this.scanProfileDbService.deleteWithObservable(this.thing[0]).subscribe(() => {
+      // Success callback
+      this.thing = [];
+      alert("this has been deleted");
+      this.endProfile();
+    }, error => {
+      // Error callback
+      console.error(error);
+      // Handle the error here
+    });
   }
 
   saveProfileName(name:string | null){

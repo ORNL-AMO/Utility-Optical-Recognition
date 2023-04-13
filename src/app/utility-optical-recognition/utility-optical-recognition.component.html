@@ -140,7 +140,7 @@
   <div class="row pdf-img-attribute-wrapper">
     <div class="attributeButtons col-4 mt-5">
       <!-- attribute buttons -->
-      <div class="ms-e me-3" *ngIf="showCropButtons">
+      <div class="me-3" *ngIf="showCropButtons">
         <div class="d-flex flex-column justify-content-center" *ngFor="let attr of this.tempArrayAttributeNames; let i=index">
           <button class="btn action-btn p-3 mb-3" (click)="upatePage(attr);" 
             [id]="attr[0]" [disabled]="isPdf2Image ? true : false" >
@@ -152,13 +152,12 @@
 <!-- pdfToCanvas($event, null, attr); -->
     <div class="col-8">
       <div class="pdf-container top-margin" *ngIf="isPdfUploaded">
-        <pdf-viewer #pdfViewer
+        <pdf-viewer
         [src]="pdfSrc" 
         [render-text]="true" 
         [(page)]="currentpage"
         [show-all]="false" 
-        [original-size]="false"
-        [zoom-scale]="'page-fit'"
+        [original-size]="true"
         (after-load-complete)="afterLoadComplete($event);">
         </pdf-viewer>
       </div>
@@ -168,18 +167,10 @@
         [imageChangedEvent]="imageChangedEvent"
         [imageBase64]="strdPdf2Img"
         [maintainAspectRatio]="false"
+        [containWithinAspectRatio]="false"
         [aspectRatio]="2 / 2"
-        [resizeToWidth]="resizeToWidth"
-        [resizeToHeight]="resizeToHeight"
-        [cropperMinWidth]="cropperMinWidth"
-        [cropperMinHeight]="cropperMinHeight"
-        [onlyScaleDown]="onlyScaleDown"
-        [imageQuality]="imageQuality"
         [autoCrop]="autoCrop"
-        [backgroundColor]="backgroundColor"
         [disabled]="disabled"
-        [canvasRotation]="canvasRotation"
-        [allowMoveImage]="allowMoveImage"
         [cropper]="cropperPosition"
         (imageCropped)="cropImage($event)"
         (imageLoaded)="imageLoaded()"
@@ -187,11 +178,11 @@
         </image-cropper>
       </div>
       
-      <div class="container" *ngIf="isOcrResult">
+      <!-- <div class="container" *ngIf="isOcrResult">
         <h1>OCR Result</h1>
         <h3>{{ ocrResult }}</h3>
         <h3 *ngIf="isOcrResult && ocrResult == ''">No text could be read</h3>
-      </div>
+      </div> -->
     </div>
   </div>
 </div>

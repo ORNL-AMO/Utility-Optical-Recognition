@@ -66,6 +66,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public tempArrayAttributey2 = [];
   public tempArrayAttributePgNum = [];
   public profileNameSave: string = '';
+  public thing: any[];
   public pdf: PDFDocumentProxy;
   public GetProfile =
   {
@@ -583,6 +584,9 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
           this.tempArrayAttributex2.push(tempArray[i].x2);
           this.tempArrayAttributey2.push(tempArray[i].y2);
           this.tempArrayAttributePgNum.push(tempArray[i].pgNum);
+          this.thing.push(tempArray[i].guid);
+          for(var index in this.thing)
+            console.log(this.thing[index]);
         }
       }
       this.counterVar++;
@@ -624,8 +628,14 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   
   deletePreset(){
     let test = this.saveProfileName(null);
-    let test2 = this.scanProfileDbService.getByPresetName(test);
-    //this.scanProfileDbService.getByPresetName(test).deleteWithObservable(guid);
+    console.log(test);
+    for (var index in this.thing){
+      console.log(index)
+      this.scanProfileDbService.deleteWithObservable(this.thing[index]);
+      
+    }
+    //console.log(this.thing);
+    //this.scanProfileDbService.deleteWithObservable(this.presetName.guid);
     return;
   }
 
@@ -638,4 +648,4 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
   
 //edit bill component
-  }
+}

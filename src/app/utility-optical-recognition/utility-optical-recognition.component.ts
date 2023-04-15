@@ -66,7 +66,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public tempArrayAttributey2 = [];
   public tempArrayAttributePgNum = [];
   public profileNameSave: string = '';
-  public thing: any[];
+  public deletePresetName: utilityMeterScanProfile;
   public pdf: PDFDocumentProxy;
   public GetProfile =
   {
@@ -584,9 +584,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
           this.tempArrayAttributex2.push(tempArray[i].x2);
           this.tempArrayAttributey2.push(tempArray[i].y2);
           this.tempArrayAttributePgNum.push(tempArray[i].pgNum);
-          this.thing.push(tempArray[i].guid);
-          for(var index in this.thing)
-            console.log(this.thing[index]);
         }
       }
       this.counterVar++;
@@ -627,24 +624,26 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
   
   deletePreset(){
+    for (var index in this.uniqueProfiles)
+      console.log(this.uniqueProfiles[index])
     let test = this.saveProfileName(null);
-    console.log(test);
-    for (var index in this.thing){
-      console.log(index)
-      this.scanProfileDbService.deleteWithObservable(this.thing[index]);
-      
-    }
-    //console.log(this.thing);
-    //this.scanProfileDbService.deleteWithObservable(this.presetName.guid);
-    return;
+    this.scanProfileDbService.getAll().subscribe(profiles => {
+      // Filter out profiles with duplicate presetName
+      this.uniqueProfiles = profiles.filter((profile, index, self) =>
+        index === self.findIndex(p => p.presetName === profile.presetName && test)
+      );
+      console.log(this.uniqueProfiles);
+      delete this.uniqueProfiles[0];
+      console.log(this.uniqueProfiles[0]);
+      console.log(this.uniqueProfiles[1]);
+    });
   }
 
   saveProfileName(name:string | null){
     if (name != null)
       this.profileNameSave = name;
     
-    return this.profileNameSave;
-      
+    return this.profileNameSave;  
   }
   
 //edit bill component

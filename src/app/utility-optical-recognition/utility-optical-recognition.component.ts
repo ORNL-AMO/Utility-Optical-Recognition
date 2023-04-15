@@ -585,6 +585,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
           this.tempArrayAttributey2.push(tempArray[i].y2);
           this.tempArrayAttributePgNum.push(tempArray[i].pgNum);
         }
+       
       }
       this.counterVar++;
     });

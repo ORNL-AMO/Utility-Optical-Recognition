@@ -66,7 +66,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public tempArrayAttributey2 = [];
   public tempArrayAttributePgNum = [];
   public profileNameSave: string = '';
-  public deletePresetName: utilityMeterScanProfile;
+  public deleteIndex: number;
   public pdf: PDFDocumentProxy;
   public GetProfile =
   {
@@ -628,16 +628,15 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     for (var index in this.uniqueProfiles)
       console.log(this.uniqueProfiles[index])
     let test = this.saveProfileName(null);
-    this.scanProfileDbService.getAll().subscribe(profiles => {
-      // Filter out profiles with duplicate presetName
-      this.uniqueProfiles = profiles.filter((profile, index, self) =>
-        index === self.findIndex(p => p.presetName === profile.presetName && test)
-      );
-      console.log(this.uniqueProfiles);
-      delete this.uniqueProfiles[0];
-      console.log(this.uniqueProfiles[0]);
-      console.log(this.uniqueProfiles[1]);
-    });
+    
+    for(var index in this.uniqueProfiles){
+      if(test == this.uniqueProfiles[index].presetName)
+        this.deleteIndex = Number(index);
+    }
+    delete this.uniqueProfiles[this.deleteIndex];
+    
+    for (var index in this.uniqueProfiles)
+      console.log(this.uniqueProfiles[index])
   }
 
   saveProfileName(name:string | null){

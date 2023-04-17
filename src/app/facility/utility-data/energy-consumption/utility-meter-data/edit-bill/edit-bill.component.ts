@@ -17,6 +17,7 @@ import { UtilityMeterDataService } from '../utility-meter-data.service';
   templateUrl: './edit-bill.component.html',
   styleUrls: ['./edit-bill.component.css']
 })
+
 export class EditBillComponent implements OnInit {
 
   editMeterData: IdbUtilityMeterData;
@@ -137,5 +138,4 @@ export class EditBillComponent implements OnInit {
   toggleFilterMenu(){
     this.showFilterDropdown = !this.showFilterDropdown;
   }
-
 }

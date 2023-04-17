@@ -26,14 +26,13 @@ export class UtilityMeterScanProfileService {
         let isTaken = false;
         
         await new Promise<void>((resolve) => {
-            this.dbService
-            .getAllByIndex('utilityMeterScanProfile', 'presetName', idbKeyRange)
+            this.dbService.getAllByIndex('utilityMeterScanProfile', 'presetName', idbKeyRange)
             .subscribe((profiles) => {
                 if (profiles.length > 0) {
-                alert('Preset name already taken.');
-                isTaken = true;
+                    alert('Preset name already taken.');
+                    isTaken = true;
                 }
-                resolve();
+                    resolve();
             });
         });
         

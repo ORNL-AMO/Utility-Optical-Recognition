@@ -5,15 +5,38 @@
     margin-top: 1.5rem;
 }
 pdf-viewer{
-    height: 100vh !important;
+    height: 120vh !important;
 }
+
 .pdf-container {
     height: 100vh !important;
-    overflow: scroll;
 }
 
 .verify_item{
     display: flex;
     align-items: center;
     justify-content: center;
+}
+    
+:host ::ng-deep .ng2-pdf-viewer-container {
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
+    height: 120vh !important;
+}
+
+.attributeButtons{
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    max-height: 110vh;
+}
+
+.pdf-img-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 120vh;
+}
+
+.img-container{
+    height: 120vh !important;
 }

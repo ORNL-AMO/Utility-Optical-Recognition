@@ -65,6 +65,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public tempArrayAttributex2 = [];
   public tempArrayAttributey2 = [];
   public tempArrayAttributePgNum = [];
+  public buttonColors: string[] = [];
   public profileNameSave: string = '';
   public deleteIndex: number;
   public pdf: PDFDocumentProxy;
@@ -146,6 +147,16 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
     // set required attributes
     this.undefinedMeterData.forEach(subArray => {
+      if(subArray.includes('Read Date')){
+        this.toDo.push(subArray[0]);
+      } else if(subArray.includes('Total Volume')){
+        this.toDo.push(subArray[0]);
+      } else if(subArray.includes('Total Energy Use')){
+        this.toDo.push(subArray[0]);
+      }
+    });
+
+    this.tempArrayAttributeNames.forEach(subArray => {
       if(subArray.includes('Read Date')){
         this.toDo.push(subArray[0]);
       } else if(subArray.includes('Total Volume')){
@@ -238,7 +249,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     return;
   }
   
-  public upatePage(attr: string){
+  public upatePage(attr: string, index: number | null, event: any){
     for(let i = 0; i < this.tempArrayAttributeNames.length; i++){
       if(attr == this.tempArrayAttributeNames[i]){
         this.GetProfile.coordinatesx1 = this.tempArrayAttributex1[i];
@@ -249,10 +260,13 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
         this.GetProfile.attribute123 = this.tempArrayAttributeNames[i];
       }
     }
-    
+    if (index != null) {
+      this.updateAttributeColor(index);
+      this.GetProfile.attribute123 = event.target.id;
+    }
+  
     this.currentpage = this.GetProfile.pgNum;
     this.isButtonReady = true;
-    
     return;
   }
   //#endregion
@@ -292,9 +306,8 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     }
     
     if(index != null){
-      this.undefinedMeterData[index][1] = "red"
-      this.interface.attribute123 = event.target.id;
       this.updateAttributeColor(index);
+      this.interface.attribute123 = event.target.id;
     }
     
     html2canvas(document.querySelector(".pdf-container") as HTMLElement).then((canvas: any) => {
@@ -433,9 +446,16 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
   //#endregion
 
+  //When called this function will turn the selected attribute red
   private updateAttributeColor(index:number){
     //store the index variable when it is sent from pdfToCanvas for when this function is called from HTML file
     this.colorIndex = index;
+    this.buttonColors[index] = "red";
+  }
+
+  //When called this function will turn the saved attribute lightgray
+  private resetButtonColors() {
+    this.buttonColors[this.colorIndex] = "lightgray";
   }
 
   //#region Tesseract
@@ -457,7 +477,8 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
     // OCR
     const worker = createWorker();
-    this.undefinedMeterData[this.colorIndex][1] = "lightgray"
+    // this.undefinedMeterData[this.colorIndex][1] = "lightgray"
+    this.resetButtonColors();
     await (await worker).loadLanguage('eng');
     await (await worker).initialize('eng');
     const {data: { text } } = await (await worker).recognize(this.cropingImage);
@@ -597,7 +618,8 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.isPdf2Image = false;
     this.isOcrResult = true;
     const worker = createWorker();
-    this.undefinedMeterData[this.colorIndex][1] = "lightgray"
+    // this.Test123();
+    this.resetButtonColors();
     await (await worker).load();
     await (await worker).loadLanguage('eng');
     await (await worker).initialize('eng');

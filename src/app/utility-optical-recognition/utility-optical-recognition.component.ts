@@ -1,11 +1,6 @@
-<<<<<<< HEAD
-import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { PDFDocumentProxy } from 'ng2-pdf-viewer';
-=======
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { PDFDocumentProxy, PdfViewerComponent } from 'ng2-pdf-viewer';
->>>>>>> TNTech-dev
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import html2canvas from 'html2canvas';
 import { Dimensions, ImageCroppedEvent, CropperPosition } from 'ngx-image-cropper'
 import { createWorker } from 'tesseract.js'
@@ -27,11 +22,8 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   @ViewChild(PdfViewerComponent, {static: false}) private pdfViewer: PdfViewerComponent;
   @Input() editMeter: IdbUtilityMeter;
   @Input() editMeterData: IdbUtilityMeterData;
-<<<<<<< HEAD
   @Input() meterDataForm: FormGroup;
   public undefinedMeterData;
-=======
->>>>>>> TNTech-dev
   
   public page: number = 1;
   public counterVar: number = 0;
@@ -44,10 +36,11 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public show_ocr_results_div: boolean = false;
   public showFileUploadDiv: boolean = false;
   public showPdfModalDiv: boolean = false;
+  public showPdfModalDiv1: boolean = false;
   public showCropButtons: boolean = false;
   public showPdfDiv: boolean = false;
   public showToDoAlert: boolean = false;
-  public showPdfModalDiv1: boolean = false;
+  public lastPdfModalID: number = 0;
   //#endregion
 
   public isPdfUploaded: boolean = false;
@@ -107,7 +100,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   };
 
   //#region bill attributes
-  public undefinedMeterData: any;
+  // public undefinedMeterData: any;
   public colorIndex: number = 0;
   public toDo: any[] = [];
   //#endregion
@@ -311,14 +304,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     html2canvas(document.querySelector(".pdf-container") as HTMLElement).then((canvas: any) => {
       this.getCanvasToStorage(canvas)
     })
-<<<<<<< HEAD
-    
-    this.isPdfUploaded = false;
-    this.isPdf2Image = true;
-    
-    this.last_attritbute = event.target.id;
-=======
->>>>>>> TNTech-dev
 
     if(index == null){
       this.cropperPosition.x1 = this.GetProfile.coordinatesx1;
@@ -381,11 +366,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.interface.coordinatesx1 = event.cropperPosition.x1;
     this.interface.coordinatesy1 = event.cropperPosition.y1;
     this.interface.coordinatesx2 = event.cropperPosition.x2;
-<<<<<<< HEAD
     this.interface.coordinatesy2 = event.cropperPosition.y2; 
-=======
-    this.interface.coordinatesy2 = event.cropperPosition.y2;
->>>>>>> TNTech-dev
   }
   //#endregion
 
@@ -524,17 +505,14 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.showPdfModalDiv1 = false;
     this.showPdfModalDiv = false;
     this.showCropButtons = false;
-<<<<<<< HEAD
-    this.show_ocr_results_div = false;
-=======
     this.showPdfDiv = false;
+    this.show_ocr_results_div = false;
 
     // reset session storage
     sessionStorage.removeItem("pdf2Img");
     sessionStorage.removeItem("CrppdImg");
 
     // reset OCR
->>>>>>> TNTech-dev
     await (await worker1).terminate();
     this.set_json(); //Set json from updated text boxes
     
@@ -560,7 +538,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
 //#endregion
 
-<<<<<<< HEAD
   setFormControlValue(controlName: string, newValue: any) {
     this.meterDataForm.controls[controlName].setValue(newValue);
   }
@@ -580,10 +557,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     } else {
       this.JSON_object.push({key: key, value: value});;
     }
-=======
-  async add_to_json(key:string, value:any){
-    this.JSON_object[key] = value;
->>>>>>> TNTech-dev
   }
 
   public clear_json(){
@@ -607,7 +580,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     });
   }
 
-<<<<<<< HEAD
   updateValue(key: string, event: any) {
     const index = this.JSON_object.findIndex(item => item.key === key);
     if (index !== -1) {
@@ -615,8 +587,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     }
   }
 
-}
-=======
   async startProcessing(event: any | null){
     if(event != null){
       this.GetProfile.name123 = event.target.value;
@@ -643,7 +613,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     });
     
     return;
-}
+  }
   async doOCR2(){
     // show/hide divs
     this.isPdf2Image = false;
@@ -679,7 +649,5 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   deletePreset(){
     return;
   }
+}
   
-//edit bill component
-  }
->>>>>>> TNTech-dev

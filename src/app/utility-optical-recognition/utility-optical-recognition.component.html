@@ -6,7 +6,7 @@
   <div class="container text-center">
     <div class="row row-cols-3 mb-5">
       <div class="col-12">
-        <button class="btn btn-primary col-3 m-2" *ngFor="let profile of uniqueProfiles" [value]="profile.presetName">{{profile.presetName}}</button>
+        <button class="btn btn-primary col-3 m-2" *ngFor="let profile of uniqueProfiles" [value]="profile.presetName" (click)="startProcessing($event)">{{profile.presetName}}</button>
       </div>
     </div>
   </div>
@@ -17,18 +17,15 @@
   </div>
   <div class="row justify-content-center mb-5">
     <button class="btn btn-primary col-6" (click)="skipToUploadPdf()" >New Scan Profile</button> 
-    
   </div>
 </div>
+
 <!-- utility selector -->
 <div class="utility-selector container p-4" *ngIf="showUtilitySelectorDiv">
   <div class="row justify-content-center mb-5">
     <h4>Please select a utility bill or meter option</h4>
   </div>
   <div class="row mb-5">
-    <!-- <div class="d-flex flex-wrap justify-content-around">
-      <button class="btn btn-primary col-4 mb-5" *ngFor="let sourceOption of sourceOptions">{{sourceOption}}</button>
-    </div> -->
     <div class="col">
       <button class="btn btn-primary col-12" (click)="this.showUtilitySelectorDiv = false; this.showFileUploadDiv = true">Electricity</button>
     </div>
@@ -50,21 +47,6 @@
       <button class="btn btn-primary col-12" (click)="this.showUtilitySelectorDiv = false; this.showFileUploadDiv = true">Other Fuels</button>
     </div>
   </div>
-</div>
-
-<!-- completion menu-->
-<div class="verify-menu-container" *ngIf="show_ocr_results_div">
-  <div class="col">
-    <div class="verify-text mb-5">
-      <div *ngFor="let item of JSON_object; let i = index" class="verify_item">
-        <label>{{ item.key }}:</label>
-        <input type="text" [value]="item.value" (input)="updateValue(item.key, $event)">
-      </div>
-  <button class="btn btn-primary col-12 mb-3" id="saveAll" (click) = "endProfile()">Confirm Save</button>
-  <button class="btn btn-primary col-12 mb-3" (click) = "this.show_ocr_results_div = false; this.showPdfModalDiv = true">Go back</button>
-    </div>
-  </div>
-
 </div>
 
 <!-- upload pdf -->
@@ -93,13 +75,55 @@
     </div>
   </div>
   <div id ="inputDiv" class="form-control" style="pointer-events: none;">
-  <input class="form-control" type="file" id="upload-doc" accept=".pdf" (change)="uploadPdf($event); this.showFileUploadDiv = false; this.showPdfModalDiv = true" />
+  <input class="form-control" type="file" id="upload-doc" accept=".pdf" (change)="uploadPdf($event); this.showFileUploadDiv = false; this.showPdfModalDiv = true;" />
   </div>
   <hr>
 </div>
 
-<!-- show pdf -->
-<div class="show-pdf container p-4" *ngIf="showPdfModalDiv">
+<!-- completion menu-->
+<div class="verify-menu-container" *ngIf="show_ocr_results_div">
+  <div class="col">
+    <div class="verify-text mb-5">
+      <div *ngFor="let item of JSON_object; let i = index" class="verify_item">
+        <label>{{ item.key }}:</label>
+        <input type="text" [value]="item.value" (input)="updateValue(item.key, $event)">
+      </div>
+  <button class="btn btn-primary col-12 mb-3" id="saveAll" (click) = "endProfile()">Confirm Save</button>
+  <button class="btn btn-primary col-12 mb-3" (click) = "this.show_ocr_results_div = false; this.lastPdfModalID === 0 ? this.showPdfModalDiv = true : this.showPdfModalDiv = false">Go back</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- DUPLICATE SECTION -->
+<div class="file-upload container p-4" *ngIf="showFileUploadDiv1">
+  <div class="row mb-2">
+    <h4>Import Data from .PDF Files</h4>
+  </div>
+  <div class="alert alert-info">
+    <ul class="mb-0">
+      <li>Select the file you wish to upload.</li>
+      <li>Data must be a .PDF file type.</li>
+      <li>Once the files have been selected, we will work through selecting the relevant data on the bill.</li>
+      <li>Click the "Choose Files" button or drag and drop files into the grey box.</li>
+      <li>One file can be uploaded at a time.</li>
+    </ul>
+  </div>
+  <hr>
+  
+  <!-- scan profile/preset name -->
+  <div class="col-4 mb-3">
+    <div class="input-group">
+      <button class="btn btn-danger" type="button" (click)="deletePreset() ">Delete</button>
+    </div>
+  </div>
+  <div id ="inputDiv" class="form-control">
+  <input class="form-control" type="file" id="upload-doc" accept=".pdf" (change)="uploadPdf($event); this.showFileUploadDiv1 = false; this.showPdfModalDiv1 = true" />
+  </div>
+  <hr>
+</div>
+
+<div class="show-pdf container p-4" *ngIf="showPdfModalDiv1">
   <div class="row justify-content-center mb-2">
     <h4>Set up scan profile</h4>
   </div>
@@ -113,7 +137,102 @@
 
   <div class="d-flex mt-5">
     <!-- page numbers -->
-    <button class="btn btn-primary"id="saveAll" type="button" (click)="this.show_ocr_results_div = true; this.showPdfModalDiv = false">Save Profile Changes</button>
+    <button class="btn btn-primary"id="saveAll" type="button" (click)="this.show_ocr_results_div = true; this.showPdfModalDiv1 = false; this.lastPdfModalID = 1">Save Profile Changes</button>
+    <div class="d-inline-flex ms-auto" *ngIf="isButtonReady">
+      <button class="btn btn-primary"id="saveAll" type="button" (click)="test($event);">Load Set Location</button>
+    </div>
+    <!-- crop image button -->
+    <div class="pagescount ms-auto" *ngIf="isPdf2Image">
+      <button (click)="doOCR2()" class="btn btn-primary">Fetch This Data</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-4 mt-5">
+      <!-- attribute buttons -->
+      <div class="ms-e me-3" *ngIf="showCropButtons">
+        <div class="d-flex flex-column justify-content-center" *ngFor="let attr of this.tempArrayAttributeNames; let i=index">
+          <button class="btn action-btn p-3 mb-3" (click)="upatePage(attr);" 
+            [id]="attr[0]" [disabled]="isPdf2Image ? true : false" >
+            {{ attr }}
+          </button>
+        </div>
+      </div>
+    </div>
+<!-- pdfToCanvas($event, null, attr); -->
+    <div class="col-8">
+      <div class="pdf-container top-margin" *ngIf="isPdfUploaded">
+        <pdf-viewer #pdfViewer
+        [src]="pdfSrc" 
+        [render-text]="true" 
+        [(page)]="currentpage"
+        [show-all]="false" 
+        [original-size]="false"
+        [zoom-scale]="'page-fit'"
+        (after-load-complete)="afterLoadComplete($event);">
+        </pdf-viewer>
+      </div>
+  
+      <div class="container" *ngIf="isPdf2Image">
+        <image-cropper 
+        [imageChangedEvent]="imageChangedEvent"
+        [imageBase64]="strdPdf2Img"
+        [maintainAspectRatio]="false"
+        [aspectRatio]="aspectRatio"
+        [resizeToWidth]="resizeToWidth"
+        [resizeToHeight]="resizeToHeight"
+        [cropperMinWidth]="cropperMinWidth"
+        [cropperMinHeight]="cropperMinHeight"
+        [onlyScaleDown]="onlyScaleDown"
+        [imageQuality]="imageQuality"
+        [autoCrop]="autoCrop"
+        [backgroundColor]="backgroundColor"
+        [disabled]="disabled"
+        [canvasRotation]="canvasRotation"
+        [allowMoveImage]="allowMoveImage"
+        [cropper]="cropperPosition"
+        (imageCropped)="cropImage($event)"
+        (imageLoaded)="imageLoaded()"
+        (cropperReady)="cropperReady($event)">
+        </image-cropper>
+      </div>
+      
+      <div class="container" *ngIf="isOcrResult">
+        <h1>OCR Result</h1>
+        <h3>{{ ocrResult }}</h3>
+        <h3 *ngIf="isOcrResult && ocrResult == ''">No text could be read</h3>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END DUPLICATE SECTION  -->
+
+<!-- show pdf -->
+<div class="show-pdf container p-4" *ngIf="showPdfModalDiv">
+  <div class="row justify-content-center mb-2">
+    <h4>Set up scan profile</h4>
+  </div>
+
+  <!-- alerts -->
+  <div class="alert alert-info">
+    <ul class="mb-0">
+      <li>Please select the required fields.</li>
+      <li>Click a box to the left to begin snipping.</li>
+      <li>Once all of the required fields are selected, we will work through reading in the bill.</li>
+    </ul>
+  </div>
+  <div class="alert alert-danger" role="alert" *ngIf="showToDoAlert">
+    <p>Required fields</p>
+    <ul class="mb-0">
+      <li *ngFor="let i of toDo">{{ i }}</li>
+    </ul>
+  </div>
+  
+  <!-- main pdf container -->
+  <div class="d-flex mt-5">
+
+    <!-- save & page numbers -->
+    <button class="btn btn-primary"id="saveAll" type="button" (click)="this.show_ocr_results_div = true; this.showPdfModalDiv = false; this.lastPdfModalID = 0">Save Profile Changes</button>
     <div class="d-inline-flex ms-auto" *ngIf="isPdfUploaded">
       <button class="btn action-btn" type="button" (click)="previous()">
         <i class="fa fa-chevron-left"></i>
@@ -123,6 +242,7 @@
         <i class="fa fa-chevron-right"></i>
       </button>
     </div>
+
     <!-- crop image button -->
     <div class="pagescount ms-auto" *ngIf="isPdf2Image">
       <button (click)="doOCR()" class="btn btn-primary">Crop Image</button>
@@ -130,19 +250,23 @@
     </div>
   </div>
 
+  <!-- attribute button section -->
   <div class="row">
     <div class="col-4 mt-5">
-      <!-- attribute buttons -->
       <div class="ms-e me-3" *ngIf="showCropButtons">
+
+        <!-- dynamically generated attribute buttons -->
         <div class="d-flex flex-column justify-content-center" *ngFor="let attr of undefinedMeterData; let i=index">
-          <button class="btn action-btn p-3 mb-3" (click)="pdfToCanvas($event,i)" [style.color] = "attr[1]"
+          <button class="btn action-btn p-3 mb-3" (click)="pdfToCanvas($event,i, null)" [style.color] = "attr[1]"
             [id]="attr[0]" [disabled]="isPdf2Image ? true : false">
-            {{ attr[0] }}
+            {{ attr[0] }} <span *ngIf="attr.includes('Total Volume') || attr.includes('Total Energy Use') || attr.includes('Read Date')" class="required">*</span>
           </button>
         </div>
+
       </div>
     </div>
 
+    <!-- pdf-viewer -->
     <div class="col-8">
       <div class="pdf-container top-margin" *ngIf="isPdfUploaded">
         <pdf-viewer 
@@ -156,22 +280,26 @@
         </pdf-viewer>
       </div>
   
+      <!-- image-cropper -->
       <div class="container" *ngIf="isPdf2Image">
         <image-cropper 
         [imageBase64]="strdPdf2Img"
         (imageCropped)="cropImage($event)"
         [maintainAspectRatio]="false"
         [containWithinAspectRatio]="false" 
-
-        [aspectRatio]="2 / 2">
+        [aspectRatio]="2 / 2"
+        [cropper]="cropperPosition"
+        (cropperReady)="cropperReady1($event)">
         </image-cropper>
       </div>
       
+      <!-- ocr result -->
       <div class="container" *ngIf="isOcrResult">
         <h1>OCR Result</h1>
         <h3>{{ ocrResult }}</h3>
         <h3 *ngIf="isOcrResult && ocrResult == ''">No text could be read</h3>
       </div>
+      
     </div>
   </div>
 </div>

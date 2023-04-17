@@ -1,8 +1,11 @@
+<<<<<<< HEAD
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PDFDocumentProxy } from 'ng2-pdf-viewer';
+=======
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { PDFDocumentProxy, PdfViewerComponent } from 'ng2-pdf-viewer';
+>>>>>>> TNTech-dev
 import html2canvas from 'html2canvas';
 import { Dimensions, ImageCroppedEvent, CropperPosition } from 'ngx-image-cropper'
 import { createWorker } from 'tesseract.js'
@@ -24,8 +27,11 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   @ViewChild(PdfViewerComponent, {static: false}) private pdfViewer: PdfViewerComponent;
   @Input() editMeter: IdbUtilityMeter;
   @Input() editMeterData: IdbUtilityMeterData;
+<<<<<<< HEAD
   @Input() meterDataForm: FormGroup;
   public undefinedMeterData;
+=======
+>>>>>>> TNTech-dev
   
   public page: number = 1;
   public counterVar: number = 0;
@@ -305,11 +311,14 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     html2canvas(document.querySelector(".pdf-container") as HTMLElement).then((canvas: any) => {
       this.getCanvasToStorage(canvas)
     })
+<<<<<<< HEAD
     
     this.isPdfUploaded = false;
     this.isPdf2Image = true;
     
     this.last_attritbute = event.target.id;
+=======
+>>>>>>> TNTech-dev
 
     if(index == null){
       this.cropperPosition.x1 = this.GetProfile.coordinatesx1;
@@ -366,13 +375,17 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   //#endregion
 
   //#region Image Cropper
-  public cropImage(event: ImageCroppedEvent){
+  public cropImage(event: ImageCroppedEvent ){
     this.cropingImage = event.base64;
     sessionStorage.setItem("CrppdImg", this.cropingImage);
     this.interface.coordinatesx1 = event.cropperPosition.x1;
     this.interface.coordinatesy1 = event.cropperPosition.y1;
     this.interface.coordinatesx2 = event.cropperPosition.x2;
+<<<<<<< HEAD
     this.interface.coordinatesy2 = event.cropperPosition.y2; 
+=======
+    this.interface.coordinatesy2 = event.cropperPosition.y2;
+>>>>>>> TNTech-dev
   }
   //#endregion
 

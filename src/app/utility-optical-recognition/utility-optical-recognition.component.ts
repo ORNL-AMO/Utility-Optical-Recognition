@@ -248,9 +248,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
   
   public upatePage(attr: string, index: number | null, event: any){
-    console.log('Updating page before, index:', index);
-    console.log('tempArrayAttributeNames before upatePage:', this.tempArrayAttributeNames);
-    console.log('buttonColors before upatePage:', this.buttonColors);
     for(let i = 0; i < this.tempArrayAttributeNames.length; i++){
       if(attr == this.tempArrayAttributeNames[i]){
         this.GetProfile.coordinatesx1 = this.tempArrayAttributex1[i];
@@ -268,9 +265,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   
     this.currentpage = this.GetProfile.pgNum;
     this.isButtonReady = true;
-    console.log('Updating page After, index:', index);
-    console.log('tempArrayAttributeNames after upatePage:', this.tempArrayAttributeNames);
-    console.log('buttonColors after upatePage:', this.buttonColors);
     return;
   }
   //#endregion
@@ -607,6 +601,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.isPdf2Image = false;
     this.isOcrResult = true;
     const worker = createWorker();
+    // this.Test123();
     this.resetButtonColors();
     await (await worker).load();
     await (await worker).loadLanguage('eng');

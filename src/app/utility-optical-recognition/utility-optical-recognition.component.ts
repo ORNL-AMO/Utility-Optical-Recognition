@@ -20,6 +20,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   //#region Variables
   @Input() editMeter: IdbUtilityMeter;
   @Input() editMeterData: IdbUtilityMeterData;
+  @Input() meterDataForm: FormGroup;
   public undefinedMeterData;
   
   public showScanProfileSelectorDiv: boolean = true;        //aka preset profiles
@@ -299,6 +300,11 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.showCropButtons = false;
     this.show_ocr_results_div = false;
     await (await worker1).terminate();
+    this.set_json(); //Set json from updated text boxes
+    
+    this.JSON_object.forEach(item => {
+      this.setFormControlValue(item.key, item.value);
+    })
 
     this.clear_json();
     this.set_json();
@@ -311,14 +317,25 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   
 //#endregion
 
+  setFormControlValue(controlName: string, newValue: any) {
+    this.meterDataForm.controls[controlName].setValue(newValue);
+  }
+
+  toCamelCase(str: string) {
+    str = str.charAt(0).toLowerCase() + str.slice(1);
+    return str.replace(/\s(.)/g, function(match, group1) {
+      return group1.toUpperCase();
+    });
+  }
+
   async add_to_json(key:string, value:any){
+    key = this.toCamelCase(key);
     const index = this.JSON_object.findIndex(item => item.key === key);
     if(index !== -1){
       this.JSON_object[index].value = value;
     } else {
       this.JSON_object.push({key: key, value: value});;
     }
-    
   }
 
   public clear_json(){
@@ -341,6 +358,13 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
         index === self.findIndex(p => p.presetName === profile.presetName)
       );
     });
+  }
+
+  updateValue(key: string, event: any) {
+    const index = this.JSON_object.findIndex(item => item.key === key);
+    if (index !== -1) {
+      this.JSON_object[index].value = event.target.value;
+    }
   }
 
 }

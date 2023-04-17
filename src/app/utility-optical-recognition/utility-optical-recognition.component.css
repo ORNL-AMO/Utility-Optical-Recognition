@@ -11,3 +11,9 @@ pdf-viewer{
     height: 100vh !important;
     overflow: scroll;
 }
+
+.verify_item{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

@@ -66,6 +66,8 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public tempArrayAttributey2 = [];
   public tempArrayAttributePgNum = [];
   public buttonColors: string[] = [];
+  public profileNameSave: string = '';
+  public deleteIndex: number;
   public pdf: PDFDocumentProxy;
   public GetProfile =
   {
@@ -511,6 +513,19 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   async endProfile(){
     this.onGetUniqueProfiles();
     const worker1 = createWorker();
+    this.showFileUploadDiv = false;
+    sessionStorage.removeItem("pdf2Img");
+    sessionStorage.removeItem("CrppdImg");
+    this.showScanProfileSelectorDiv = true;
+    this.showUtilitySelectorDiv = false;
+    this.showPdfModalDiv = false;
+    this.showCropButtons = false;
+    this.currentpage = 1;
+    await (await worker1).terminate();
+
+    for(var index in this.undefinedMeterData){
+      this.undefinedMeterData[index][1] = "black";
+    }
 
     // reset divs
     this.showFileUploadDiv1 = false;
@@ -579,6 +594,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
         this.showFileUploadDiv1 = true;
         this.showScanProfileSelectorDiv = false;
       }
+      this.saveProfileName(event.target.value);
     
       let i = 0;
       if(this.counterVar == 0){
@@ -590,6 +606,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
           this.tempArrayAttributey2.push(tempArray[i].y2);
           this.tempArrayAttributePgNum.push(tempArray[i].pgNum);
         }
+       
       }
       this.counterVar++;
     });
@@ -630,8 +647,26 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
   
   deletePreset(){
-    return;
+    for (var index in this.uniqueProfiles)
+      console.log(this.uniqueProfiles[index])
+    let test = this.saveProfileName(null);
+    
+    for(var index in this.uniqueProfiles){
+      if(test == this.uniqueProfiles[index].presetName)
+        this.deleteIndex = Number(index);
+    }
+    delete this.uniqueProfiles[this.deleteIndex];
+    
+    for (var index in this.uniqueProfiles)
+      console.log(this.uniqueProfiles[index])
+  }
+
+  saveProfileName(name:string | null){
+    if (name != null)
+      this.profileNameSave = name;
+    
+    return this.profileNameSave;  
   }
   
 //edit bill component
-  }
+}

@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { PDFDocumentProxy, PdfViewerComponent } from 'ng2-pdf-viewer';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import html2canvas from 'html2canvas';
 import { Dimensions, ImageCroppedEvent, CropperPosition } from 'ngx-image-cropper'
 import { createWorker } from 'tesseract.js'
@@ -8,6 +9,7 @@ import { SourceOptions } from 'src/app/facility/utility-data/energy-consumption/
 import * as _ from 'lodash';
 import { UtilityMeterScanProfileService } from '../indexedDB/utilityMeterScanProfile-db.service';
 import { UtilityMeterDataService } from '../facility/utility-data/energy-consumption/utility-meter-data/utility-meter-data.service';
+
 
 @Component({
   selector: 'app-utility-optical-recognition',
@@ -20,6 +22,8 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   @ViewChild(PdfViewerComponent, {static: false}) private pdfViewer: PdfViewerComponent;
   @Input() editMeter: IdbUtilityMeter;
   @Input() editMeterData: IdbUtilityMeterData;
+  @Input() meterDataForm: FormGroup;
+  public undefinedMeterData;
   
   public page: number = 1;
   public counterVar: number = 0;
@@ -29,12 +33,14 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public showFileUploadDiv1:boolean = false;
   public showScanProfileSelectorDiv: boolean = true;        //aka preset profiles
   public showUtilitySelectorDiv: boolean = false;
+  public show_ocr_results_div: boolean = false;
   public showFileUploadDiv: boolean = false;
   public showPdfModalDiv: boolean = false;
+  public showPdfModalDiv1: boolean = false;
   public showCropButtons: boolean = false;
   public showPdfDiv: boolean = false;
   public showToDoAlert: boolean = false;
-  public showPdfModalDiv1: boolean = false;
+  public lastPdfModalID: number = 0;
   //#endregion
 
   public isPdfUploaded: boolean = false;
@@ -56,7 +62,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public coordinatesy2: number = 0;
   public booleanAns: any;
   public last_attritbute = '';
-  public JSON_object = {};
+  public JSON_object: any[] = [];
   public uniqueProfiles: utilityMeterScanProfile[];
   public inputValue123: any = (<HTMLInputElement>document.getElementById("inputDiv"));
   public tempArrayAttributeNames = [];
@@ -97,7 +103,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   };
 
   //#region bill attributes
-  public undefinedMeterData: any;
+  // public undefinedMeterData: any;
   public colorIndex: number = 0;
   public toDo: any[] = [];
   //#endregion
@@ -375,7 +381,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.interface.coordinatesx1 = event.cropperPosition.x1;
     this.interface.coordinatesy1 = event.cropperPosition.y1;
     this.interface.coordinatesx2 = event.cropperPosition.x2;
-    this.interface.coordinatesy2 = event.cropperPosition.y2;
+    this.interface.coordinatesy2 = event.cropperPosition.y2; 
   }
   //#endregion
 
@@ -485,7 +491,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     sessionStorage.setItem("CrppdImg", this.cropingImage); 
     this.ocrResult = text;
 
-    this.ocrResult = this.ocrResult.replace(/[$\n]/g, '') //splice out $ and new lines
+    this.ocrResult = this.ocrResult.replace(/[^\d.]/g, "") //splice out everything besides numbers and "."
     this.add_to_json(this.last_attritbute, this.ocrResult);
     this.set_json();
     await (await worker).terminate();
@@ -536,6 +542,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     this.showPdfModalDiv = false;
     this.showCropButtons = false;
     this.showPdfDiv = false;
+    this.show_ocr_results_div = false;
 
     // reset session storage
     sessionStorage.removeItem("pdf2Img");
@@ -543,6 +550,14 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
     // reset OCR
     await (await worker1).terminate();
+    this.set_json(); //Set json from updated text boxes
+    
+    this.JSON_object.forEach(item => {
+      this.setFormControlValue(item.key, item.value);
+    })
+
+    this.clear_json();
+    this.set_json();
 
     // reset variables
     this.tempArrayAttributeNames = [];
@@ -559,12 +574,29 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
 //#endregion
 
+  setFormControlValue(controlName: string, newValue: any) {
+    this.meterDataForm.controls[controlName].setValue(newValue);
+  }
+
+  toCamelCase(str: string) {
+    str = str.charAt(0).toLowerCase() + str.slice(1);
+    return str.replace(/\s(.)/g, function(match, group1) {
+      return group1.toUpperCase();
+    });
+  }
+
   async add_to_json(key:string, value:any){
-    this.JSON_object[key] = value;
+    key = this.toCamelCase(key);
+    const index = this.JSON_object.findIndex(item => item.key === key);
+    if(index !== -1){
+      this.JSON_object[index].value = value;
+    } else {
+      this.JSON_object.push({key: key, value: value});;
+    }
   }
 
   public clear_json(){
-    this.JSON_object = {}
+    this.JSON_object = [];
   }
 
   public set_json(){
@@ -582,6 +614,13 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
         index === self.findIndex(p => p.presetName === profile.presetName)
       );
     });
+  }
+
+  updateValue(key: string, event: any) {
+    const index = this.JSON_object.findIndex(item => item.key === key);
+    if (index !== -1) {
+      this.JSON_object[index].value = event.target.value;
+    }
   }
 
   async startProcessing(event: any | null){
@@ -612,7 +651,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     });
     
     return;
-}
+  }
   async doOCR2(){
     // show/hide divs
     this.isPdf2Image = false;
@@ -667,6 +706,5 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     
     return this.profileNameSave;  
   }
-  
-//edit bill component
 }
+  

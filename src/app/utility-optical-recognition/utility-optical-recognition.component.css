@@ -12,6 +12,12 @@ pdf-viewer{
     height: 120vh !important;
 }
 
+.verify_item{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+    
 :host ::ng-deep .ng2-pdf-viewer-container {
     overflow-x: hidden !important;
     overflow-y: hidden !important;

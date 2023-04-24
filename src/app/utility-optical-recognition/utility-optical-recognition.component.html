@@ -88,11 +88,10 @@
         <label>{{ item.key }}:</label>
         <input type="text" [value]="item.value" (input)="updateValue(item.key, $event)">
       </div>
-  <button class="btn btn-primary col-12 mb-3" id="saveAll" (click) = "saveChanges()">Confirm Save</button>
-  <button class="btn btn-primary col-12 mb-3" (click) = "this.show_ocr_results_div = false; this.lastPdfModalID === 0 ? this.showPdfModalDiv = true : this.showPdfModalDiv1 = true">Go back</button>
+  <button class="btn btn-primary col-12 mb-3" id="saveAll" (click)="saveChanges()">Confirm Save</button>
+  <button class="btn btn-primary col-12 mb-3" (click)="this.show_ocr_results_div = false; this.lastPdfModalID === 0 ? this.showPdfModalDiv = true : this.showPdfModalDiv1 = true">Go back</button>
     </div>
   </div>
-
 </div>
 
 <!-- DUPLICATE SECTION -->

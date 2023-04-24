@@ -150,28 +150,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupBillAttributes();
-
-    // set required attributes
-    this.undefinedMeterData.forEach(subArray => {
-      if(subArray.includes('Read Date')){
-        this.toDo.push(subArray[0]);
-      } else if(subArray.includes('Total Volume')){
-        this.toDo.push(subArray[0]);
-      } else if(subArray.includes('Total Energy Use')){
-        this.toDo.push(subArray[0]);
-      }
-    });
-
-    this.tempArrayAttributeNames.forEach(subArray => {
-      if(subArray.includes('Read Date')){
-        this.toDo.push(subArray[0]);
-      } else if(subArray.includes('Total Volume')){
-        this.toDo.push(subArray[0]);
-      } else if(subArray.includes('Total Energy Use')){
-        this.toDo.push(subArray[0]);
-      }
-    });
-
     // start scan profile
     this.newScanProfile = this.scanProfileDbService.getnewUtilityMeterProfile();
     this.interface.accountId = this.editMeter.accountId;
@@ -226,6 +204,28 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     } else{
       alert('please upload pdf file')
     }
+    //setup required attributes
+    this.undefinedMeterData.forEach(subArray => {
+      if(subArray.includes('Read Date')){
+        this.toDo.push(subArray[0]);
+      } else if(subArray.includes('Total Volume')){
+        this.toDo.push(subArray[0]);
+      } else if(subArray.includes('Total Energy Use')){
+        this.toDo.push(subArray[0]);
+      }
+    });
+
+    this.tempArrayAttributeNames.forEach(subArray => {
+      if(subArray.includes('Read Date')){
+        this.toDo.push(subArray[0]);
+      } else if(subArray.includes('Total Volume')){
+        this.toDo.push(subArray[0]);
+      } else if(subArray.includes('Total Energy Use')){
+        this.toDo.push(subArray[0]);
+      }
+    });
+    //filter out duplicates and single letters (i.e. 'R' 'T');
+    this.toDo = this.toDo.filter((item, index) => this.toDo.indexOf(item) === index && item.length > 1);
   }
 
   public afterLoadComplete(pdf: PDFDocumentProxy) {
@@ -647,6 +647,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
         }
        
       }
+
       this.counterVar++;
     });
     
@@ -676,6 +677,18 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     }
     this.add_to_json(this.GetProfile.attribute123, this.ocrResult);
     this.set_json();
+    if(this.GetProfile.attribute123.includes("Read Date")){
+      this.toDo = this.toDo.filter(item => item !== "Read Date");
+    } else if(this.GetProfile.attribute123.includes("Total Energy Use")){
+      this.toDo = this.toDo.filter(item => item !== "Total Energy Use");
+    } else if(this.GetProfile.attribute123.includes("Total Volume")){
+      this.toDo = this.toDo.filter(item => item !== "Total Volume");
+    }
+
+    // if toDo list is empty, hide it
+    if(this.toDo.length == 0){
+      this.showToDoAlert = false;
+    }
     await (await worker).terminate();
     this.startProcessing(null);
     this.currentpage = 1;

@@ -150,28 +150,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupBillAttributes();
-
-    // set required attributes
-    this.undefinedMeterData.forEach(subArray => {
-      if(subArray.includes('Read Date')){
-        this.toDo.push(subArray[0]);
-      } else if(subArray.includes('Total Volume')){
-        this.toDo.push(subArray[0]);
-      } else if(subArray.includes('Total Energy Use')){
-        this.toDo.push(subArray[0]);
-      }
-    });
-
-    this.tempArrayAttributeNames.forEach(subArray => {
-      if(subArray.includes('Read Date')){
-        this.toDo.push(subArray[0]);
-      } else if(subArray.includes('Total Volume')){
-        this.toDo.push(subArray[0]);
-      } else if(subArray.includes('Total Energy Use')){
-        this.toDo.push(subArray[0]);
-      }
-    });
-
     // start scan profile
     this.newScanProfile = this.scanProfileDbService.getnewUtilityMeterProfile();
     this.interface.accountId = this.editMeter.accountId;
@@ -226,6 +204,28 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     } else{
       alert('please upload pdf file')
     }
+    //setup required attributes
+    this.undefinedMeterData.forEach(subArray => {
+      if(subArray.includes('Read Date')){
+        this.toDo.push(subArray[0]);
+      } else if(subArray.includes('Total Volume')){
+        this.toDo.push(subArray[0]);
+      } else if(subArray.includes('Total Energy Use')){
+        this.toDo.push(subArray[0]);
+      }
+    });
+
+    this.tempArrayAttributeNames.forEach(subArray => {
+      if(subArray.includes('Read Date')){
+        this.toDo.push(subArray[0]);
+      } else if(subArray.includes('Total Volume')){
+        this.toDo.push(subArray[0]);
+      } else if(subArray.includes('Total Energy Use')){
+        this.toDo.push(subArray[0]);
+      }
+    });
+    //filter out duplicates and single letters (i.e. 'R' 'T');
+    this.toDo = this.toDo.filter((item, index) => this.toDo.indexOf(item) === index && item.length > 1);
   }
 
   public afterLoadComplete(pdf: PDFDocumentProxy) {
@@ -509,6 +509,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
   saveChanges(){
     if(this.toDo.length == 0){
+      alert(this.toDo.length)
       this.showToDoAlert = false;
       this.endProfile();
     } else {
@@ -647,6 +648,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
         }
        
       }
+
       this.counterVar++;
     });
     

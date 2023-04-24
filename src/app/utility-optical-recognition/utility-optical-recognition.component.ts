@@ -509,7 +509,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
   saveChanges(){
     if(this.toDo.length == 0){
-      alert(this.toDo.length)
       this.showToDoAlert = false;
       this.endProfile();
     } else {

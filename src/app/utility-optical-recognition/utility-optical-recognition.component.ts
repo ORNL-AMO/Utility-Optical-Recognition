@@ -676,6 +676,18 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     }
     this.add_to_json(this.GetProfile.attribute123, this.ocrResult);
     this.set_json();
+    if(this.GetProfile.attribute123.includes("Read Date")){
+      this.toDo = this.toDo.filter(item => item !== "Read Date");
+    } else if(this.GetProfile.attribute123.includes("Total Energy Use")){
+      this.toDo = this.toDo.filter(item => item !== "Total Energy Use");
+    } else if(this.GetProfile.attribute123.includes("Total Volume")){
+      this.toDo = this.toDo.filter(item => item !== "Total Volume");
+    }
+
+    // if toDo list is empty, hide it
+    if(this.toDo.length == 0){
+      this.showToDoAlert = false;
+    }
     await (await worker).terminate();
     this.startProcessing(null);
     this.currentpage = 1;

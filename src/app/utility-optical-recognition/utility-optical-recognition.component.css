@@ -14,8 +14,10 @@ pdf-viewer{
 
 .verify_item{
     display: flex;
+    display: grid;
     align-items: center;
     justify-content: center;
+    grid-template-columns: 150px 190px;
 }
     
 :host ::ng-deep .ng2-pdf-viewer-container {

@@ -550,6 +550,12 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
     // reset OCR
     await (await worker1).terminate();
+
+    // reset variables
+    this.tempArrayAttributeNames = [];
+    this.counterVar = 0;
+    this.currentpage = 1;
+    // location.reload();
     this.set_json(); //Set json from updated text boxes
     
     this.JSON_object.forEach(item => {
@@ -558,12 +564,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
     this.clear_json();
     this.set_json();
-
-    // reset variables
-    this.tempArrayAttributeNames = [];
-    this.counterVar = 0;
-    this.currentpage = 1;
-    location.reload();
     for(var index in this.undefinedMeterData){
       this.undefinedMeterData[index][1] = "black";
     }

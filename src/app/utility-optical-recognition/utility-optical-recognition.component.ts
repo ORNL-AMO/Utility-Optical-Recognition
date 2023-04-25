@@ -511,7 +511,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     const clickedButton = event.target as HTMLButtonElement;
 
     if (clickedButton.id === 'saveAll') {
-      console.log('Button 1 clicked');
       this.endProfile();
     } else if (clickedButton.id === 'dupSaveProfileChanges') {
       if(this.toDo.length == 0){
@@ -653,9 +652,8 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
       if(event != null){
         this.showFileUploadDiv1 = true;
         this.showScanProfileSelectorDiv = false;
+        this.saveProfileName(event.target.value);
       }
-      this.saveProfileName(event.target.value);
-
       let i = 0;
       if(this.counterVar == 0){
         for(i = 0; i < tempArray.length; i++){

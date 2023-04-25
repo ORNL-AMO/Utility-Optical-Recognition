@@ -728,13 +728,13 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     
       // Delete each attribute
       filteredProfiles.forEach(profile => {
-        this.scanProfileDbService.deleteWithObservable(profile.id).subscribe(
+         this.scanProfileDbService.deleteWithObservable(profile.id).subscribe(
           result => console.log(`Profile with the name ${profile.presetName} deleted.`),
           error => console.error(`Error deleting profile with guid ${profile.guid}: ${error}`)
         );
       });
     });
-    location.reload();
+    this.endProfile();
   }
 }
 

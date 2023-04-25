@@ -647,6 +647,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
 
   async startProcessing(event: any | null){
+    this.profileNameSave = event.target.value;
     if(event != null){
       this.GetProfile.name123 = event.target.value;
     }
@@ -655,7 +656,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
       if(event != null){
         this.showFileUploadDiv1 = true;
         this.showScanProfileSelectorDiv = false;
-        this.saveProfileName(event.target.value);
       }
       let i = 0;
       if(this.counterVar == 0){
@@ -720,28 +720,21 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
 
   deletePreset(){
-    let name = this.saveProfileName(null);
-    // find every attribute within a given presetName
+// find every attribute within a given presetName
     this.scanProfileDbService.getAll().subscribe(profiles => {
       const filteredProfiles = profiles.filter((profile) =>
-        profile.presetName === name
+        profile.presetName === this.profileNameSave
       );
     
       // Delete each attribute
       filteredProfiles.forEach(profile => {
         this.scanProfileDbService.deleteWithObservable(profile.id).subscribe(
-          result => console.log(`Profile with guid ${profile.guid} deleted.`),
+          result => console.log(`Profile with the name ${profile.presetName} deleted.`),
           error => console.error(`Error deleting profile with guid ${profile.guid}: ${error}`)
         );
       });
     });
-  }
-
-  saveProfileName(name:string | null){
-    if (name != null)
-      this.profileNameSave = name;
-
-    return this.profileNameSave;
+    location.reload();
   }
 }
 

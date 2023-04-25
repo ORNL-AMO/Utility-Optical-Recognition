@@ -75,6 +75,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public profileNameSave: string = '';
   public deleteIndex: number;
   public pdf: PDFDocumentProxy;
+  public profileDelete: utilityMeterScanProfile;
   public GetProfile =
   {
     guid: "",
@@ -518,6 +519,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
   async endProfile(){
     this.onGetUniqueProfiles();
+    console.log()
     const worker1 = createWorker();
     this.showFileUploadDiv = false;
     sessionStorage.removeItem("pdf2Img");
@@ -614,6 +616,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
         index === self.findIndex(p => p.presetName === profile.presetName)
       );
     });
+    console.log(this.uniqueProfiles);
   }
 
   updateValue(key: string, event: any) {
@@ -699,18 +702,21 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
   
   deletePreset(){
-    for (var index in this.uniqueProfiles)
-      console.log(this.uniqueProfiles[index])
-    let test = this.saveProfileName(null);
+    let name = this.saveProfileName(null);
+    // find every attribute within a given presetName
+    this.scanProfileDbService.getAll().subscribe(profiles => {
+      const filteredProfiles = profiles.filter((profile) =>
+        profile.presetName === name
+      );
     
-    for(var index in this.uniqueProfiles){
-      if(test == this.uniqueProfiles[index].presetName)
-        this.deleteIndex = Number(index);
-    }
-    delete this.uniqueProfiles[this.deleteIndex];
-    
-    for (var index in this.uniqueProfiles)
-      console.log(this.uniqueProfiles[index])
+      // Delete each attribute
+      filteredProfiles.forEach(profile => {
+        this.scanProfileDbService.deleteWithObservable(profile.id).subscribe(
+          result => console.log(`Profile with guid ${profile.guid} deleted.`),
+          error => console.error(`Error deleting profile with guid ${profile.guid}: ${error}`)
+        );
+      });
+    });
   }
 
   saveProfileName(name:string | null){

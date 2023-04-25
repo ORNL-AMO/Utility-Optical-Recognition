@@ -48,8 +48,8 @@ export class UtilityMeterScanProfileService {
         return this.dbService.add('utilityMeterScanProfile', item);
     }
     
-    deleteWithObservable(guid: string): Observable<any> {
-        return this.dbService.delete('utilityMeterScanProfile', guid);
+    deleteWithObservable(id: number): Observable<any> {
+        return this.dbService.delete('utilityMeterScanProfile', id);
     }
     
     updateWithObservable(values: utilityMeterScanProfile): Observable<utilityMeterScanProfile> {
@@ -82,7 +82,7 @@ export class UtilityMeterScanProfileService {
     whole form by the foreign key (guid)*/
     async deleteUtilityMeterProfileForm(meterData: Array<utilityMeterScanProfile>){
         for(let i = 0; i < meterData.length; i++){
-            await this.deleteWithObservable(meterData[i].guid).toPromise();
+            await this.deleteWithObservable(meterData[i].id).toPromise();
         }
     }
 

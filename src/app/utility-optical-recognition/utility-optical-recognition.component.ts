@@ -361,10 +361,10 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
 
   calculateInitialPosition1(dimensions: Dimensions): CropperPosition {
-    const x1 = 192;
-    const y1 = 227;
+    const x1 = 385;
+    const y1 = 385;
     const x2 = 452;
-    const y2 = 320;
+    const y2 = 452;
     return { x1, y1, x2, y2 };
   }
 

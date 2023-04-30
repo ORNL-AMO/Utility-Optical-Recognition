@@ -2,9 +2,32 @@
 
 This tool is an addition to [Verifi by Oak Ridge National Lab](https://github.com/ORNL-AMO/VERIFI). 
 
-It's purpose is to help automate obtaining utility bill data. Using optical character recognition (OCR) through Tesseract.js, it is able to extract bill attributes.
+This tool aims to automate the process of obtaining utility bill data. It uses optical character recognition (OCR) through Tesseract.js to extract relevant bill attributes.
 
 This tool provides an interface that allows you to upload a PDF, save the locations of the attributes, and save the profile for later use. Then you can upload each month's new utility bill and automatically extract the bill's data for use within Verifi.
+
+
+
+## Build & Installation
+
+No additional commands needed. Please follow Verifi's instructions further below.
+
+
+## Usage Instructions
+
+When adding a new bill into Verifi, the option "Upload PDF" will appear. This option will allow you to create a reusable scan profile that will extract the bill's utility data.
+
+### New Scan Profile
+To start a new scan profile, select "New Scan Profile." Save a unique name for this utility bill and select a PDF to upload. Then, select the attribute you would like to extract and create a snippet. Repeat this step for every attribute you want to include. Once complete, click "Save Profile Changes." On the next page, you can edit the extracted data. Click "Confirm Save" when you are done.
+
+### Reuse Scan Profile
+To reuse a scan profile, click on the saved scan profile name you would like to use. Then, upload the new utility bill that matches this scan profile type. Select the attributes you want to extract. Once complete, click "Save Profile Changes." On the next page, you can edit the extracted data. Click "Confirm Save" when you are done.
+
+### Edit Scan Profile
+To edit a scan profile, click on the saved scan profile name you would like to edit. Then, upload a utility bill that matches this scan profile type. Select the attribute you would like to edit. When you are in a snippet, you are able to change where the snippet pulls from. Once complete, click "Save Profile Changes." On the next page, you can edit the extracted data. Click "Confirm Save" when you are done.
+
+### Delete Scan Profile
+To delete a scan profile, click on the saved scan profile name you would like to delete. Then, click the "Delete" button. Upon refresh, the scan profile should no longer appear.
 
 
 ### Additional Dependencies
@@ -15,6 +38,10 @@ In addition to the dependencies of VERIFI, we used the following.
  - ng2-pdf-viewer
  - html2canvas
  - tesseract.js
+
+ ## Acknowledgments
+
+A special thank you to Gina Accawi, Kristina Armstrong, and Mark Root with Oak Ridge National Lab (ORNL). Your guidance and feedback through our first open-source contribution was vital to its success. We appreciate everything you have done for us.
 
 
 
@@ -75,8 +102,3 @@ The Department of Energy Advanced Manufacturing Office has tasked Oak Ridge Nati
 - Run `xcrun stapler staple VERIFI-x.x.x-x.dmg` to staple the notarization. 
 
 > **Note:** APPLE APP PASSWORD is an [app-specific password](https://support.apple.com/en-us/HT204397) (not your Apple ID password).
-
-
-# Acknowledgments
-
-A special thank you to Gina Accawi, Kristina Armstrong, and Mark Root with Oak Ridge National Lab (ORNL). Your guidance and feedback through our first open-source contribution was vital to its success.

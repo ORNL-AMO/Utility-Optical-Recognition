@@ -77,6 +77,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public profileNameSave: string = '';
   public deleteIndex: number;
   public pdf: PDFDocumentProxy;
+  public profileDelete: utilityMeterScanProfile;
   public GetProfile =
   {
     guid: "",
@@ -361,10 +362,10 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
 
   calculateInitialPosition1(dimensions: Dimensions): CropperPosition {
-    const x1 = 192;
-    const y1 = 227;
+    const x1 = 385;
+    const y1 = 385;
     const x2 = 452;
-    const y2 = 320;
+    const y2 = 452;
     return { x1, y1, x2, y2 };
   }
 
@@ -542,6 +543,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
 
   async endProfile(){
     this.onGetUniqueProfiles();
+    console.log()
     const worker1 = createWorker();
     this.showFileUploadDiv = false;
     sessionStorage.removeItem("pdf2Img");
@@ -640,6 +642,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
         index === self.findIndex(p => p.presetName === profile.presetName)
       );
     });
+    console.log(this.uniqueProfiles);
   }
 
   updateValue(key: string, event: any) {
@@ -650,6 +653,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
 
   async startProcessing(event: any | null){
+    this.profileNameSave = event.target.value;
     if(event != null){
       this.GetProfile.name123 = event.target.value;
     }
@@ -658,7 +662,6 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
       if(event != null){
         this.showFileUploadDiv1 = true;
         this.showScanProfileSelectorDiv = false;
-        this.saveProfileName(event.target.value);
       }
       let i = 0;
       if(this.counterVar == 0){
@@ -728,25 +731,21 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   }
 
   deletePreset(){
-    for (var index in this.uniqueProfiles)
-      console.log(this.uniqueProfiles[index])
-    let test = this.saveProfileName(null);
-
-    for(var index in this.uniqueProfiles){
-      if(test == this.uniqueProfiles[index].presetName)
-        this.deleteIndex = Number(index);
-    }
-    delete this.uniqueProfiles[this.deleteIndex];
-
-    for (var index in this.uniqueProfiles)
-      console.log(this.uniqueProfiles[index])
-  }
-
-  saveProfileName(name:string | null){
-    if (name != null)
-      this.profileNameSave = name;
-
-    return this.profileNameSave;
+// find every attribute within a given presetName
+    this.scanProfileDbService.getAll().subscribe(profiles => {
+      const filteredProfiles = profiles.filter((profile) =>
+        profile.presetName === this.profileNameSave
+      );
+    
+      // Delete each attribute
+      filteredProfiles.forEach(profile => {
+         this.scanProfileDbService.deleteWithObservable(profile.id).subscribe(
+          result => console.log(`Profile with the name ${profile.presetName} deleted.`),
+          error => console.error(`Error deleting profile with guid ${profile.guid}: ${error}`)
+        );
+      });
+    });
+    this.endProfile();
   }
 }
 

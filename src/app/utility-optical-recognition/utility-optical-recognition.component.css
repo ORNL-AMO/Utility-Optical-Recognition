@@ -5,11 +5,11 @@
     margin-top: 1.5rem;
 }
 pdf-viewer{
-    height: 120vh !important;
+    height: 130vh !important;
 }
 
 .pdf-container {
-    height: 120vh !important;
+    height: 130vh !important;
 }
 
 .verify_item{
@@ -23,7 +23,7 @@ pdf-viewer{
 :host ::ng-deep .ng2-pdf-viewer-container {
     overflow-x: hidden !important;
     overflow-y: hidden !important;
-    height: 120vh !important;
+    height: 130vh !important;
 }
 
 .attributeButtons{
@@ -36,9 +36,9 @@ pdf-viewer{
 .pdf-img-wrapper {
     display: flex;
     flex-direction: column;
-    height: 120vh;
+    height: 130vh;
 }
 
 .img-container{
-    height: 120vh !important;
+    height: 130vh !important;
 }

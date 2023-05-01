@@ -63,6 +63,7 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
   public coordinatesy2: number = 0;
   public booleanAns: any;
   public last_attritbute = '';
+  public match = "";
   public JSON_object: any[] = [];
   public uniqueProfiles: utilityMeterScanProfile[];
   public inputValue123: any = (<HTMLInputElement>document.getElementById("inputDiv"));
@@ -491,7 +492,12 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     sessionStorage.setItem("CrppdImg", this.cropingImage);
     this.ocrResult = text;
 
-    this.ocrResult = this.ocrResult.replace(/[^\d.]/g, "") //splice out everything besides numbers and "."
+    if(this.last_attritbute == "Read Date"){
+      this.ocrResult = this.ocrResult.replace(/[^0-9\/]/g, "");
+    }else{
+      this.match = this.ocrResult.match(/[\d,]+(\.\d{2})?/);
+      this.ocrResult = this.match[0].replace(",", "");
+    }
     this.add_to_json(this.last_attritbute, this.ocrResult);
     this.set_json();
     await (await worker).terminate();
@@ -684,7 +690,12 @@ export class UtilityOpticalRecognitionComponent implements OnInit {
     const {data: { text } } = await (await worker).recognize(this.cropingImage);
     sessionStorage.setItem("CrppdImg", this.cropingImage);
     this.ocrResult = text;
-    this.ocrResult = this.ocrResult.replace(/[$\n]/g, '') //splice out $ and new lines
+    if(this.GetProfile.attribute123 == "Read Date"){
+      this.ocrResult = this.ocrResult.replace(/[^0-9\/]/g, "");
+    }else{
+      this.match = this.ocrResult.match(/[\d,]+(\.\d{2})?/);
+      this.ocrResult = this.match[0].replace(",", "");
+    }    
     if(this.ocrResult == ""){
       alert("Nothing was able to be read from the image. Please try again.");
       this.startProcessing(null);

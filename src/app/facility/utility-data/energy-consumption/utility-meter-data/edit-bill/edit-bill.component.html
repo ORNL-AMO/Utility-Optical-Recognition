@@ -34,8 +34,10 @@
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <div class="modal-body">
-                <button type="button" class="btn-close item-right" data-bs-dismiss="modal" aria-label="Close" onclick="location.reload()"></button>
-                <app-utility-optical-recognition [editMeter]="editMeter" [editMeterData]="editMeterData"></app-utility-optical-recognition>
+                <!-- <button type="button" class="btn-close item-right" data-bs-dismiss="modal" aria-label="Close" onclick="location.reload()"></button> -->
+                <button type="button" class="btn-close item-right" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                <app-utility-optical-recognition [editMeter]="editMeter" [editMeterData]="editMeterData" [meterDataForm]="meterDataForm"></app-utility-optical-recognition>
             </div>
         </div>
     </div>
